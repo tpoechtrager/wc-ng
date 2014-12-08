@@ -58,8 +58,9 @@ GPG Signature Key: [32079601](https://github.com/tpoechtrager/wc-ng/tree/master/
 
 * [Installation instructions](http://wc-ng.sauerworld.org/builds/nightly/readme/#installation)
 * [Client documentation](http://wc-ng.sauerworld.org/builds/nightly/readme)
-* Build instructions
-* ChangeLog
+* [Chat Server](https://github.com/tpoechtrager/wc-ng/blob/master/CHATSERVER.md)
+* [Build instructions](https://github.com/tpoechtrager/wc-ng/blob/master/BUILD_INSTRUCTIONS.md)
+* [ChangeLog](https://github.com/tpoechtrager/wc-ng/blob/master/ChangeLog)
 * [Screenshots](http://wc-ng.sauerworld.org/builds/nightly/screens)
 
 ### Features: ###
