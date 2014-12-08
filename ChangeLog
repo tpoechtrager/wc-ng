@@ -1,0 +1,101 @@
+wc-ng v0.7.2 2014-xx-xx
+
+  added:
+    - '/wcver [1]' which represents the current version of the client
+      '/wcversion' should be avoided from now on
+    - server accross chat
+    - sdl2 port (by pisto)
+    - hwtemp plugin (windows, linux and OS X)
+    - hwtemp hud display (windows, linux and OS X)
+    - support for multiple master servers (/addmasterserver, /delmasterserver)
+    - requireplugin cubescript function
+    - servcmd event (N_SERVCMD)
+    - playerdisplaymaxteams variable
+    - '/resolveip' cubescript function
+    - FreeBSD 10.x support (amd64)
+    - '/stripextdemo': strip extinfo out of demos
+    - '/recompressdemo': recompress demos with a different recompression level
+    - '/getactioncn': useful for video streaming
+    - '/autofollowactioncn': useful for video streaming
+    - '/resolveip <ip>': resolve given ip address to its respective hostname
+    - '/scoreboardtextcolour': change scoreboard text colour
+    - '/scoreboardtextcolourhead': change scoreboard text colour
+
+  changed:
+    - in sync with sauerbraten r5050
+    - libcurl update to 7.39.0
+    - libgeoip update to 1.6.0
+    - windows client is now linked statically against its required libs
+    - all client packages are now built with link time optimization
+
+  enhanced:
+    - demorecorder can now record coop-edit "games"
+    - server country is now shown in the scoreboard
+    - '/statsdisplayfmt' allows now game mode specific stats formatting
+    - '/httprequest': added support for the https protocol**
+
+  fixed:
+    - server browser capture team scores
+    - player display: scaling of shown players per team
+    - fixed "failed to create demo directory" issue
+    - showservermod / showserveruptime not being shown in coop edit
+    - and other fixes and improvements
+
+Some features had to be dropped due to a persons arrogancy (you may imagine
+whom it is). I have tried everything to solve this, but he didn't answer to my
+emails over several months(!) (claiming they were "lost", while I wrote to three
+email addresses), didn't appear on IRC to said times to solve the code licensing
+issue (and now, while I write this, he is ignoring my emails again).
+
+So, I have enough of this, and I don't want to deal such a person any longer.
+
+If there is enough interested, then I might rewrite wanted features that have
+been dropped but not replaced yet.
+
+Rewritten features:
+- Plugin API
+- Console History
+- indentfrags
+- Several other things (including internal used functions)
+
+Removed features:
+- Plugins: movieencoder, soundinput and mpdclient
+- '/consearch'
+- '/checkregex' (wanted to get rid of pcre)
+- chatsounds
+- name completion / highlighting
+- \fz and \fb color codes
+- Center Console  (May be rewritten if there's enough interest)
+- '/contimecolor' + '/conshowtime'
+- '/colornames' + '/highlightteamkillmsg' (TKs are already highlighted with \f6)
+
+Deprecated commands:
+- addplugin(s)   (new name is loadplugin(s))
+- delplugins(s)  (new name is unloadplugin(s))
+- listplugins    (new name is listloadedplugins)
+
+Things that have not been rewritten on purpose:
+- showtimeleft:  the source code for this was already given out to others
+
+**
+Certificate validation is done via the curl ca-bundle (data/CA/ca-bundle.crt)
+https://raw.githubusercontent.com/bagder/ca-bundle/master/ca-bundle.crt.
+
+--------------------------------------------------------------------------------
+
+wc-r931 2013-09-30
+  fixed: several hud display glitches (stats display and other displays)
+  changed: sauerbraten update to r4896
+
+  movieencoder 0.9.6.0:
+    fixed: write delayed frames when closing the output
+    fixed: support of webm codec (linux)
+    changed: use ffmpeg-2.0.1
+    added: codecs, formats  and debug param
+
+  soundinput 0.5.0.1
+    fixed: GLIBC_2.17 errors on dists with < libc2.17 (linux)
+
+
+wc-r860 2013-09-11
+  initial release

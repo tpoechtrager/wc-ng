@@ -1,0 +1,1 @@
+package_nsis_windows_mingw.sh

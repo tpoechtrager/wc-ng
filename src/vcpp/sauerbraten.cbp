@@ -1,0 +1,1847 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="sauerbraten_wc" />
+		<Option makefile_is_custom="1" />
+		<Option execution_dir="../../src" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="native-debug">
+				<Option output="bin/Debug/sauerbraten_wc" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<MakeCommands>
+					<Build command="./build.sh OPTIMIZE=0 DEBUG=3 " />
+					<CompileFile command="" />
+					<Clean command="$make clean" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="" />
+					<SilentBuild command="./build.sh OPTIMIZE=0 DEBUG=3  &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="native-release">
+				<Option output="bin/Release/sauerbraten_wc" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="clang" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+				<MakeCommands>
+					<Build command="./build.sh" />
+					<CompileFile command="" />
+					<Clean command="$make clean" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="" />
+					<SilentBuild command="./build.sh &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="mingw32-cross">
+				<Option output="sauerbraten_wc" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+				<MakeCommands>
+					<Build command="make MINGWPREFIX=i686-w64-mingw32 PLATFORM=mingw MINGWARCH=i686 -j4" />
+					<CompileFile command="" />
+					<Clean command="$make clean" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="" />
+					<SilentBuild command="make MINGWPREFIX=i686-w64-mingw32 PLATFORM=mingw MINGWARCH=i686 -j4 &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="mingw64-cross">
+				<Option output="sauerbraten_wc" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+				<MakeCommands>
+					<Build command="make MINGWPREFIX=x86_64-w64-mingw32 PLATFORM=mingw MINGWARCH=x86_64 -j4" />
+					<CompileFile command="" />
+					<Clean command="$make clean" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="" />
+					<SilentBuild command="make MINGWPREFIX=x86_64-w64-mingw32 PLATFORM=mingw MINGWARCH=x86_64 -j4 &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="clang-w32-cross">
+				<Option output="sauerbraten_wc" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+				<MakeCommands>
+					<Build command="make MINGWPREFIX=x86_64-w64-mingw32 PLATFORM=mingw MINGWARCH=x86_64" />
+					<CompileFile command="" />
+					<Clean command="$make clean" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="" />
+					<SilentBuild command="make MINGWPREFIX=x86_64-w64-mingw32 PLATFORM=mingw MINGWARCH=x86_64 &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="clang-w64-cross">
+				<Option output="sauerbraten_wc" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+				<MakeCommands>
+					<Build command="./build/package_w64-clang_cross.sh" />
+					<CompileFile command="" />
+					<Clean command="$make clean" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="" />
+					<SilentBuild command="./build/package_w64-clang_cross.sh &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="osx-cross">
+				<Option output="sauerbraten" prefix_auto="1" extension_auto="1" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<MakeCommands>
+					<Build command="make PLATFORM=DARWIN -j4" />
+					<CompileFile command="" />
+					<Clean command="make clean" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="" />
+					<SilentBuild command="make PLATFORM=DARWIN -j4 &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="../../doc/WC_README.html">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../../doc/examples/events/chatrules.cfg">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../../doc/examples/events/ignorechat.cfg">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../../doc/examples/events/packetloss.cfg">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../../doc/examples/events/specmsg.cfg">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../../doc/examples/events/timetrial.cfg">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../../doc/examples/http/whatsmyip.cfg">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../../doc/examples/private/clonescanner.cfg">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../../doc/style.css">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../Makefile">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../TODO">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../build/build.sh" />
+		<Unit filename="../build/check_cxx_standard.sh" />
+		<Unit filename="../build/checksyntax.sh" />
+		<Unit filename="../build/checkvcsyntax_clang.sh" />
+		<Unit filename="../build/cpucount.c">
+			<Option compilerVar="CC" />
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../build/enet_cflags.sh" />
+		<Unit filename="../build/get_cpu_count.sh" />
+		<Unit filename="../build/get_revision.sh" />
+		<Unit filename="../build/get_version.cpp" />
+		<Unit filename="../build/msvc-pre-build.bat" />
+		<Unit filename="../build/package.sh" />
+		<Unit filename="../build/package_darwin_cross.sh" />
+		<Unit filename="../build/package_freebsd32_cross.sh" />
+		<Unit filename="../build/package_freebsd64_cross.sh" />
+		<Unit filename="../build/package_linux32.sh" />
+		<Unit filename="../build/package_linux64.sh" />
+		<Unit filename="../build/package_nsis_windows.bat" />
+		<Unit filename="../build/package_nsis_windows_clang_cross.sh" />
+		<Unit filename="../build/package_nsis_windows_mingw_cross.sh" />
+		<Unit filename="../build/package_w32-clang_cross.sh" />
+		<Unit filename="../build/package_w32-mingw_cross.sh" />
+		<Unit filename="../build/package_w64-clang_cross.sh" />
+		<Unit filename="../build/package_w64-mingw_cross.sh" />
+		<Unit filename="../enet/include/enet/callbacks.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../enet/include/enet/enet.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../enet/include/enet/list.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../enet/include/enet/protocol.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../enet/include/enet/time.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../enet/include/enet/types.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../enet/include/enet/unix.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../enet/include/enet/utility.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../enet/include/enet/win32.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/3dgui.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/animmodel.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/bih.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/bih.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/blend.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/blob.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/client.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/command.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/console.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/cubeloader.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/decal.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/depthfx.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/dynlight.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/engine.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/explosion.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/glare.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/glexts.h" />
+		<Unit filename="../engine/grass.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/iqm.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/lensflare.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/lightmap.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/lightmap.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/lightning.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/main.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/master.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/material.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/md2.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/md3.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/md5.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/menus.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/model.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/movie.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/mpr.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/normal.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/obj.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/octa.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/octa.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/octaedit.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/octarender.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/pch.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/physics.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/pvs.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/ragdoll.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/rendergl.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/rendermodel.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/renderparticles.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/rendersky.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/rendertarget.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/rendertext.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/renderva.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/scale.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/server.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/serverbrowser.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/shader.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/shadowmap.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/skelmodel.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/smd.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/sound.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/textedit.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/texture.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/texture.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/varray.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/vertmodel.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/water.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/world.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/world.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../engine/worldio.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../fpsgame/ai.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../fpsgame/ai.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../fpsgame/aiman.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../fpsgame/capture.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../fpsgame/client.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../fpsgame/collect.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../fpsgame/ctf.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../fpsgame/entities.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../fpsgame/extinfo.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../fpsgame/fps.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../fpsgame/game.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../fpsgame/monster.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../fpsgame/movable.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../fpsgame/pch.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../fpsgame/render.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../fpsgame/scoreboard.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../fpsgame/server.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../fpsgame/waypoint.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../fpsgame/weapon.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/GL/glext.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/GeoIP/GeoIP.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/GeoIP/GeoIPCity.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_active.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_audio.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_byteorder.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_cdrom.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_config.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_config_macosx.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_config_win32.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_copying.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_cpuinfo.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_endian.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_error.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_events.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_getenv.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_image.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_joystick.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_keyboard.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_keysym.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_loadso.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_main.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_mixer.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_mouse.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_mutex.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_name.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_opengl.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_platform.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_quit.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_rwops.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_stdinc.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_syswm.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_thread.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_timer.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_types.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_version.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/SDL_video.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/begin_code.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/close_code.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/curl/curl.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/curl/curlbuild.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/curl/curlrules.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/curl/curlver.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/curl/easy.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/curl/mprintf.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/curl/multi.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/curl/stdcheaders.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/curl/typecheck-gcc.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/inttypes.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/quirks/msvc/stdbool.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/zconf.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../include/zlib.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../last_sauer_svn_rev.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../mod/chat-ca-certs.h" />
+		<Unit filename="../mod/chat.cpp" />
+		<Unit filename="../mod/chat.h" />
+		<Unit filename="../mod/chatserver/chatserver.cpp" />
+		<Unit filename="../mod/chatserver/sfree.h" />
+		<Unit filename="../mod/compat.h" />
+		<Unit filename="../mod/cubescript.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../mod/cubescript.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../mod/demorecorder.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../mod/demorecorder.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../mod/events.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../mod/events.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../mod/extinfo.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../mod/extinfo.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../mod/gamemod.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../mod/gamemod.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../mod/geoip.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../mod/http.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../mod/hwdisplay.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../mod/ipbuf.h" />
+		<Unit filename="../mod/ipignore.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../mod/mod.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../mod/mod.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../mod/playerdisplay.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../mod/plugin.cpp" />
+		<Unit filename="../mod/plugin.h" />
+		<Unit filename="../mod/quirks/glibc/compat.c">
+			<Option compilerVar="CC" />
+			<Option target="native-debug" />
+			<Option target="native-release" />
+		</Unit>
+		<Unit filename="../mod/strtool.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../mod/strtool.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../mod/thread.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../mod/wcversion.h.in">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../plugins/g15lcd/g15lcd.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../plugins/g15lcd/g15sdkwrapper.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../plugins/g15lcd/g15sdkwrapper_linux.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../plugins/g15lcd/g15sdkwrapper_windows.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../plugins/hwtemp/hwtemp.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../plugins/hwtemp/hwtemp.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../plugins/hwtemp/include/GetCoreTempInfo.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../plugins/hwtemp/include/nvapi.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../plugins/hwtemp/linux.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../plugins/hwtemp/osx.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../plugins/hwtemp/windows.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../shared/command.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../shared/crypto.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../shared/cube.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../shared/cube2font.c">
+			<Option compilerVar="CC" />
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../shared/ents.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../shared/geom.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../shared/geom.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../shared/iengine.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../shared/igame.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../shared/pch.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../shared/stream.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../shared/tools.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../shared/tools.h">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Unit filename="../shared/zip.cpp">
+			<Option target="native-debug" />
+			<Option target="native-release" />
+			<Option target="mingw32-cross" />
+			<Option target="mingw64-cross" />
+			<Option target="clang-w32-cross" />
+			<Option target="clang-w64-cross" />
+		</Unit>
+		<Extensions>
+			<envvars />
+			<code_completion />
+			<debugger />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
