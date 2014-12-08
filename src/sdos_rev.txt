@@ -1,0 +1,2 @@
+789af786e941d557a4aa4f6054b5a22f1f98ba60
++ https://github.com/pisto/sdos-test/pull/6

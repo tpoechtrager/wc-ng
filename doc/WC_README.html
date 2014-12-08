@@ -1,0 +1,1152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+<head>
+<title>WC-NG 259 ReadMe</title>
+<link rel="stylesheet" type="text/css" href="style.css" />
+</head>
+
+<body>
+
+<h1>WC-NG 259 ReadMe</h1>
+
+<div class="contents">
+<ul class="contents">
+
+    <li>
+        <a href="#installation"><b>Installation</b></a>
+        <ul class="contents2">
+            <li><a href="#installation_win"><tt>Windows</tt></a></li>
+            <li><a href="#installation_osx"><tt>OS X</tt></a></li>
+            <li><a href="#installation_unx"><tt>Unix/Linux</tt></a></li>
+        </ul>
+    </li>
+
+    <li>
+        <a href="#additional_variables"><b>Additional Variables</b></a>
+        <ul class="contents2">
+            <li><a href="#showtimeleft"><tt>showtimeleft</tt></a></li>
+            <li><a href="#showpingdisplay"><tt>showpingdisplay</tt></a></li>
+            <li><a href="#shownetworkdisplay"><tt>shownetworkdisplay</tt></a></li>
+            <li><a href="#showstatsdisplay"><tt>showstatsdisplay</tt></a></li>
+            <li><a href="#statsdisplayfmt"><tt>statsdisplayfmt</tt></a></li>
+            <li><a href="#demogamespeed"><tt>demogamespeed</tt></a></li>
+            <li><a href="#demomillis"><tt>demomillis</tt></a></li>
+            <li><a href="#scaletimeleft"><tt>scaletimeleft</tt></a></li>
+            <li><a href="#indentfrags"><tt>indentfrags</tt></a></li>
+            <li><a href="#keephistory"><tt>keephistory</tt></a></li>
+            <li><a href="#keepchathistory"><tt>keepchathistory</tt></a></li>
+            <li><a href="#clientcountry"><tt>clientcountry</tt></a></li>
+            <li><a href="#clientcountrycode"><tt>clientcountrycode</tt></a></li>
+            <li><a href="#extinfopingrate"><tt>extinfopingrate</tt></a></li>
+            <li><a href="#clientdemoautorecord"><tt>clientdemoautorecord</tt></a></li>
+            <li><a href="#clientdemorecordextinfo"><tt>clientdemorecordextinfo</tt></a></li>
+            <li><a href="#autofollowactioncn"><tt>autofollowactioncn</tt></a></li>
+            <li><a href="#actioncnfollowtime"><tt>actioncnfollowtime</tt></a></li>
+            <li><a href="#wcautoversioncheck"><tt>wcautoversioncheck</tt></a></li>
+        </ul>
+    </li>
+
+    <li>
+        <a href="#additional_commands"><b>Additional Commands</b></a>
+        <ul class="contents2">
+            <li><a href="#wcinfo"><tt>wcinfo</tt></a></li>
+            <li><a href="#wccheckversion"><tt>wccheckversion</tt></a></li>
+            <li><a href="#wcupdategeoipdatabase"><tt>wcupdategeoipdatabase</tt></a></li>
+            <li><a href="#writehistory"><tt>writehistory</tt></a></li>
+            <li><a href="#loadhistory"><tt>loadhistory</tt></a></li>
+            <li><a href="#getclientcountry"><tt>getclientcountry</tt></a></li>
+            <li><a href="#getclientcountrycode"><tt>getclientcountrycode</tt></a></li>
+            <li><a href="#getteamkills"><tt>getteamkills</tt></a></li>
+            <li><a href="#getping"><tt>getping</tt></a></li>
+            <li><a href="#recordclientdemo"><tt>recordclientdemo</tt></a></li>
+            <li><a href="#clientdemocompresslevel"><tt>clientdemocompresslevel</tt></a></li>
+            <li><a href="#clientdemoskipservmsg"><tt>clientdemoskipservmsg</tt></a></li>
+            <li><a href="#clientdemoskipservercmds"><tt>clientdemoskipservercmds</tt></a></li>
+            <li><a href="#clientdemorecording"><tt>clientdemorecording</tt></a></li>
+            <li><a href="#clientdemorawsize"><tt>clientdemorawsize</tt></a></li>
+            <li><a href="#searchdemo"><tt>searchdemo</tt></a></li>
+            <li><a href="#stopsearchdemo"><tt>stopsearchdemo</tt></a></li>
+            <li><a href="#searchdemothreadlimit"><tt>searchdemothreadlimit</tt></a></li>
+            <li><a href="#searchdemomindemosize"><tt>searchdemomindemosize</tt></a></li>
+            <li><a href="#searchdemomaxresults"><tt>searchdemomaxresults</tt></a></li>
+            <li><a href="#getdemoduration"><tt>getdemoduration</tt></a></li>
+            <li><a href="#stripextdemo"><tt>stripextdemo</tt></a></li>
+            <li><a href="#recompressdemo"><tt>recompressdemo</tt></a></li>
+            <li><a href="#getactioncn"><tt>getactioncn</tt></a></li>
+            <li><a href="#jumpto"><tt>jumpto</tt></a></li>
+            <li><a href="#gettotalmillis"><tt>gettotalmillis</tt></a></li>
+            <li><a href="#getlastmillis"><tt>getlastmillis</tt></a></li>
+            <li><a href="#ifnotdeclared"><tt>ifnotdeclared</tt></a></li>
+            <li><a href="#roundf"><tt>roundf</tt></a></li>
+            <li><a href="#getgamestatefmt"><tt>getgamestatefmt</tt></a></li>
+            <li><a href="#getosstring"><tt>getosstring</tt></a></li>
+            <li><a href="#guititleleftalign"><tt>guititleleftalign</tt></a></li>
+            <li><a href="#countryflagpath"><tt>countryflagpath</tt></a></li>
+            <li><a href="#isipaddress"><tt>isipaddress</tt></a></li>
+        </ul>
+    </li>
+
+    <li>
+        <a href="#additional_functions"><b>Additional Functions</b></a>
+        <ul class="contents2">
+            <li><a href="#colors"><tt>colors</tt></a></li>
+            <li><a href="#console_input_search"><tt>console input search</tt></a></li>
+        </ul>
+    </li>
+
+    <li>
+        <a href="#server_browser"><b>Server Browser</b></a>
+        <ul class="contents2">
+            <li><a href="#server_browser_filters"><tt>filters</tt></a>
+                <ul class="contents2">
+                <li><a href="#filterservermod"><tt>filterservermod</tt></a></li>
+                <li><a href="#filterservercountry"><tt>filterservercountry</tt></a></li>
+                <li><a href="#filterserverdesc"><tt>filterserverdesc</tt></a></li>
+                <li><a href="#filterservermode"><tt>filterservermode</tt></a></li>
+                <li><a href="#filterservermodestring"><tt>filterservermodestring</tt></a></li>
+                <li><a href="#filterserverhost"><tt>filterserverhost</tt></a></li>
+                <li><a href="#filterservermastermode"><tt>filterservermastermode</tt></a></li>
+                </ul>
+            </li>
+            <li><a href="#server_browser_others"><tt>others</tt></a>
+                <ul class="contents2">
+                    <li><a href="#extinfoserverbrowser"><tt>extinfoserverbrowser</tt></a></li>
+                    <li><a href="#extinfoconnect"><tt>extinfoconnect</tt></a></li>
+                    <li><a href="#processservers"><tt>processservers</tt></a></li>
+                    <li><a href="#loopextinfoplayers"><tt>loopextinfoplayers</tt></a></li>
+                    <li><a href="#getextinfoplayercount"><tt>getextinfoplayercount</tt></a></li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+
+    <li>
+        <a href="#additional_master_servers"><b>Additional Master Servers</b></a>
+        <ul class="contents2">
+            <li><a href="#addmasterserver"><tt>addmasterserver</tt></a></li>
+            <li><a href="#delmasterserver"><tt>delmasterserver</tt></a></li>
+            <li><a href="#listmasterservers"><tt>listmasterservers</tt></a></li>
+        </ul>
+    </li>
+
+    <li>
+        <a href="#scoreboard"><b>Scoreboard</b></a>
+        <ul class="contents2">
+            <li><a href="#scoreboard_extinfo"><tt>extinfo extensions</tt></a>
+                <ul class="contents2">
+                    <li><a href="#showextinfo"><tt>showextinfo</tt></a></li>
+                    <li><a href="#showfrags"><tt>showfrags</tt></a></li>
+                    <li><a href="#showdeaths"><tt>showdeaths</tt></a></li>
+                    <li><a href="#showkpd"><tt>showkpd</tt></a></li>
+                    <li><a href="#showtks"><tt>showtks</tt></a></li>
+                    <li><a href="#showacc"><tt>showacc</tt></a></li>
+                    <li><a href="#showspectatorping"><tt>showspectatorping</tt></a></li>
+                    <li><a href="#showcountry"><tt>showcountry</tt></a></li>
+                    <li><a href="#showserveruptime"><tt>showserveruptime</tt></a></li>
+                    <li><a href="#showservermod"><tt>showservermod</tt></a></li>
+                </ul>
+            </li>
+            <li><a href="#scoreboard_player_display"><tt>player display</tt></a>
+                <ul class="contents2">
+                    <li><a href="#showplayerdisplay"><tt>showplayerdisplay</tt></a></li>
+                    <li><a href="#playerdisplayshowspectators"><tt>playerdisplayshowspectators</tt></a></li>
+                    <li><a href="#playerdisplayfontscale"><tt>playerdisplayfontscale</tt></a></li>
+                    <li><a href="#playerdisplayrightoffset"><tt>playerdisplayrightoffset</tt></a></li>
+                    <li><a href="#playerdisplayheightoffset"><tt>playerdisplayheightoffset</tt></a></li>
+                    <li><a href="#playerdisplaywidthoffset"><tt>playerdisplaywidthoffset</tt></a></li>
+                    <li><a href="#playerdisplaylineoffset"><tt>playerdisplaylineoffset</tt></a></li>
+                    <li><a href="#playerdisplayplayerlimit"><tt>playerdisplayplayerlimit</tt></a></li>
+                    <li><a href="#playerdisplaymaxteams"><tt>playerdisplaymaxteams</tt></a></li>
+                    <li><a href="#playerdisplaymaxnamelen"><tt>playerdisplaymaxnamelen</tt></a></li>
+                    <li><a href="#playerdisplayalpha"><tt>playerdisplayalpha</tt></a></li>
+                </ul>
+            </li>
+            <li><a href="#scoreboard_others"><tt>others</tt></a>
+                <ul class="contents2">
+                    <li><a href="#oldscoreboard"><tt>oldscoreboard</tt></a></li>
+                    <li><a href="#showdemotime"><tt>showdemotime</tt></a></li>
+                    <li><a href="#scoreboardtextcolor"><tt>scoreboardtextcolor</tt></a></li>
+                    <li><a href="#scoreboardtextcolorhead"><tt>scoreboardtextcolorhead</tt></a></li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+
+    <li>
+        <a href="#event_system"><b>Event System</b></a>
+        <ul class="contents2">
+            <li><a href="#event_commands"><tt>commands</tt></a>
+                <ul class="contents2">
+                <li><a href="#scriptevent"><tt>scriptevent</tt></a></li>
+                <li><a href="#delscriptevent"><tt>delscriptevent</tt></a></li>
+                <li><a href="#delallscriptevents"><tt>delallscriptevents</tt></a></li>
+                <li><a href="#getthiseventid"><tt>getthiseventid</tt></a></li>
+                <li><a href="#getscripteventcount"><tt>getscripteventcount</tt></a></li>
+                <li><a href="#listscriptevents"><tt>listscriptevents</tt></a></li>
+                </ul>
+            </li>
+            <li><a href="#installing_events"><tt>installing events</tt></a></li>
+            <li><a href="#uninstalling_events"><tt>uninstalling events</tt></a></li>
+            <li><a href="#available_events"><tt>available events</tt></a></li>
+            <li><a href="#event_troubleshooting"><tt>event troubleshooting</tt></a></li>
+        </ul>
+    </li>
+
+    <li>
+        <a href="#time_functions"><b>Time Functions</b></a>
+        <ul class="contents2">
+            <li><a href="#gettimestamp"><tt>gettimestamp</tt></a></li>
+            <li><a href="#getgametimestamp"><tt>getgametimestamp</tt></a></li>
+            <li><a href="#formattimestamp"><tt>formattimestamp</tt></a></li>
+        </ul>
+    </li>
+
+    <li>
+        <a href="#script_vector"><b>Script Vector</b></a>
+        <ul class="contents2">
+            <li><a href="#scriptvector"><tt>scriptvector</tt></a></li>
+            <li><a href="#scriptvectorlength"><tt>scriptvectorlength</tt></a></li>
+            <li><a href="#loopscriptvector"><tt>loopscriptvector</tt></a></li>
+            <li><a href="#writescriptvector"><tt>writescriptvector</tt></a></li>
+            <li><a href="#loadscriptvector"><tt>loadscriptvector</tt></a></li>
+            <li><a href="#delscriptvectorindex"><tt>delscriptvectorindex</tt></a></li>
+            <li><a href="#delscriptvector"><tt>delscriptvector</tt></a></li>
+        </ul>
+    </li>
+
+    <li>
+        <a href="#http_requests"><b>HTTP Requests</b></a>
+        <ul class="contents2">
+            <li><a href="#httpproxy"><tt>httpproxy</tt></a></li>
+            <li><a href="#httpspeedlimit"><tt>httpspeedlimit</tt></a></li>
+            <li><a href="#httprequest"><tt>httprequest</tt></a></li>
+            <li><a href="#delhttprequest"><tt>delhttprequest</tt></a></li>
+            <li><a href="#httpresponsecodeok"><tt>httpresponsecodeok</tt></a></li>
+        </ul>
+    </li>
+
+    <li>
+        <a href="#global_chat"><b>Global Chat</b></a>
+        <ul class="contents2">
+            <li><a href="#global_chat"><tt>chat server setup</tt></a></li>
+            <li><a href="#wcchatserver"><tt>wcchatserver</tt></a></li>
+            <li><a href="#wcchatpassword"><tt>wcchatpassword</tt></a></li>
+            <li><a href="#wcchataddcert"><tt>wcchataddcert</tt></a></li>
+            <li><a href="#wcchatdelcert"><tt>wcchatdelcert</tt></a></li>
+            <li><a href="#wcchatdelcerts"><tt>wcchatdelcert</tt></a></li>
+            <li><a href="#wcchatlistcerts"><tt>wcchatlistcerts</tt></a></li>
+            <li><a href="#wcchatshowcertdetails"><tt>wcchatshowcertdetails</tt></a></li>
+            <li><a href="#wcchataddrevokedcert"><tt>wcchataddrevokedcert</tt></a></li>
+            <li><a href="#wcchatconnect"><tt>wcchatconnect</tt></a></li>
+            <li><a href="#wcchatdisconnect"><tt>wcchatdisconnect</tt></a></li>
+            <li><a href="#wcchatautoconnect"><tt>wcchatautoconnect</tt></a></li>
+            <li><a href="#wcchatshowconnects"><tt>wcchatshowconnects</tt></a></li>
+            <li><a href="#wcchatshowservconnects"><tt>wcchatshowservconnects</tt></a></li>
+            <li><a href="#wcchatprefix"><tt>wcchatprefix</tt></a></li>
+            <li><a href="#wcchatlist"><tt>wcchatlist</tt></a></li>
+            <li><a href="#wcchatlatency"><tt>wcchatlatency</tt></a></li>
+            <li><a href="#wcchatgoto"><tt>wcchatgoto</tt></a></li>
+            <li><a href="#wcchat"><tt>wcchat</tt></a></li>
+        </ul>
+    </li>
+
+    <li>
+        <a href="#plugins"><b>Plugins</b></a>
+        <ul class="contents2">
+            <li>
+                <a href="#plugin_commands"><tt><b>Plugin Commands</b></tt></a>
+                <ul class="contents2">
+                    <li><a href="#loadplugins"><tt>loadplugins</tt></a></li>
+                    <li><a href="#unloadplugins"><tt>unloadplugins</tt></a></li>
+                    <li><a href="#loadplugin"><tt>loadplugin</tt></a></li>
+                    <li><a href="#unloadplugin"><tt>unloadplugin</tt></a></li>
+                    <li><a href="#requireplugin"><tt>requireplugin</tt></a></li>
+                    <li><a href="#listplugins"><tt>listplugins</tt></a></li>
+                    <li><a href="#listplugincommands"><tt>listplugincommands</tt></a></li>
+                    <li><a href="#plugincommand"><tt>plugincommand</tt></a></li>
+                </ul>
+            </li>
+
+            <li>
+                <a href="#available_plugins"><tt><b>Available Plugins</b></tt></a>
+                <ul class="contents2">
+                    <li><a href="#g15lcd"><tt>g15lcd</tt></a>
+                        <ul class="contents2">
+                            <li><a href="#drawtext"><tt>drawtext</tt></a></li>
+                            <li><a href="#updatelcd"><tt>updatelcd</tt></a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#hwtemp"><tt>hwtemp</tt></a>
+                        <ul class="contents2">
+                            <li><a href="#hwtemp_interface"><tt>interface</tt></a></li>
+                            <li><a href="#hwtemp_gettemp"><tt>gettemp</tt></a></li>
+                            <li><a href="#hwtemp_example"><tt>example</tt></a></li>
+                            <li><a href="#hwtemp_note"><tt>note</tt></a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </li> <!-- Available Plugins -->
+        </ul>
+    </li> <!-- plugins -->
+    <li>
+        <a href="#faq"><b>Frequently Asked Questions</b></a>
+    </li>
+
+</ul>
+</div>
+
+<h2 id="installation">Installation</h2>
+
+<h3 id="installation_win">Windows</h3>
+<ul>
+    <li>Run the installer, change the destination path to your sauerbraten installation path, if not detected correctly.</li>
+    <li>Start sauerbraten through the created Sauerbraten_wc shortcuts.</li>
+</ul>
+
+<h3 id="installation_osx">OS X</h3>
+<ul>
+    <li>Open another finder window, go to your home folder and then browse to Library / Application Support / sauerbraten.</li>
+    <li>If you don't see the Library folder, then please check <a href="http://osxdaily.com/2011/07/04/show-library-directory-in-mac-os-x-lion/" target="_blank">this</a> link.</li>
+    <li>Copy the doc, data, packages and plugins folders from the opened wc.dmg into the previous opened dir.</li>
+    <li>Browse to the location of the original sauerbraten package, right click it, choose &quot;Show Package Contents&quot; and browse to contents / MacOS</li>
+    <li>Rename (backup) the original file sauerbraten_u (OS X 10.6+) or sauerbraten_c (OS X 10.5) to sauerbraten_orig and copy the wclient executeable from the opened wc.dmg into this dir. Now rename it to either sauerbraten_u (OS X 10.6+) or sauerbraten_c (OS X 10.5).</li>
+</ul>
+
+<h3 id="installation_unx">Unix/Linux</h3>
+<ul>
+    <li>Open your preferred file manager (e.g. konqueror, dolphin, nautilus, etc.) or terminal and browse to ~/.sauerbraten.</li>
+    <li>Copy the doc, data, packages and plugins folders into the previous opened dir.</li>
+    <li>Browse to the location of the original sauerbraten binary (e.g. /usr/lib/games/sauerbraten/).</li>
+    <li>Rename the binary to sauerbraten_orig and copy the wc executeable into this dir.</li>
+</ul>
+
+<h2 id="additional_variables">Additional Variables</h2>
+
+<pre id="showtimeleft">showtimeleft &lt;0|1&gt;</pre>
+<p>Shows a remaining map time counter.<br />(default: 1)</p>
+
+<pre id="showpingdisplay">showpingdisplay &lt;0|1&gt;</pre>
+<p>Shows your ping on the game hud.<br />(default: 1)</p>
+
+<pre id="shownetworkdisplay">shownetworkdisplay &lt;0|1&gt;</pre>
+<p>Shows bandwidth stats on the game hud.<br />(default: 0)<br /><br />
+Info: Left side = incoming, Right side = outgoing. p/s = packets/second.<br />
+Note: Width/Height needs to be >= 1.6 with showtimeleft and or showpingisplay enabled.</p>
+
+<pre id="showstatsdisplay">showstatsdisplay &lt;0|1&gt;</pre>
+<p>Shows game stats on the game hud.<br />(default: 1)<br /></p>
+
+<pre id="statsdisplayfmt">statsdisplayfmt</pre>
+<p>(default: "Frags: ^f0%f ^f7Deaths: ^f3%d ^f7KpD: ^f0%k ^f7Acc: ^f1%a%% [ctf] ^fs^f7Flags: ^f0%x^fr [ctf][collect] ^fs^f7Skulls: ^f0%x^fr[collect]")<br /><br />
+Available format specifiers:
+</p>
+
+<table>
+<tr><td>%n</td><td>Name</td></tr>
+<tr><td>%t</td><td>Team</td></tr>
+<tr><td>%i</td><td>Teamkills</td></tr>
+<tr><td>%f</td><td>Frags</td></tr>
+<tr><td>%d</td><td>Deaths</td></tr>
+<tr><td>%k</td><td>Kills per Death</td></tr>
+<tr><td>%a</td><td>Accuracy</td></tr>
+<tr><td>%h</td><td>Highres Ping</td></tr>
+<tr><td>%p</td><td>Ping</td></tr>
+<tr><td>%s</td><td>State (alive, dead, ..)</td></tr>
+<tr><td>%x</td><td>Flags / Skulls</td></tr>
+<tr><td>%g</td><td>Gamemode</td></tr>
+<tr><td>%u</td><td>Gamespeed</td></tr>
+<tr><td>%l</td><td>Game Paused (string) "paused " or ""</td></tr>
+<tr><td>%m</td><td>Mapname</td></tr>
+<tr><td>%o</td><td>Mapinfo</td></tr>
+<tr><td>%e</td><td>Mastermode (string)</td></tr>
+</table>
+
+<p>Targeting specific game modes:<br /><br />
+Operators:</p>
+
+<table>
+<tr><td>!</td><td>not</td></tr>
+<tr><td>*</td><td>game mode contains</td></tr>
+<tr><td>=</td><td>game mode is equal to</td></tr>
+</table>
+
+<p>Example:</p>
+<pre class="code">[ctf]Flags: %x[ctf][collect]Skulls: %x[collect]</pre>
+<p>Is the same as:</p>
+<pre class="code">[*ctf]Flags: %x[*ctf][*collect]Skulls: %x[*collect]</pre>
+
+<p>More Examples:</p>
+<pre class="code">[!ctf]Not CTF[=ffa]Not CTF, but ffa[=ffa][!ctf]</pre>
+<pre class="code">[!=ffa]not fully equal to ffa[!=ffa][!effic]not effic[!effic]</pre>
+
+
+<pre id="demogamespeed">demogamespeed &lt;0|1&gt;</pre>
+<p>Take over Gamespeed from demos instead of playing them in real time.<br />
+Note: This variable can't be changed during demo playback.<br />(default: 0)<br /></p>
+
+<pre id="demomillis">demomillis &lt;ms&gt;</pre>
+<p>Jump forward to &lt;ms&gt; in demo. Attention: Jumping back is not supported!</p>
+
+<pre id="scaletimeleft">scaletimeleft &lt;0|1&gt;</pre>
+<p>Scale Time Left timers always to real time.<br />(default: 1)<br /></p>
+
+<pre id="indentfrags">indentfrags &lt;0-8&gt;</pre>
+<p>Indent frag messages by N spaces.<br />(default: 4)</p>
+
+<pre id="keephistory">keephistory &lt;0|1&gt;</pre>
+<p>Write console input history to 'history' on exit (1).<br />
+(default: 1)</p>
+
+<pre id="keepchathistory">keepchathistory &lt;0|1&gt;</pre>
+<p>include chat in 'history'<br />(default: 0)</p>
+
+<pre id="clientcountry">clientcountry &lt;cn&gt;</pre>
+<p>Client country.<br /></p>
+
+<pre id="clientcountrycode">clientcountrycode &lt;cn&gt;</pre>
+<p>Client country (ISO 6166-1) codes.<br /></p>
+
+<pre id="overlay">overlay &lt;0|1&gt;</pre>
+<p>Enable overlay image.<br /></p>
+
+<pre id="overlayalpha">overlayalpha &lt;0.0-1.0&gt;</pre>
+<p>Set overlay image opcacity.<br /></p>
+
+<pre id="overlayimage">overlayimage &lt;path&gt;</pre>
+<p>Set overlay image.<br /></p>
+
+<pre id="overlayscale">overlayscale &lt;0.0-1.0&gt;</pre>
+<p>Scale overlay image.<br /></p>
+
+<pre id="overlayoffsetx">overlayoffsetx &lt;0.0-10.0&gt;</pre>
+<p>Offset overlay image (horizontal).<br /></p>
+
+<pre id="overlayoffsety">overlayoffsety &lt;0.0-10.0&gt;</pre>
+<p>Offset overlay image (vertical).<br /></p>
+
+<pre id="extinfopingrate">extinfopingrate &lt;1000-10000&gt;</pre>
+<p>Polling interval for extinfo.<br />(default: 2000)</p>
+
+<pre id="autofollowactioncn">autofollowactioncn &lt;0|1&gt;</pre>
+<p>Automatically follow action cn in spectator mode.<br />(default: 0)</p>
+
+<pre id="actioncnfollowtime">actioncnfollowtime &lt;0|1&gt;</pre>
+<p>Determines how long one action will be followed.<br />(default: 0)</p>
+
+<pre id="wcautoversioncheck">wcautoversioncheck &lt;0-1&gt;</pre>
+<p>Check for new versions of WC-NG on startup.<br />
+(default: 1)</p>
+
+<h2 id="additional_commands">Additional Commands</h2>
+
+<pre id="wcinfo">wcinfo [&lt;get&gt;]</pre>
+<p>Shows the WC-NG version, Sauerbraten revision, Compiler version and Lib versions.<br />
+Pass 1 for get to return a string instead of showing it in the console.
+</p>
+
+<pre id="wccheckversion">wccheckversion</pre>
+<p>Command to check if there is a new version of WC-NG available.</p>
+
+
+<pre id="wcupdategeoipdatabase">wcupdategeoipdatabase</pre>
+<p>Get latest GeoIP Database.</p>
+
+<pre id="writehistory">writehistory [filename]</pre>
+<p>Write console input history to <i>filename.cfg</i>.<br /> Default filename is <i>history.cfg</i>.</p>
+
+<pre id="loadhistory">loadhistory &lt;filename&gt;</pre>
+<p>Load console input history from filename.</p>
+
+<pre id="getclientcountry">getclientcountry &lt;cn&gt;</pre>
+<p>Get Player Country.</p>
+
+<pre id="getclientcountrycode">getclientcountrycode &lt;cn&gt;</pre>
+<p>Get Player Country Code (Example: AT, DE, ... (ISO 6166-1))</p>
+
+<pre id="getteamkills">getteamkills &lt;cn&gt;</pre>
+<p>Get Player teamkills.</p>
+
+<pre id="getping">getping &lt;cn&gt;</pre>
+<p>Get Player ping.</p>
+
+<pre id="recordclientdemo">recordclientdemo [name]</pre>
+<p>Start client side demo recording.</p>
+
+<pre id="stopclientdemo">stopclientdemo</pre>
+<p>Stop client side demo recording.</p>
+
+<pre id="clientdemoautorecord">clientdemoautorecord &lt;0|1&gt;</pre>
+<p>Record demos automatically.</p>
+
+<pre id="clientdemorecordextinfo">clientdemorecordextinfo &lt;0|1&gt;</pre>
+<p>Record extinfo into demos.<br />(Default: 1)</p>
+
+<pre id="clientdemocompresslevel">clientdemocompresslevel &lt;0|9&gt;</pre>
+<p>Sets compress level for client demos.<br />(Default: 5)</p>
+
+<pre id="clientdemoskipservmsg">clientdemoskipservmsg &lt;0|1&gt;</pre>
+<p>Don't record server messages in client demos.</p>
+
+<pre id="clientdemoskipservcmds">clientdemoskipservcmds &lt;0|1&gt;</pre>
+<p>Don't record result of commands in client demos.</p>
+
+<pre id="clientdemorecording">clientdemorecording</pre>
+<p>Returns 1 if client demo recording is active.</p>
+
+<pre id="clientdemorawsize">clientdemorawsize</pre>
+<p>Returns the current raw size of the demo being recorded.</p>
+
+<pre id="searchdemo">searchdemo [[&lt;gamemode&gt;] [&lt;servername&gt;] [&lt;mapname&gt;] [&lt;name&gt;] [&lt;frags&gt;] [&lt;deaths&gt;] [&lt;acc&gt;] [&lt;teamkills&gt;] [&lt;flags&gt;] [&lt;priv&gt;]]</pre>
+<p>Search for demos / players in the demos matching the given parameters.<br />
+Note: This only works if the demo contains extinfo information.<br />
+There is also a GUI for this available in the ogros-menu: /searchdemogui</p>
+
+<pre id="stopsearchdemo">stopsearchdemo</pre>
+<p>Stops searchdemo.</p>
+
+<pre id="searchdemothreadlimit">searchdemothreadlimit &lt;1|logical-cpu-count&gt;</pre>
+<p>Sets how many threads should be used at a single time for searching.<br />(Default: logical-cpu-count)</p>
+
+<pre id="searchdemomaxresults">searchdemomaxresults &lt;0|250&gt;</pre>
+<p>Sets how many entries will be shown in the result dialog.<br />(Default: 100)</p>
+
+<pre id="searchdemomindemosize">searchdemomindemosize &lt;0|0x7FFFFFFF&gt;</pre>
+<p>Sets minimum demo size.<br />(Default: 0)</p>
+
+<pre id="getdemoduration">getdemoduration &lt;demo&gt;</pre>
+<p>Get duration of the demo in milliseconds. (Returns -1 on error).</p>
+
+<pre id="stripextdemo">stripextdemo &lt;demo&gt;</pre>
+<p>Strip extended informations out of a demo.</p>
+
+<pre id="recompressdemo">recompressdemo &lt;demo&gt;</pre>
+<p>Recompess demo with a different compression level.</p>
+
+<pre id="getactioncn">getactioncn</pre>
+<p>Get clientnumber of client where something interesting happens, like cn is current flagholder.<br />
+Useful for video recording.</p>
+
+<pre id="jumpto">jumpto &lt;mm[:ss]&gt;</pre>
+<p>Jump forward to mm[:ss] time left in demos. Attention: Jumping back is not supported!</p>
+
+<pre id="gettotalmillis">gettotalmillis</pre>
+<p>Returns current totalmillis.</p>
+
+<pre id="getlastmillis">getlastmillis</pre>
+<p>Returns current lastmillis.</p>
+
+
+<pre id="ifnotdeclared">ifnotdeclared &lt;variable name&gt; &lt;code&gt;</pre>
+<p>Executes "code" if variable doesn't exist.</p>
+
+<pre id="roundf">roundf &lt;float num&gt; &lt;n-decimals&gt;</pre>
+<p>Rounds given float number with n-decimals.</p>
+
+<pre id="getgamestatefmt">getgamestatefmt &lt;cn&gt; &lt;format&gt;</pre>
+<p>Returns a formatted string with the given format specifiers<br />
+<a href="#showstatsdisplay">See statsdisplayfmt table for available format specifiers.</a><br />
+Note: Always requires a valid cn.
+</p>
+
+<pre id="getosstring">getosstring</pre>
+<p>Returns the operating system string.<br />
+The Result may be: win64, win32, linux64, linux32, osx64, osx32, bsd64, bsd32, other64, other32<br />
+</p>
+
+<pre id="guititleleftalign">guititleleftalign</pre>
+<p>Same as guititle, but aligns the text on the left side.</p>
+
+<pre id="countryflagpath">countryflagpath &lt;country code&gt;</pre>
+<p>Returns path to flag icon (or &quot;&quot; in case of an error).</p>
+
+<pre id="isipaddress">isipaddress &lt;str&gt;</pre>
+<p>Returns 1 if the given string is an IP-Address.</p>
+
+<h2 id="additional_functions">Additional Functions</h2>
+
+<pre id="colors">Colors</pre>
+<ul>
+    <li>"^f8" black</li>
+    <li>"^f9" light gray</li>
+</ul>
+
+<pre id="console_input_search">Console Input Search</pre>
+<p>Console input search works with CTRL + R or CTRL + S (unix shell style, S forward, R backward).<br />Note: On OS X CTRL is mapped to the META key.</p>
+
+<h2 id="server_browser">Server Browser</h2>
+<h3 id="server_browser_filters">Filters</h3>
+<pre id="filterservermod">filterservermod &lt;mod num&gt;</pre>
+<p>Filter servers by server mod, -3 for ogros mod, -2 for hopmod (0 for all).</p>
+<pre id="filterservercountry">filterservercountry &lt;country code&gt;</pre>
+<p>Filter servers by country code (&quot;&quot; for all).</p>
+<pre id="filterserverdescription">filterserverdescription &lt;description&gt;</pre>
+<p>Filter servers by server description (&quot;&quot; for all).</p>
+<pre id="filterservermode">filterservermode &lt;mode num&gt;</pre>
+<p>Filter servers by game mode (-4 for all).</p>
+<pre id="filterservermodestring">filterservermodestring &lt;mode string&gt;</pre>
+<p>Filter servers by game mode string (&quot;&quot; for all).</p>
+<pre id="filterservermastermode">filterservermastermode &lt;mode num&gt;</pre>
+<p>Filter servers by server mastermode (-2 for all).</p>
+<h3 id="server_browser_others">Others</h3>
+<pre id="extinfoserverbrowser">extinfoserverbrowser &lt;0|2&gt;</pre>
+<p>Shows the players which are on the server in a gui window, <br />
+when you click on a server in the server browser, with connect buttons at the bottom.<br /><br />
+If you set extinfoserverbrowser to 2, then the players from non empty servers will be already requested,<br />
+before you click on a server, therefore players will be shown earlier when you click on a server.<br /><br />
+If you have problems using /extinfoserverbrowser 2 then use /extinfoserverbrowser 1 instead (increasing servpingrate may also help).<br />
+Some providers are dropping packets (german T-Com for example) - which may cause some servers to disappear.<br /><br />
+Note: Ping Rate is servpingrate and not extinfopingrate in this case.<br />(default: 1)</p>
+<pre id="extinfoconnect">extinfoconnect &lt;server&gt; [&lt;port&gt; [&lt;pass&gt;]]</pre>
+<p>Use this command instead of connect to see the players which are on the server before connecting.</p>
+<pre id="processservers">processservers</pre>
+<p>Keep processing/pinging the server list, useful for loopextinfoplayers/getextinfoplayercount.</p>
+<pre id="loopextinfoplayers">loopextinfoplayers &lt;playername&gt; &lt;country code&gt; &lt;callbackargs&gt; &lt;callback&gt;</pre>
+<p>Loop through all players matching the given player/country name ("" for all).<br /><br />
+Example:</p>
+<pre class="code">
+loopextinfoplayers "" "" "server_ip ignore server_port ignore server_name ignore8 player_cn player_ping player_name ignore player_frags player_deaths" [
+    echo (format "Server Address:%1:%2 Server Name:%3 CN:%4 Name:%5 Ping: %6 Frags: %7 Deaths: %8" $server_ip $server_port $server_name $player_cn $player_ping $player_name $player_frags $player_deaths)
+]</pre>
+<p>
+Full callback arg list:</p>
+<pre class="code">
+hostname hostint port serverping serverdesc secleft numplayers maxplayers mastermode gamemode mapname gamepaused gamespeed
+cn ping playername playerteam frags flags deaths teamkills acc health armour gunselect priv state playercountrycode playercountry
+</pre>
+<pre id="getextinfoplayercount">getextinfoplayercount</pre>
+<p>Returns the total (extinfo) player count.</p>
+
+
+<h2 id="additional_master_servers">Additional Master Servers</h2>
+
+<pre id="addmasterserver">addmasterserver &lt;server&gt; [&lt;port&gt;]</pre>
+<p>Add an additional master server.<br />
+If no port is given, then the default master server port is used.<br />
+Note: They are persistent and saved on shutdown.</p>
+
+<pre id="delmasterserver">delmasterserver &lt;server&gt; [&lt;port&gt;]</pre>
+<p>Delete an additional master server.<br />
+If no port is given, then the default master server port is used.</p>
+
+<pre id="listmasterservers">listmasterservers</pre>
+<p>List the master servers, including /mastername.</p>
+
+
+<h2 id="scoreboard">Scoreboard</h2>
+
+<h3 id="scoreboard_extinfo">extinfo extensions</h3>
+<pre id="showextinfo">showextinfo &lt;0|1&gt;</pre>
+<p>Enable extended player infos.<br />(default: 1)</p>
+<pre id="showfrags">showfrags &lt;0|1&gt;</pre>
+<p>Show extended info frags.<br />(default: 1)</p>
+<pre id="showdeaths">showdeaths &lt;0|1&gt;</pre>
+<p>Show extended info deaths.<br />(default: 1)</p>
+<pre id="showkpd">showkpd &lt;0|1&gt;</pre>
+<p>Show extended info kills per death.<br />(default: 0)</p>
+<pre id="showacc">showacc &lt;0|1&gt;</pre>
+<p>Show extended info accuracy.<br />(default: 1)</p>
+<pre id="showtks">showtks &lt;0|1&gt;</pre>
+<p>Show extended info teamkills.<br />(default: 0)</p>
+<pre id="showspectatorping">showspectatorping &lt;0|1&gt;</pre>
+<p>Show ping of spectators.<br />(default: 0)</p>
+<pre id="showcountry">showcountry &lt;0|1|2|3|4|5&gt;</pre>
+<p>
+<table>
+    <tr><td><b>Num</b></td><td><b>Desc</b></td></tr>
+    <tr><td>0</td><td>Disabled</td></tr>
+    <tr><td>1</td><td>Country Code</td></tr>
+    <tr><td>2</td><td>Country Name</td></tr>
+    <tr><td>3</td><td>Country Flag | Country Code</td</tr>
+    <tr><td>4</td><td>Country Flag | Country Name</td></tr>
+    <tr><td>5</td><td>Country Flag</td></tr>
+</table>
+<br />(default: 3)</p>
+<pre id="showserveruptime">showserveruptime &lt;0|1&gt;</pre>
+<p>Show Server Uptime in Scoreboard.<br />(default: 0)</p>
+<pre id="showservermod">showservermod &lt;0|1&gt;</pre>
+<p>Show Server Mod in Scoreboard (If info is available).<br />(default: 0)</p>
+
+<pre id="scoreboardtextcolor">scoreboardtextcolor &lt;0x000000|0xFFFFFF&gt;</pre>
+<p>Sets text color in scoreboard (head).<br />(default: 0xFFFFDD)</p>
+<pre id="scoreboardtextcolorhead">scoreboardtextcolorhead &lt;0x000000|0xFFFFFF&gt;</pre>
+<p>Sets text color in scoreboard.<br />(default: 0xFFFF80)</p>
+
+<h3 id="scoreboard_player_display">player display</h3>
+<pre id="showplayerdisplay">showplayerdisplay &lt;0|1&gt;</pre>
+<p>Shows a small scoreboard on the game hud.<br />(default: 0)<br /></p>
+<pre id="playerdisplayshowspectators">playerdisplayshowspectators &lt;0|1&gt;</pre>
+<p>Show spectators in the player display.<br />(default: 1)<br /></p>
+<pre id="playerdisplayfontscale">playerdisplayfontscale &lt;25|30&gt;</pre>
+<p>Player display font scale.<br />(default: 25)<br /></p>
+<pre id="playerdisplayrightoffset">playerdisplayrightoffset &lt;-100|100&gt;</pre>
+<p>Player display right offset (Frags / Acc column).<br />(default: 0)<br /></p>
+<pre id="playerdisplayheightoffset">playerdisplayheightoffset &lt;0|600&gt;</pre>
+<p>Player display height offset.<br />(default: 250)<br /></p>
+<pre id="playerdisplaywidthoffset">playerdisplaywidthoffset &lt;-50|300&gt;</pre>
+<p>Player display width offset.<br />(default: 0)<br /></p>
+<pre id="playerdisplaylineoffset">playerdisplaylineoffset &lt;-30|50&gt;</pre>
+<p>Player display line offset.<br />(default: 0)<br /></p>
+<pre id="playerdisplayplayerlimit">playerdisplayplayerlimit &lt;1|64&gt;</pre>
+<p>Max players shown in the player display.<br />(default: 0)<br /></p>
+<pre id="playerdisplaymaxteams">playerdisplaymaxteams &lt;1|16&gt;</pre>
+<p>Max teams shown in the player display.<br />(default: 6)<br /></p>
+<pre id="playerdisplaymaxnamelen">playerdisplaymaxnamelen &lt;4|15&gt;</pre>
+<p>Max shown player name length in the player display.<br />(default: 13)<br /></p>
+<pre id="playerdisplayalpha">playerdisplayalpha &lt;20|255&gt;</pre>
+<p>Alpha value of the player display (opacity / transparency).<br />(default: 150)<br /></p>
+
+<h3 id="scoreboard_others">others</h3>
+<pre id="oldscoreboard">oldscoreboard &lt;0|1&gt;</pre>
+<p>Show name column on the same place as known from &lt;=Justice Edition.<br />(default: 0)</p>
+<pre id="showdemotime">showdemotime &lt;0|1&gt;</pre>
+<p>Shows the time it was in the game in the scoreboard (If available).<br />(default: 1)</p>
+
+<h2 id="event_system">Event System</h2>
+
+<h3 id="event_commands">Commands</h3>
+
+<pre id="scriptevent">scriptevent &lt;eventname&gt; &lt;eventargs&gt; &lt;function&gt;</pre>
+<p>Creates a new script event.</p>
+
+<pre id="delscriptevent">delscriptevent &lt;eventid&gt;</pre>
+<p>Deletes a script event.</p>
+
+<pre id="delallscriptevents">delallscriptevents</pre>
+<p>Deletes all script events.</p>
+
+<pre id="getthiseventid">getthiseventid</pre>
+<p>Works only in events: Returns the ID of the current event.</p>
+
+<pre id="getscripteventcount">getscripteventcount</pre>
+<p>Returns the count of the current installed events.</p>
+
+<pre id="listscriptevents">listscriptevents</pre>
+<p>Lists current installed events.</p>
+
+
+<h3 id="installing_events">Installing Events</h3>
+<p>examples:</p>
+<pre class="code">
+    scriptevent "playerrename" "player_cn player_name_old player_name_new" [
+        echo (concat $player_name_old "renamed to" $player_name_new)
+    ]
+</pre>
+
+<p>If you only need the cn as an argument:</p>
+<pre class="code">
+    scriptevent "playerrename" "player_cn" [
+        echo (concat "cn" $player_cn "renamed")
+    ]
+</pre>
+
+<p>If you don't need any arguments at all you may also skip the "arguments" and start with the function directly:</p>
+<pre class="code">
+    scriptevent "playerrename" [
+        echo "someone renamed"
+    ]
+</pre>
+
+<p>You can also use | or , for event argument declaration:</p>
+<pre class="code">
+    scriptevent "playerrename" player_cn|player_name_old|player_name_new [
+        echo (concat $player_name_old "renamed to" $player_name_new)
+    ]
+<br />
+    scriptevent "playerrename" player_cn,player_name_old,player_name_new [
+        echo (concat $player_name_old "renamed to" $player_name_new)
+    ]
+</pre>
+
+
+<h3 id="uninstalling_events">Uninstalling Events</h3>
+
+<p>If you want to be able to uninstall events at runtime, then you need to save the returned event id from the scriptevent command.</p>
+<p>For example:</p>
+<pre class="code">
+    event_id = (scriptevent "playerrename" "player_cn player_name_old player_name_new" [
+        echo (concat $player_name_old "renamed to" $player_name_new)
+    ])
+    <br />
+    if (delscriptevent $event_id) [ echo "uninstalled event!" ]
+</pre>
+
+<p>Keeping event functions as external functions:</p>
+<pre class="code">
+    playerrename_event = [
+        echo (concat $player_name_old "renamed to" $player_name_new)
+    ]
+    <br />
+    scriptevent "playerrename" "player_cn player_name_old player_name_new" $playerrename_event
+</pre>
+
+<h3 id="available_events">Available Events</h3>
+<p></p>
+<table>
+    <tr><td colspan="3"><b>Player Events:</b></td></tr>
+    <tr><td>playerconnect</td><td >clientnum, name</td><td></td></tr>
+    <tr><td>playerdisconnect</td><td>clientnum, name</td><td></td></tr>
+    <tr><td>playerrename</td><td>clientnum, oldname, newname</td><td></td></tr>
+    <tr><td>playerjoinspec</td><td>clientnum, name</td><td></td></tr>
+    <tr><td>playerleavespec</td><td>clientnum, name</td><td></td></tr>
+    <tr><td>playerswitchteam</td><td>clientnum, name, oldteam, newteam, reason</td><td></td></tr>
+    <tr><td>playertext</td><td>clientnum, name, text</td><td>use "result 1" to prevent console message from being shown</td></tr>
+    <tr><td>playerteamtext</td><td>clientnum, name, text</td><td>use "result 1" to prevent console message from being shown</td></tr>
+    <tr><td>playerfrag</td><td>clientnum, name, actor clientnum, actor name</td><td>use "result 1" to prevent console message from being shown</td></tr>
+    <tr><td>playerteamkill</td><td>clientnum, name, actor clientnum, actor name</td><td></td></tr>
+    <tr><td>playerpingupdate</td><td>clientnum, name, ping value</td><td></td></tr>
+
+    <tr><td colspan="3" style="border:0">&nbsp;</td></tr>
+    <tr><td colspan="3"><b>CTF Events:</b></td></tr>
+    <tr><td>flagscore</td><td>clientnum, actor name, actor flagcount,<br /> team flagcount, was dropped</td><td>returned string will be appended to display string</td></tr>
+    <tr><td>flagdrop</td><td>clientnum, actor name, actor flagcount</td><td>returned string will be appended to the console message</td></tr>
+    <tr><td>flagtake</td><td>clientnum, actor name, actor flagcount</td><td>returned string will be appended to the console message</td></tr>
+    <tr><td>flagreturn</td><td>clientnum, actor name, actor flagcount</td><td></td></tr>
+    <tr><td>flagreset</td><td>-</td><td></td></tr>
+    <tr><td>coaf</td><td>team name</td><td></td></tr>
+
+    <tr><td colspan="3" style="border:0">&nbsp;</td></tr>
+    <tr><td colspan="3"><b>COLLECT Events:</b></td></tr>
+    <tr><td>skullscore</td><td>clientnum, actor name, actor flagcount,<br /> team flagcount, was dropped</td><td>returned string will be appended to display string</td></tr>
+    <tr><td>skulltake</td><td>clientnum, actor name, actor flagcount</td><td>returned string will be appended to the console message</td></tr>
+    <tr><td>coas</td><td>team name</td><td></td></tr>
+
+    <tr><td colspan="3" style="border:0">&nbsp;</td></tr>
+    <tr><td colspan="3"><b>CAPTURE Events:</b></td></tr>
+    <tr><td>basecaptured</td><td>owner team, enemy team, base name</td><td></td></tr>
+    <tr><td>baselost</td><td>owner team, enemy team, base name</td><td></td></tr>
+    <tr><td>coab</td><td>team name</td><td></td></tr>
+
+    <tr><td colspan="3" style="border:0">&nbsp;</td></tr>
+    <tr><td colspan="3"><b>Misc Events:</b></td></tr>
+    <tr><td>startup</td><td>-</td><td></td></tr>
+    <tr><td>shutdown</td><td>-</td><td></td></tr>
+    <tr><td>frame</td><td>-</td><td></td></tr>
+    <tr><td>mapstart</td><td>gamemode name, map name</td><td></td></tr>
+    <tr><td>intermission</td><td>gamemode name, map name</td><td></td></tr>
+    <tr><td>servmsg</td><td>text</td><td>use "result 1" to prevent console message from being shown</td></tr>
+    <tr><td>servcmd</td><td>text</td><td>(N_SERVCMD)</td></tr>
+    <tr><td>masterupdate</td><td>master clientnum, master name, privilege (numeric)</td><td></td></tr>
+    <tr><td>mastermodeupdate</td><td>master clientnum, mastermode</td><td>master clientnum might be &lt; 0</td></tr>
+    <tr><td>consoleinput</td><td>text</td><td>use console input (emits a warning when being installed)</td></tr>
+
+    <tr><td colspan="3" style="border:0">&nbsp;</td></tr>
+    <tr><td colspan="3"><b>Plugin Events:</b></td></tr>
+    <tr><td>pluginload</td><td>plugin name</td><td></td></tr>
+    <tr><td>pluginunload</td><td>plugin name</td><td></td></tr>
+
+    <tr><td colspan="3" style="border:0">&nbsp;</td></tr>
+    <tr><td colspan="3"><b>Demplayback Events:</b></td></tr>
+    <tr><td>demostart</td><td>-</td><td></td></tr>
+    <tr><td>demoend</td><td>-</td><td></td></tr>
+
+    <tr><td colspan="3" style="border:0">&nbsp;</td></tr>
+    <tr><td colspan="3"><b>Extinfo Events:</b></td></tr>
+    <tr><td>servermod</td><td>servermod</td><td>currently supported: spaghettimod, oomod and hopmod</td></tr>
+    <tr><td>extinfoupdate</td>
+        <td>
+            cn, ping, name, team, frags, flags, deaths, teamkills,<br />
+            acc, health, armour, gun, privilege, state
+        </td>
+        <td></td>
+    </tr>
+
+    <tr><td>countryupdate</td><td>cn, country, countrycode</td><td></td></tr>
+
+    <tr><td colspan="3" style="border:0">&nbsp;</td></tr>
+    <tr><td colspan="3"><b>Network Events:</b></td></tr>
+    <tr><td>connect</td>
+        <td>
+            ip as string, port<br />
+            ip byte 1, ip byte 2, ip byte 3, ip byte 4
+        </td>
+        <td></td>
+    </tr>
+    <tr><td>disconnect</td><td></td></tr>
+    <tr><td>bandwidthupdate</td>
+        <td>
+            in (kb/s), out (kb/s),<br />
+            in packets (p/s), out packets (p/s),<br />
+            in (total kb), out (total kb),<br />
+            in packets (total), out packets (total),<br />
+            reliable packets lost (total)
+        </td>
+    <td>called once in a second when connected</td></tr>
+
+    <tr><td colspan="3" style="border:0">&nbsp;</td></tr>
+    <tr><td colspan="3"><b>Event System Events:</b></td></tr>
+    <tr><td>scriptinit</td><td>-</td><td>Only called in <i>current</i> file after loading, <br />gets automatically uninstalled after execution</td></tr>
+
+    <tr><td colspan="3" style="border:0">&nbsp;</td></tr>
+    <tr><td colspan="3"><b>Demo Events:</b></td></tr>
+    <tr><td>clientdemostart</td><td>demofilename</td><td></td></tr>
+    <tr><td>clientdemoend</td><td>demofilename</td><td></td></tr>
+
+    <tr><td colspan="3" style="border:0">&nbsp;</td></tr>
+    <tr><td colspan="3"><b>GUI Events:</b></td></tr>
+    <tr><td>showgui</td><td>guiname</td><td></td></tr>
+    <tr><td>closegui</td><td>guiname</td><td></td></tr>
+</table>
+
+<h3 id="event_troubleshooting">Event Troubleshooting</h3>
+<p>
+Getting unused event variables warnings? Then you've declared event args, but you aren't using them.<br />
+You can simply fix this by replacing the variable name with ignore or null.<br />
+Hint: You can switch this warning off by setting eventsystemnounusedcallargwarning to 1.<br />
+<br />
+Example:</p>
+<pre class="code">scriptevent "playerconnect" "player_cn player_name" [ echo $player_name ]</pre>
+<p>In this case "player_cn" is unused, the fixed version would be:</p>
+<pre class="code">scriptevent "playerconnect" "ignore player_name" [ echo $player_name ]</pre>
+
+<h2 id="time_functions">Time Functions</h2>
+
+<pre id="gettimestamp">gettimestamp</pre>
+<p>Get current unix timestamp.</p>
+
+<pre id="getgametimestamp">getgametimestamp</pre>
+<p>Get game timestamp.<br />Note: Returns 0 if not available.</p>
+
+<pre id="formattimestamp">formattimestamp &lt;timestamp&gt; &lt;format&gt;</pre>
+<p>Format given timestamp. See <a href="http://www.cplusplus.com/reference/ctime/strftime/">Link</a> for available format specifiers.</p>
+
+
+<h2 id="script_vector">Script Vector</h2>
+
+<pre id="scriptvector">scriptvector &lt;name&gt; [[&lt;index&gt;] [&lt;value&gt;] [&lt;no-warnings&gt;]]</pre>
+<p>
+Stores "value" with index "index" in vector "name".<br />
+If no value is given, then the value of "index" in vector "name" is returned.<br />
+<br />
+Note: You always need to create a scriptvector first, before you can store values to it.<br />
+<br />
+scriptvector "test" - creates / clears scriptvector test<br />
+scriptvector "test" "x" "z" - stores z in index x<br />
+scriptvector "test" "x" - returns value of index "x" = z
+</p>
+
+<pre id="scriptvectorlength">scriptvectorlength &lt;name&gt;</pre>
+<p>Return how many objects are stored in the given Script Vector.</p>
+
+<pre id="loopscriptvector">loopscriptvector &lt;name&gt; &lt;index (ident)&gt; &lt;value (ident)&gt; &lt;code&gt; [&lt;start&gt; &lt;end&gt;]</pre>
+<p>Iterate through a Script Vector.</p>
+
+<pre id="loadscriptvector">loadscriptvector &lt;file&gt;</pre>
+<p>Load Script Vector from a file.</p>
+
+<pre id="writescriptvector">writescriptvector &lt;file&gt;</pre>
+<p>Write Script Vector to a file.</p>
+
+<pre id="delscriptvectorindex">delscriptvectorindex &lt;name&gt; &lt;index&gt;</pre>
+<p>Delete index "index" in vector "name", returns 1 on success.</p>
+
+<pre id="delscriptvector">delscriptvector &lt;name&gt;</pre>
+<p>Delete Script Vector "name", returns 1 on success.</p>
+
+<!-- http requests -->
+
+<h2 id="http_requests">HTTP Requests</h2>
+
+<pre id="httpproxy">httpproxy &lt;host:port&gt;</pre>
+<p>Use proxy for http requests.<br />(default: "")</p>
+
+<pre id="httpspeedlimit">httpspeedlimit &lt;limit in kb/sec&gt;</pre>
+<p>Limit download tranfser rate <i>per</i> request to .. kb/s - 0 for unlimited.<br />
+Will also take affect on active http requests.<br />(default: 0)</p>
+
+<pre id="httprequest">httprequest &lt;url&gt; [[&lt;callback args&gt;] [&lt;callback&gt;] [&lt;referer&gt;] [&lt;useragent&gt;]</pre>
+<p>Returns the request handle id, or 0 on error. This function returns 0, when there are too many active requests or no url is given.<br />
+Binary files are NOT supported, because they may contain zeroes which cannot be seen from cubescript!<br />
+Limit is 10 concurrent requests. Connect timeout is 5 seconds.</p>
+
+<pre id="delhttprequest">delhttprequest &lt;id&gt;</pre>
+<p>Uninstalls an active http request. Returns 1 on success, otherwise 0.<br />
+Attention: Callback will be still called, but responsecode will be set to -2,<br />
+therefore always use httpresponsecodeok to check the response code.</p>
+
+<pre id="httpresponsecodeok">httpresponsecodeok &lt;response code&gt;</pre>
+<p>Returns 1 if there haven't happened any internal errors, and response code is equal to 200.</p>
+
+<p>example:</p>
+<pre class="code">
+    rv = (httprequest "http://wc-ng.sauerworld.org/ipecho.php" "request_ok response_code response_data response_datalen" [
+        if (&amp;&amp; ($request_ok) (httpresponsecodeok $response_code)) [
+            echo (format "Response Code: %1  Response Data Length: %2  Response Data: %3" $response_code $response_datalen $response_data)
+        ] [
+            error "http request failed, or was interrupted with delhttprequest"
+        ]
+    ])
+
+    if (= $rv 0) [
+        error "failed to create http request: too many active requests"
+    ]
+</pre>
+
+<!-- http requests end -->
+
+<!-- global chat -->
+
+<h2 id="global_chat">Global Chat</h2>
+
+<p>
+Please see <a href="todo">TODO</a> in how to setup a chat server.
+</p>
+
+<pre id="wcchatserver">wcchatserver</pre>
+<p>Fmt: [ssl:]&lt;hostname&gt;[:&lt;port&gt;]</p>
+
+<pre id="wcchatpassword">wcchatpassword</pre>
+<p>Password for the chat server.</p>
+
+<pre id="wcchatconnect">wcchatconnect</pre>
+<p>Connect to the chat server.</p>
+
+<pre id="wcchatdisconnect">wcchatdisconnect</pre>
+<p>Disconnect from the chat server.</p>
+
+<pre id="wcchatautoconnect">wcchatautoconnect</pre>
+<p>Automatically connect to the chat server on startup.<br />(default: 0)</p>
+
+<pre id="wcchatdelcert">wcchatprefix &lt;num or hash&gt;</pre>
+<p>Delete a certificate.</p>
+
+<pre id="wcchatdelcerts">wcchatprefix</pre>
+<p>Clear all certificates.</p>
+
+<pre id="wcchatlistcerts">wcchatlistcerts</pre>
+<p>List added certificates.</p>
+
+<pre id="wcchatshowcertdetails">wcchatshowcertdetails</pre>
+<p>Show certificate details (root certs + current server).</p>
+
+<pre id="wcchataddrevokedcert">wcchataddrevokedcert &lt;hash&gt;</pre>
+<p>Permanently revoke a certificate.</p>
+
+<pre id="wcchatshowconnects">wcchatshowconnects</pre>
+<p>Show connects and disconnects.<br />(default: 1)</p>
+
+<pre id="wcchatshowservconnects">wcchatshowservconnects</pre>
+<p>Show connects to game servers.<br />(default: 1)</p>
+
+<pre id="wcchatprefix">wcchatprefix</pre>
+<p>Prefix for chat messages.<br />(default: "^fs^f9[c]^fr")</p>
+
+<pre id="wcchataddcert">wcchatprefix &lt;hash&gt; [&lt;hostname&gt;]</pre>
+<p>
+Add a chat server certificate (hostname = bind the certificate to a specific host).<br />
+Supported hash types are: MD5, SHA1, SHA224, SHA256, SHA384 and SHA512.
+</p>
+
+<pre id="wcchatlist">wcchatlist</pre>
+<p>List connected clients.</p>
+
+<pre id="wcchatlatency">wcchatlatency</pre>
+<p>Show round trip time (ping).</p>
+
+<pre id="wcchatgoto">wcchatgoto &lt;id or name&gt;</pre>
+<p>Connect to the (game-)server of given client.</p>
+
+<pre id="wcchat">wcchat &lt;msg&gt;</pre>
+<p>Write a chat message (this is bound to the keys P and C by default)</p>
+
+<!-- global chat end -->
+
+<h2 id="plugins">Plugins</h2>
+
+<h3 id="plugin_commands">Plugin Commands</h3>
+
+<pre id="loadplugins">loadplugins</pre>
+<p>
+Load all available plugins.
+Returns the number of loaded plugins for cubescript usage.
+</p>
+
+<pre id="unloadplugins">unloadplugins</pre>
+<p>
+Unload all loaded plugins.
+Returns the number of unloaded plugins for cubescript usage.
+</p>
+
+<pre id="loadplugin">loadplugin &lt;name&gt;</pre>
+<p>
+Load a plugin by name.
+Returns 1 if the plugin was successfully loaded, otherwise 0 (for cubescript usage).
+</p>
+
+<pre id="unloadplugin">unloadplugin &lt;name&gt;</pre>
+<p>
+Unload a plugin by name.
+Returns 1 if the plugin was successfully unloaded, otherwise 0 (for cubescript usage).
+</p>
+
+<pre id="requireplugin">requireplugin &lt;name&gt;</pre>
+<p>
+Load plugin by name when not already loaded.
+Returns 1 on success, otherwise 0 (for cubescript usage).
+</p>
+
+<pre id="listloadedplugins">listloadedplugins [&lt;val&gt;]</pre>
+<p>List loaded plugins (pass 1 for val to get a string for cubescript usage).</p>
+
+<pre id="listplugincommands">listplugincommands [&lt;val&gt;]"</pre>
+<p>List supported plugin commands (pass 1 for val to get a string for cubescript usage).</p>
+
+<pre id="plugincommand">plugincommand &lt;command&gt; [&lt;val&gt;]</pre>
+<p>Execute a plugin command.</p>
+
+<h3 id="available_plugins">Available Plugins</h3>
+
+<h3 id="g15lcd">g15lcd (windows and linux)</h3>
+
+<pre id="drawtext">drawtext &lt;line text&gt;</pre>
+<p>example: drawtext "1 drawn on first line"</p>
+<pre id="updatelcd">updatelcd</pre>
+<p>Flush text buffer to keyboard.</p>
+
+<h3 id="hwtemp">hwtemp (windows, linux and OS X)</h3>
+
+<pre id="hwtemp_interface">interface &lt;interface to use&gt;</pre>
+<p><b>Interfaces:</b></p>
+<p>Windows:</p>
+<table>
+    <tr><td><b>Interface</b></td><td><b>Description</b></td><td><b>Note</b></td></tr>
+    <tr><td><a href="http://www.alcpu.com/CoreTemp/" target="_blank">coretemp</a></td><td>cpu temperature</td><td>coretemp must be running</td></tr>
+    <tr><td>nvgpu</td><td>nvidia gpu temperature</td><td></td></tr>
+</table>
+<p>Linux:</p>
+<table>
+    <tr><td><b>Interface</b></td><td><b>Description</b></td><td><b>Note</b></td></tr>
+    <tr><td><a href="http://lm-sensors.org/" target="_blank">lm-sensors</a></td><td><a href="http://lm-sensors.org/wiki/Devices" target="_blank">misc</a> temperatures</td><td>you may need to run <a href="http://askubuntu.com/a/53782" target="_blank">sensors-detect</a></td></tr>
+    <tr><td>nvgpu</td><td>nvidia gpu temperature</td><td><a href="http://www.nvidia.com/object/unix.html" target="_blank">proprietary</a> nvidia driver needs to be used (use lm-sensors for nouveau)</td></tr>
+    <tr><td>atigpu</td><td>amd/ati gpu temperature</td><td>proprietary amd catalyst driver needs to be used</td></tr>
+    <tr><td>amdgpu</td><td>same as atigpu</td><td></td></tr>
+</table>
+<pre id="hwtemp_gettemp">gettemp</pre>
+<p>Request temperatures</p>
+<p>The result is delievered through an event:</p>
+<table>
+    <tr><td><b>Event</b></td><td><b>Arguments</b></td><td><b>Note</b></td></tr>
+    <tr><td>hwtemp_interface</td><td>interface n-temperatures-following</td><td></td></tr>
+    <tr><td>hwtemp</td><td>device-name temperature hw-load</td><td>hw-load is coretemp only</td></tr>
+</table>
+<pre id="hwtemp_example">Example</pre>
+<pre class="code">
+requireplugin hwtemp
+scriptevent "hwtemp" "device temperature" [ echo (format "temperature of %1 is %2 C" $device $temperature) ]
+setplugin hwtemp interface nvgpu
+getplugin hwtemp gettemp
+</pre>
+<pre id="hwtemp_note">Note</pre>
+<p>Don't be scared about high GPU temperatures like 70-80&deg;c and above, that's quite normal for a <b><a href="http://en.wikipedia.org/wiki/Graphics_processing_unit" target="blank">GPU</a></b> (especially for newer nvidia cards) but not for a CPU.</p>
+
+<h3 id="faq">FAQ (Frequently Asked Questions)</h3>
+<p>
+Q: Why is my ping in the scoreboard different compared to the one on the game hud?<br />
+A: Ping in scoreboard is <i>less</i> accurate due to rounding.</p>
+
+</body>
+</html>
