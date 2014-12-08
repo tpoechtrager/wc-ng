@@ -1,6 +1,6 @@
-### Build Instructions ###
+## Build Instructions ##
 
-## Supported Compilers ##
+### Supported Compilers ###
 
 Tier 1:
 
@@ -17,7 +17,7 @@ Not Supported:
   * MinGW32 (MinGW-w64 is supported)
   * MSYS + MinGW (may work though)
 
-## Unix/Linux ##
+### Unix/Linux ###
 
 The static way (recommended):
 
@@ -41,7 +41,7 @@ Package (static):
   * Other:
       * [ARCH=...] `./build/package.sh`
 
-## OS X ##
+### OS X ###
 
 There is only a static way on OS X:
 
@@ -56,7 +56,7 @@ Package:
 
   * `./build/package_darwin.sh`
 
-## Windows ##
+### Windows ###
 
 Cross compiling from Unix/Linux to Windows:
 
