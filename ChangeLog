@@ -18,8 +18,8 @@ wc-ng v0.7.2 2014-xx-xx
     - '/getactioncn': useful for video streaming
     - '/autofollowactioncn': useful for video streaming
     - '/resolveip <ip>': resolve given ip address to its respective hostname
-    - '/scoreboardtextcolour': change scoreboard text colour
-    - '/scoreboardtextcolourhead': change scoreboard text colour
+    - '/scoreboardtextcolor': change scoreboard text color
+    - '/scoreboardtextcolorhead': change scoreboard text color
 
   changed:
     - in sync with sauerbraten r5050

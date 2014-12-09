@@ -563,6 +563,11 @@ ifeq (,$(findstring -fsanitize=undefined,$(CXXFLAGS)))
   override CXXFLAGS+= -fno-rtti
 endif
 
+ifeq ($(PLATFORM),linux)
+  override CFLAGS+= -U_FORTIFY_SOURCE
+  override CXXFLAGS+= -U_FORTIFY_SOURCE
+endif
+
 ################ GENERIC TARGETS ################
 
 $(SERVER_OBJS): CXXFLAGS += $(SERVER_INCLUDES)
