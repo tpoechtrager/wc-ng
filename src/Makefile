@@ -323,6 +323,10 @@ ifeq (darwin,$(PLATFORM))
 
   HWTEMP_LIBS= $(STATIC_LIB_DIR)/smc.a
 
+  ifeq (1, $(LTO))
+    HWTEMP_LIBS+= $(STATIC_LIB_DIR)/libSDL.a -framework IOKit
+  endif
+
   xcode/Launcher%: override OBJCFLAGS+=-Wno-deprecated-declarations
 
   ################ OS X targets ################
