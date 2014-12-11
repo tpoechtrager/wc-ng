@@ -147,6 +147,7 @@ struct ragdolldata
           lastmove(lastmillis),
           unsticks(INT_MAX),
           mylastmillis(lastmillis),
+          radius(0),
           timestep(0),
           scale(scale),
           verts(new vert[skel->verts.length()]), 

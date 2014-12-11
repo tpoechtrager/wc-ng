@@ -23,10 +23,9 @@ function get_client_wc_version()
 }
 
 $CHANGELOG = array(
-    "0.7.1" => array("Changed: removed entire c++ code since java > c++",
-                            "Added: java scoreboard"),
-    "0.7.0" => array("\f3\f4Fixed: nothing - we use java, java doesn't break anything",
-                            "Added: more nothing"),
+    "0.7.2" => array("first open source release!",
+                     "please see http://sauerworld.org/forum => mods => wc-ng ".
+                     "for more")
 );
 
 $REVOKEDCERTS = array(
