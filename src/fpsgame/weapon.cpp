@@ -25,10 +25,7 @@ namespace game
         {
             addmsg(N_GUNSELECT, "rci", d, gun);
             playsound(S_WEAPLOAD, &d->o);
-            //NEW
-            if(mod::demorecorder::demorecord)
-                mod::demorecorder::self::gunselect(gun);
-            //NEW END
+            if(mod::demorecorder::demorecord) mod::demorecorder::self::gunselect(gun); //NEW
         }
         d->gunselect = gun;
     }
@@ -651,10 +648,7 @@ namespace game
                 break;
         }
         if(d->quadmillis && lastmillis-prevaction>200 && !looped) playsound(S_ITEMPUP, d==hudplayer() ? NULL : &d->o);
-        //NEW
-        if(mod::demorecorder::demorecord)
-            mod::demorecorder::self::shoteffect(d, gun, id, from, to);
-        //NEW END
+        if(mod::demorecorder::demorecord && (d->ai || d==hudplayer())) mod::demorecorder::self::shoteffect(d, gun, id, from, to); //NEW
     }
 
     void particletrack(physent *owner, vec &o, vec &d)
