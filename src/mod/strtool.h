@@ -46,7 +46,6 @@ namespace mod {
 #define ENABLE_STRTOOL_ASSERTS
 //#endif //!__OPTIMIZE__ || _DEBUG || __DEBUG__
 
-#pragma push_macro("isnumber")
 #undef isnumber
 
 #ifdef STRTOOL_USE_REF_COUNTER
@@ -211,23 +210,35 @@ public:
 
     void remove(strtool_size_t i, strtool_size_t count = 1)
     {
-        if (i >= length())
+        if (empty())
             return;
 
         checkreference();
 
-        count = min(length()-i, count);
-        memmove(buf+i, buf+i+count, length()-count);
-        p -= count;
-    }
+        char *offp = buf+i;
+        char *offpm = offp+count;
+        strtool_size_t tomove = end()-offpm;
 
-    void trim(bool front = false, strtool_size_t max = -1,
-              const char *trimchars = "\r\n");
+        if (tomove)
+        {
+            STRTOOL_ASSERT((offp >= begin() && offp < end()) &&
+                           (offpm >= begin() && offpm < end()));
+
+            memmove(offp, offpm, tomove);
+        }
+
+        p -= count;
+
+        STRTOOL_ASSERT(p >= buf && p < buf+size);
+    }
 
     void erease(strtool_size_t i, strtool_size_t count = 1)
     {
         remove(i, count);
     }
+
+    void trim(bool front = false, strtool_size_t max = -1,
+              const char *trimchars = "\r\n");
 
     void removechr(char c)
     {
@@ -829,7 +840,5 @@ static inline void copystrtool(strtool &dst, const strtool &src)
 #ifdef _MSC_VER
 #pragma warning (pop)
 #endif //_MSC_VER
-
-#pragma pop_macro("isnumber")
 
 } // namespace mod

@@ -513,7 +513,7 @@ endif
 
 override LIBDIR=native
 
-ifneq ($(LTO),0)
+ifeq ($(LTO),1)
   ifneq (,$(findstring clang,$(CXX)))
   ifeq (linux,$(PLATFORM))
     $(shell ln -sf `which ld.gold` build/ld 2>/dev/null)
@@ -537,7 +537,7 @@ ifneq ($(LTO),0)
       override LDFLAGS+= -Wl,-plugin-opt=mtriple=$(ARCH)-w64-mingw32
     else
       ifneq ($(PLATFORM),darwin)
-        #override LDFLAGS+= -Wl,-plugin-opt=mtriple=$(ARCH)-pc-$(PLATFORM)
+        override LDFLAGS+= -Wl,-plugin-opt=mtriple=$(ARCH)-pc-$(PLATFORM)
       endif
     endif
   endif
