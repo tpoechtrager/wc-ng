@@ -46,7 +46,6 @@ namespace mod {
 #define ENABLE_STRTOOL_ASSERTS
 //#endif //!__OPTIMIZE__ || _DEBUG || __DEBUG__
 
-#pragma push_macro("isnumber")
 #undef isnumber
 
 #ifdef STRTOOL_USE_REF_COUNTER
@@ -841,7 +840,5 @@ static inline void copystrtool(strtool &dst, const strtool &src)
 #ifdef _MSC_VER
 #pragma warning (pop)
 #endif //_MSC_VER
-
-#pragma pop_macro("isnumber")
 
 } // namespace mod
