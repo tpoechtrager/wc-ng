@@ -642,20 +642,34 @@ namespace mod
         }
     }
 
-    static void wcver(int *v)
+    static void wcver(const char *op, const char *ver)
     {
-        static auto ver = CLIENTVERSION.str();
+        clientversion v;
+        if (*ver) v = parseclientversion(ver);
 
-        if (*v == 1)
+        #define res(expr) do { intret((expr)); return; } while (0)
+
+        if (!strcmp(op, ">=")) res(CLIENTVERSION >= v);
+        else if (!strcmp(op, "<=")) res(CLIENTVERSION <= v);
+        else if (!strcmp(op, "==")) res(CLIENTVERSION == v);
+        else if (!strcmp(op, "<")) res(CLIENTVERSION < v);
+        else if (!strcmp(op, ">")) res(CLIENTVERSION > v);
+        else if (!strcmp(op, "!=")) res(CLIENTVERSION != v);
+
+        #undef res
+
+        static auto verbuf = CLIENTVERSION.str();
+
+        if (*op == '1')
         {
-            conoutf("%s", ver.str());
+            conoutf("%s", verbuf.str());
             return;
         }
 
-        result(ver.str());
+        result(verbuf.str());
     }
 
-    COMMAND(wcver, "i");
+    COMMAND(wcver, "ss");
     VAR(wcversion, 1200, 1200, 1200); // compat
     ICOMMAND(wccheckversion, "", (), wccheckversion(true));
     MODVARP(wcautoversioncheck, 0, 1, 1);

@@ -42,6 +42,11 @@ struct clientversion
         return num() <= cv.num();
     }
 
+    constexpr bool operator==(const clientversion &cv) const
+    {
+        return num() == cv.num();
+    }
+
     constexpr bool operator!=(const clientversion &cv) const
     {
         return num() != cv.num();
