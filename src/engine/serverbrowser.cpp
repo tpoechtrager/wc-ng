@@ -899,10 +899,14 @@ void loopextinfoplayers(const char *name, const char *country, const char *callb
             {
                 if (!findcountry.empty())
                 {
-                    countryname = p.countrycode;
-                    countryname.upperstring();
+                    if (p.countrycode)
+                    {
+                        countryname = p.countrycode;
+                        countryname.upperstring();
 
-                    if (countryname != findcountry) continue; // require full equality for country code names
+                        if (countryname != findcountry) continue; // require full equality for country code names
+                    }
+                    else if (findcountry != "??") continue;
                 }
 
                 if (si->attr.length() < 5) goto nextserver;
