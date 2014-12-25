@@ -206,6 +206,8 @@ extern void closelogfile();
 extern void logoutfv(const char *fmt, va_list args);
 extern void logoutf(const char *fmt, ...) PRINTFARGS(1, 2);
 
+extern void delbinds(const char *action);
+
 // menus
 extern vec menuinfrontofplayer();
 extern void newgui(char *name, char *contents, char *header = NULL, char *init = NULL);

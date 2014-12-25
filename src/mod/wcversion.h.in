@@ -3,9 +3,9 @@
 
 #define WCREVISION "$WCREVISION$"
 
-const int WC_VERSION_MAJOR = 0;
-const int WC_VERSION_MINOR = 7;
-const int WC_VERSION_PATCH = 2;
+constexpr int WC_VERSION_MAJOR = 0;
+constexpr int WC_VERSION_MINOR = 7;
+constexpr int WC_VERSION_PATCH = 3;
 
 #undef major
 #undef minor
@@ -19,7 +19,7 @@ struct clientversion
 
     constexpr int num() const
     {
-      return major * 10000 + minor * 100 + patch;
+        return major * 10000 + minor * 100 + patch;
     }
 
     constexpr bool operator>(const clientversion &cv) const
@@ -42,6 +42,11 @@ struct clientversion
         return num() <= cv.num();
     }
 
+    constexpr bool operator==(const clientversion &cv) const
+    {
+        return num() == cv.num();
+    }
+
     constexpr bool operator!=(const clientversion &cv) const
     {
         return num() != cv.num();
@@ -56,7 +61,7 @@ struct clientversion
         while (*p)
         {
             if (*p++ == '.')
-              ++c;
+                ++c;
         }
 
         switch (c)
@@ -106,12 +111,11 @@ static inline clientversion parseclientversion(const char *version)
     return ver;
 }
 
-static inline const char *getwcrevision()
+constexpr const char *getwcrevision()
 {
-    if (!strcmp(WCREVISION, "$WC""REVISION$")) return "unknown";
-    return WCREVISION;
+    return WCREVISION[0] == '$' ? "unknown" : WCREVISION;
 }
 
-static const clientversion CLIENTVERSION(WC_VERSION_MAJOR, WC_VERSION_MINOR, WC_VERSION_PATCH);
+constexpr clientversion CLIENTVERSION(WC_VERSION_MAJOR, WC_VERSION_MINOR, WC_VERSION_PATCH);
 
 #endif //__WCVERSION_H__

@@ -266,6 +266,7 @@
                     <li><a href="#loadplugin"><tt>loadplugin</tt></a></li>
                     <li><a href="#unloadplugin"><tt>unloadplugin</tt></a></li>
                     <li><a href="#requireplugin"><tt>requireplugin</tt></a></li>
+                    <li><a href="#ispluginloaded"><tt>ispluginloaded</tt></a></li>
                     <li><a href="#listplugins"><tt>listplugins</tt></a></li>
                     <li><a href="#listplugincommands"><tt>listplugincommands</tt></a></li>
                     <li><a href="#plugincommand"><tt>plugincommand</tt></a></li>
@@ -1087,6 +1088,11 @@ Returns 1 if the plugin was successfully unloaded, otherwise 0 (for cubescript u
 <p>
 Load plugin by name when not already loaded.
 Returns 1 on success, otherwise 0 (for cubescript usage).
+</p>
+
+<pre id="ispluginloaded">ispluginloaded &lt;name&gt;</pre>
+<p>
+Check if given plugin is loaded.
 </p>
 
 <pre id="listloadedplugins">listloadedplugins [&lt;val&gt;]</pre>

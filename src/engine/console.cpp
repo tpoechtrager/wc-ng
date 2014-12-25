@@ -243,7 +243,25 @@ keym *findbind(char *key)
     });
     return NULL;
 }   
-    
+
+//NEW
+void delbinds(const char *action)
+{
+    enumerate(keyms, keym, km,
+    {
+        loopj(keym::NUMACTIONS)
+        {
+            char *&keyaction = km.actions[j];
+            if(!strcmp(keyaction, action))
+            {
+                delete[] keyaction;
+                keyaction = newstring("");
+            }
+        }
+    });
+}
+//NEW END
+
 void getbind(char *key, int type)
 {
     keym *km = findbind(key);

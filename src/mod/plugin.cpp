@@ -365,6 +365,7 @@ COMMANDN(unloadplugin, unloadplugin_, "s");
 ICOMMAND(loadplugins, "", (), intret(loadplugins()));
 ICOMMAND(unloadplugins, "", (), unloadplugins(false));
 ICOMMAND(requireplugin, "s", (const char *n), intret(require(n)));
+ICOMMAND(ispluginloaded, "s", (const char *n), intret(!!getplugin(n)));
 
 /* Deprecated */
 COMMANDN(listplugins, listloadedplugins, "i");
@@ -372,6 +373,7 @@ COMMANDN(addplugin, loadplugin_, "s");
 COMMANDN(delplugin, unloadplugin_, "s");
 ICOMMAND(addplugins, "", (), intret(loadplugins()));
 ICOMMAND(delplugins, "", (), unloadplugins(false));
+ICOMMAND(isplugin, "s", (const char *n), intret(!!getplugin(n)));
 
 } // plugin
 } // mod

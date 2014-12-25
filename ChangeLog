@@ -1,8 +1,9 @@
-wc-ng v0.7.2 2014-xx-xx
+wc-ng v0.7.3 2014-xx-xx
 
   added:
     - '/wcver [1]' which represents the current version of the client
       '/wcversion' should be avoided from now on
+    - '/wcrev' string variable which represents the client git revision
     - server accross chat
     - sdl2 port (by pisto)
     - hwtemp plugin (windows, linux and OS X)
