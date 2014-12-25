@@ -930,7 +930,7 @@ void loopextinfoplayers(const char *name, const char *country, const char *callb
                 static const char *args = "sdddsdddddsddddssddddddddddssuuuu";
 #endif
 
-                mod::event::run(cbevent, args, si->name, si->address.host, si->address.port, si->ping, si->sdesc,
+                mod::event::run(cbevent, args, si->name, si->address.host, si->address.port-1, si->ping, si->sdesc,
                                 secleft, si->numplayers, maxplayers, mastermode, gamemode, si->map, gamepaused, gamespeed,
                                 ep.cn, ep.ping, ep.getname(), ep.team, ep.frags, ep.flags, ep.deaths, ep.teamkills,
                                 ep.acc, ep.health, ep.armour, ep.gunselect, ep.priv, ep.state, p.countrycode ? p.countrycode : "",
