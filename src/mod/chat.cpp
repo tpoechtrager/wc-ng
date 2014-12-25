@@ -113,7 +113,11 @@ static vector<client_t*> clients;
 struct client_t
 {
     int id;
-    uint32_t ip;
+    union
+    {
+        uint32_t ui32;
+        uint8_t ui[4];
+    } ip;
     time_t conntime;
     strtool name;
     const char *country;
@@ -125,7 +129,11 @@ struct client_t
         ENetAddress addr;
         int cn;
         strtool title;
-        server() : conntime(), addr(), cn() {}
+        const char *country;
+        const char *countrycode;
+
+        server() : conntime(), addr(), cn(),
+                   country(), countrycode() {}
     } server;
 
     strtool getname()
@@ -182,8 +190,10 @@ static int chatthread(void *);
 static sdlthread *thread = NULL;
 static bool parsemessages(ucharbuf &p);
 static void wcchatlist();
+static void wcchatloopclients(const char *callbackargs, const char *callbackcode);
 static void wcchatgoto(const char *client);
-static void wcchatlatency();
+static void wcchatisconnected();
+static void wcchatlatency(int *cubescript);
 static void wcchat(const char *msg);
 static void wcchatconnect();
 static void wcchatdoautoconnect();
@@ -213,6 +223,7 @@ MODSVARFP(wcchatpassword, "", updateconnectdata());
 MODVARFP(wcchatshowconnects, 0, 1, 1, showconnects = wcchatshowconnects!=0);
 MODVARFP(wcchatshowservconnects, 0, 1, 1, showservconnects = wcchatshowservconnects!=0);
 MODSVARFP(wcchatprefix, DEFAULTPREFIX, updateprefix(wcchatprefix));
+MODSVARFP(wcchatbinds, "pc", setupbinds());
 MODVARP(wcchatautoconnect, 0, 0, 1);
 
 COMMAND(wcchataddcert, "ss");
@@ -224,7 +235,9 @@ COMMAND(wcchataddrevokedcert, "s");
 MODSVARFP(wcchatcipherlist, CIPHERLIST, updateconnectdata());
 
 COMMAND(wcchatlist, "");
-COMMAND(wcchatlatency, "s");
+COMMAND(wcchatloopclients, "ss");
+COMMAND(wcchatisconnected, "");
+COMMAND(wcchatlatency, "i");
 COMMAND(wcchatgoto, "s");
 COMMAND(wcchat, "s");
 COMMAND(wcchatconnect, "");
@@ -985,7 +998,7 @@ static bool parsemessages(ucharbuf &p)
         {
             client_t c;
             c.id = getint(p);
-            p.get((uchar*)&c.ip, 4);
+            p.get((uchar*)&c.ip.ui32, 4);
             c.conntime = getint(p)+timeoffset;
             getfilteredstring(c.name, p, false, MAXNAMELEN);
             if (!c.name) c.name = "unnamed";
@@ -994,10 +1007,12 @@ static bool parsemessages(ucharbuf &p)
             {
                 c.server.addr.host = (enet_uint32)getint(p);
                 c.server.addr.port = (enet_uint16)getint(p);
+                c.server.country = geoip::country(c.server.addr.host);
+                c.server.countrycode = geoip::countrycode(c.server.addr.host);
             }
             if (getclient(c.id) || clients.length() >= NUMMAXCLIENTS) break;
-            c.country = geoip::country(c.ip);
-            c.countrycode = geoip::countrycode(c.ip);
+            c.country = geoip::country(c.ip.ui32);
+            c.countrycode = geoip::countrycode(c.ip.ui32);
             clients.add(new client_t(c));
             if (!showconnects || c.id == myid) break;
             consoleoutf("connect: %s (%s)", c.getname().str(),
@@ -1237,11 +1252,11 @@ static int chatthread(void *)
     return 0;
 }
 
-static inline bool checkconnection()
+static inline bool checkconnection(bool msg = true)
 {
     if (!isconnected)
     {
-        consoleoutf("not connected to chat server");
+        if (msg) consoleoutf("not connected to chat server");
         return false;
     }
     return true;
@@ -1327,10 +1342,21 @@ static void wcchatgoto(const char *client)
     execute(connect);
 }
 
-static void wcchatlatency()
+static void wcchatisconnected()
 {
-    if (!checkconnection()) return;
-    consoleoutf("latency: %.2f ms", myping.load()/1000.0);
+    intret(isconnected);
+}
+
+static void wcchatlatency(int *cubescript)
+{
+    if (!checkconnection(!*cubescript))
+    {
+        if (*cubescript) floatret(0);
+        return;
+    }
+    float latency = myping.load()/1000.0f;
+    if (*cubescript) floatret(latency);
+    else consoleoutf("latency: %.2f ms", latency);
 }
 
 static void wcchat(const char *msg)
@@ -1437,7 +1463,7 @@ static bool checkfingerprint(strtool &hash)
         case 59:  if (sepcount == 19) goto valid; break; // SHA1
         case 83:  if (sepcount == 27) goto valid; break; // SHA224
         case 95:  if (sepcount == 31) goto valid; break; // SHA256
-        case 143: if (sepcount == 47) goto valid; break; // SHA284
+        case 143: if (sepcount == 47) goto valid; break; // SHA384
         case 191: if (sepcount == 63) goto valid; break; // SHA512
     }
     erroroutf_r("invalid fingerprint");
@@ -1519,6 +1545,48 @@ static void wcchatlistcerts()
     }
 }
 
+static void wcchatloopclients(const char *callbackargs, const char *callbackcode)
+{
+    uint callbackid;
+    uint scriptcallbackid = event::install(event::INTERNAL_CALLBACK, callbackargs, callbackcode, &callbackid);
+    uint cbevent = callbackid<<16|event::INTERNAL_CALLBACK;
+
+    if (!scriptcallbackid) return;
+
+#ifdef ENABLE_IPS
+    constexpr const char *args = "siisssiisssuuuuuu";
+#else
+    constexpr const char *args = "siisssiisssuu";
+#endif
+
+    time_t now = time(NULL);
+
+    clientmutex.lock();
+
+    for (client_t *c : clients)
+    {
+        struct client_t::server &s = c->server;
+        string sip;
+
+        if (!s.addr.host || enet_address_get_host_ip(&s.addr, sip, sizeof(sip)) < 0)
+            memcpy(sip, "0.0.0.0", 8);
+
+        event::run(cbevent, args, c->getname().str(), c->id, int(now-c->conntime), c->country ? c->country : "",
+                                  c->countrycode ? c->country : "",
+                                  s.title.str(), s.cn, int(now-s.conntime),
+                                  s.country ? s.country : "", s.countrycode ? s.countrycode : "",
+                                  sip, s.addr.host, s.addr.port,
+                                  c->ip.ui[0], c->ip.ui[1], c->ip.ui[2], c->ip.ui[3] /* 0xff */);
+    }
+
+    // name id sec-connected country countrycode
+    // servername cn sec-connected servercountry servercountrycode hostname host(int) port
+
+    clientmutex.unlock();
+
+    event::uninstall(scriptcallbackid);
+}
+
 static void wcchatshowcertdetails()
 {
     SDL_Mutex_Locker m(sslmutex);
@@ -1595,15 +1663,19 @@ void writecerts(stream *f)
 
 void setupbinds()
 {
-    auto setupbind = [](const char *key)
+    constexpr const char *action =
+        "inputcommand \"\" [wcchat $commandbuf] \"^fs^f9[global chat]^fr\"";
+
+    auto setupbind = [&](int key)
     {
-        defformatstring(buf)("bind %s [ inputcommand \"\" [wcchat $commandbuf] "
-                             "\"^fs^f9[global chat]^fr\" ];", key);
+        defformatstring(buf)("bind %c [ %s ];", key, action);
         execute(buf);
     };
 
-    setupbind("p");
-    setupbind("c");
+    delbinds(action);
+
+    const char *keys = wcchatbinds;
+    while (*keys) setupbind(*keys++);
 }
 
 void init()

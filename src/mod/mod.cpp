@@ -668,8 +668,9 @@ namespace mod
 
         result(verbuf.str());
     }
-
     COMMAND(wcver, "ss");
+
+    SVARF(wcrev, getwcrevision(), setsvar("wcrev", getwcrevision(), false));
     VAR(wcversion, 1200, 1200, 1200); // compat
     ICOMMAND(wccheckversion, "", (), wccheckversion(true));
     MODVARP(wcautoversioncheck, 0, 1, 1);

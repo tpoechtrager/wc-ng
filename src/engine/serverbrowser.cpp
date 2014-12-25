@@ -932,8 +932,8 @@ void loopextinfoplayers(const char *name, const char *country, const char *callb
                 mod::event::run(cbevent, args, si->name, si->address.host, si->address.port, si->ping, si->sdesc,
                                 secleft, si->numplayers, maxplayers, mastermode, gamemode, si->map, gamepaused, gamespeed,
                                 ep.cn, ep.ping, ep.getname(), ep.team, ep.frags, ep.flags, ep.deaths, ep.teamkills,
-                                ep.acc, ep.health, ep.armour, ep.gunselect, ep.priv, ep.state, p.countrycode ? p.countrycode : "??",
-                                p.country ? p.country : "??", ep.ip.ia[0], ep.ip.ia[1], ep.ip.ia[2], ep.ip.ia[3]);
+                                ep.acc, ep.health, ep.armour, ep.gunselect, ep.priv, ep.state, p.countrycode ? p.countrycode : "",
+                                p.country ? p.country : "", ep.ip.ia[0], ep.ip.ia[1], ep.ip.ia[2], ep.ip.ia[3]);
 
                 si->sdesc[MAX_SERVER_DESC_LEN] = c;
 
