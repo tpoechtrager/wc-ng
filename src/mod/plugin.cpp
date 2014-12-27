@@ -276,11 +276,7 @@ void *plugin_t::dlsym(const char *name)
 strtool plugin_t::dlerror()
 {
     strtool s;
-#ifdef WIN32
-    s << "GetLastError(): " << GetLastError();
-#else
     s << "dlerror(): " << ::dlerror();
-#endif //WIN32
     return s;
 }
 
