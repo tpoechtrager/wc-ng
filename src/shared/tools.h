@@ -76,17 +76,17 @@ static inline void swap(T &a, T &b)
 #undef min
 #endif
 template<class T>
-static inline T max(T a, T b)
+constexpr T max(T a, T b) //NEW constexpr instead of static inline
 {
     return a > b ? a : b;
 }
 template<class T>
-static inline T min(T a, T b)
+constexpr T min(T a, T b) //NEW constexpr instead of static inline
 {
     return a < b ? a : b;
 }
 template<class T, class U>
-static inline T clamp(T a, U b, U c)
+constexpr T clamp(T a, U b, U c) //NEW constexpr instead of static inline
 {
     return max(T(b), min(a, T(c)));
 }
