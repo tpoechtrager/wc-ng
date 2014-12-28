@@ -1686,7 +1686,6 @@ namespace game
 
             case N_CLIPBOARD:
             {
-                DEMORECORDER_SKIP_PACKET(!m_edit); //NEW
                 int cn = getint(p), unpacklen = getint(p), packlen = getint(p);
                 fpsent *d = getclient(cn);
                 ucharbuf q = p.subbuf(max(packlen, 0));
@@ -1704,7 +1703,6 @@ namespace game
             case N_REPLACE:
             case N_DELCUBE:
             {
-                DEMORECORDER_SKIP_PACKET(!m_edit); //NEW
                 if(!d) return;
                 selinfo sel;
                 sel.o.x = getint(p); sel.o.y = getint(p); sel.o.z = getint(p);
@@ -1730,7 +1728,6 @@ namespace game
             }
             case N_REMIP:
             {
-                DEMORECORDER_SKIP_PACKET(!m_edit); //NEW
                 if(!d) return;
                 conoutf("%s remipped", colorname(d));
                 mpremip(false);
@@ -1738,7 +1735,6 @@ namespace game
             }
             case N_EDITENT:            // coop edit of ent
             {
-                DEMORECORDER_SKIP_PACKET(!m_edit); //NEW
                 if(!d) return;
                 int i = getint(p);
                 float x = getint(p)/DMF, y = getint(p)/DMF, z = getint(p)/DMF;
@@ -1750,11 +1746,9 @@ namespace game
             }
             case N_EDITVAR:
             {
-                DEMORECORDER_SKIP_PACKET(!m_edit); //NEW
                 if(!d) return;
                 int type = getint(p);
                 getstring(text, p);
-                if (!m_edit) break; //NEW
                 string name;
                 filtertext(name, text, false);
                 ident *id = getident(name);
@@ -1903,7 +1897,6 @@ namespace game
 
             case N_EDITMODE:
             {
-                DEMORECORDER_SKIP_PACKET(!m_edit); //NEW
                 int val = getint(p);
                 if(!d) break;
                 if(val)
@@ -1985,7 +1978,6 @@ namespace game
 
             case N_NEWMAP:
             {
-                DEMORECORDER_SKIP_PACKET(!m_edit); //NEW
                 int size = getint(p);
                 if(size>=0) emptymap(size, true, NULL);
                 else enlargemap(true);
