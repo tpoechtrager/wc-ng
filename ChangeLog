@@ -23,7 +23,7 @@ wc-ng v0.7.3 2014-xx-xx
     - '/scoreboardtextcolorhead': change scoreboard text color
 
   changed:
-    - in sync with sauerbraten r5058
+    - in sync with sauerbraten r5064
     - libcurl update to 7.39.0
     - libgeoip update to 1.6.0
     - windows client is now linked statically against its required libs
