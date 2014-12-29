@@ -428,7 +428,6 @@ else
     CLIENT_LIBS+= $(STATIC_LIB_DIR)/libjpeg.a
     PLUGIN_LIBS+= $(STATIC_LIB_DIR)/libSDL2.a
     CLIENT_LIBS+= -lGL -lX11 -lXext -lXrandr
-
     ifeq ($(PLATFORM),freebsd)
       CLIENT_LIBS+= -lvgl -liconv -lpulse -lpulse-simple
       CHATSERV_LIBS+= -liconv

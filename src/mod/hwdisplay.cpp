@@ -68,15 +68,15 @@ namespace gamemod
     static float fontscale = stdfontscale/100.0f;
 
     MODVARFP(showhwdisplay, 0, 0, 1, showdisplay());
-    MODVARFP(hwdisplayfontscale, 25, stdfontscale, 30, fontscale = hwdisplayfontscale/100.0f);
+    MODVARFP(hwdisplayfontscale, 25, stdfontscale, 27, fontscale = hwdisplayfontscale/100.0f);
     MODVARP(hwdisplayrightoffset, -200, stdrightoffset, 200);
     MODVARP(hwdisplayheightoffset, 0, stdheightoffset, 600);
-    MODVARP(hwdisplaywidthoffset, -50, stdwidthoffset, 300);
+    MODVARP(hwdisplaywidthoffset, -300, stdwidthoffset, 300);
     MODVARP(hwdisplaylineoffset, -30, stdlineoffset, 50);
     MODVARP(hwdisplayalpha, 20, stdalpha, 0xFF);
     MODVARP(hwdisplayfahrenheit, 0, 0, 1);
     MODVARP(hwdisplayalarmthreshold, -1, -1, 500);
-    MODVARP(hwdisplayupdateinterval, 500, 500, 5000);
+    MODVARP(hwdisplayupdateinterval, 250, 500, 5000);
     MODSVARP(hwdisplayblacklist, "");
 
     static inline bool isblacklisted(const char *device)
