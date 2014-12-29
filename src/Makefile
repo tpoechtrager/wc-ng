@@ -427,6 +427,7 @@ else
     CLIENT_LIBS+= $(STATIC_LIB_DIR)/libSDL_image.a
     CLIENT_LIBS+= $(STATIC_LIB_DIR)/libpng16.a
     CLIENT_LIBS+= $(STATIC_LIB_DIR)/libjpeg.a
+    PLUGIN_LIBS+= $(STATIC_LIB_DIR)/libSDL.a
     ifeq ($(PLATFORM),freebsd)
       CLIENT_LIBS+= -lvgl -liconv -lpulse -lpulse-simple
     endif
