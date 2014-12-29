@@ -203,7 +203,7 @@ ifneq (,$(findstring mingw,$(PLATFORM)))
   MASTER_LIBS= -L$(WINLIB) -Wl,-Bstatic -lz -Wl,-Bdynamic -lws2_32 -lwinmm
 
   CLIENT_LIBS+= $(SUBSYSTEM) -L$(WINLIB)
-  CLIENT_LIBS+= -Wl,-Bstatic -lGeoIP -lcurl -lssl -lcrypto -ldl -Wl,-Bdynamic
+  CLIENT_LIBS+= -Wl,-Bstatic -lcurl -lssl -lcrypto -ldl -Wl,-Bdynamic
   CLIENT_LIBS+= -lgdi32
 
   CLIENT_LIBS+= -Wl,-Bstatic
