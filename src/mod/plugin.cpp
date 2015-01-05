@@ -79,6 +79,9 @@ bool loadplugin(const char *pluginname)
     strtool filename;
     filename << PLUGINDIR <<  '/' << pluginname << PLUGINEXT;
 
+    const char *p = findfile(filename.c_str(), "rb");
+    if (p != filename.getrawbuf()) filename = p;
+
     if (!fileexists(filename.str(), "rb"))
     {
         erroroutf_r("cannot find plugin %s", filename.str());

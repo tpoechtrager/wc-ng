@@ -1,6 +1,7 @@
 wc-ng v0.7.3 2014-xx-xx
 
   added:
+    - '/showdamagedealt': show damage dealt
     - '/wcver [1]' which represents the current version of the client
       '/wcversion' should be avoided from now on
     - '/wcrev' string variable which represents the client git revision

@@ -19,6 +19,7 @@ namespace game
     MODVARP(showextinfo, 0, 1, 1);
     MODVARP(showfrags, 0, 1, 1);
     MODVARP(showdeaths, 0, 1, 1);
+    MODVARP(showdamagedealt, 0, 0, 2);
     MODVARP(showkpd, 0, 0, 1);
     MODVARP(showacc, 0, 1, 1);
     MODVARP(showtks, 0, 0, 1);
@@ -498,6 +499,24 @@ namespace game
                         if(o->extinfo) g.textf("%d", scoreboardtextcolor, NULL, ((player *)o->extinfo)->deaths);
                         else g.textf("%s", scoreboardtextcolor, NULL, "??");
                     });
+
+                    g.poplist();
+                }
+
+                if(showdamagedealt)
+                {
+                    // More or less the same as
+                    // https://github.com/sauerworld/community-edition/blob/2e31507b5d5/fpsgame/scoreboard.cpp#L314
+
+                    g.pushlist();
+                    g.strut(6);
+                    g.text("dd", fgcolor);
+
+                    loopscoregroup(o,
+                    {
+                        bool gtt = o->totaldamage>1000 || showdamagedealt==2;
+                        g.textf(gtt ? "%.2fk" : "%.0f", scoreboardtextcolor, NULL, gtt ? o->totaldamage/1000.f : o->totaldamage*1.f));
+                    }
 
                     g.poplist();
                 }
