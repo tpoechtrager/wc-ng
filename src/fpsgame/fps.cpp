@@ -602,6 +602,7 @@ namespace game
             d->frags = d->flags = 0;
             d->deaths = 0;
             d->totaldamage = 0;
+            d->damagedealt = 0; //NEW
             d->totalshots = 0;
             d->maxhealth = 100;
             d->lifesequence = -1;
