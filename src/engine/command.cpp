@@ -2361,9 +2361,7 @@ void writecfg(const char *name)
         extern void writemasterserverscfg(stream *f);
         writemasterserverscfg(f);
         gamemod::writetempnames(f);
-#ifdef HAVE_OPENSSL
         mod::chat::writecerts(f);
-#endif //HAVE_OPENSSL
         delete f;
         return;
     }

@@ -228,6 +228,8 @@ namespace extinfo
                         {
                             switch (servermod = getint(p))
                             {
+                                case -6: modname = "remod"; break;
+                                case -5: modname = "suckerserv"; break;
                                 case -4: modname = "spaghettimod"; break;
                                 case -3: modname = "oomod"; break;
                                 case -2: modname = "hopmod"; break;

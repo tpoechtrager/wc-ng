@@ -514,8 +514,11 @@ namespace game
 
                     loopscoregroup(o,
                     {
-                        bool gtt = o->totaldamage>1000 || showdamagedealt==2;
-                        g.textf(gtt ? "%.2fk" : "%.0f", scoreboardtextcolor, NULL, gtt ? o->totaldamage/1000.f : o->totaldamage*1.f));
+                        int damagedealt;
+                        if(m_insta) damagedealt = o->frags*guns[S_RIFLE+2].damage;
+                        else damagedealt = o->damagedealt;
+                        bool get = damagedealt>=1000 || showdamagedealt==2;
+                        g.textf(get ? "%.2fk" : "%.0f", scoreboardtextcolor, NULL, get ? damagedealt/1000.f : damagedealt*1.f));
                     }
 
                     g.poplist();

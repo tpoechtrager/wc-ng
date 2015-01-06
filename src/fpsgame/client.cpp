@@ -1597,7 +1597,7 @@ namespace game
                 if(!target || !actor) break;
                 target->armour = armour;
                 target->health = health;
-                if(actor != player1 && actor != target) target->totaldamage += damage; //NEW
+                if(actor != target && (!m_teammode || !isteam(actor->team, target->team))) actor->damagedealt += damage; //NEW
                 if(target->state == CS_ALIVE && actor != player1) target->lastpain = lastmillis;
                 damaged(damage, target, actor, false);
                 break;

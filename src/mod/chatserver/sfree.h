@@ -30,7 +30,7 @@ static inline void szeromemory(void *ptr, size_t size)
     *(volatile char*)ptr = *(volatile char*)ptr;
 }
 
-#if defined(HAVE_OPENSSL) && !defined(_WIN32) && !defined(__APPLE__)
+#if !defined(_WIN32) && !defined(__APPLE__)
 #include <stdint.h>
 #include <dlfcn.h>
 
