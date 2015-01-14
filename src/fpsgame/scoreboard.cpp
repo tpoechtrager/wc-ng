@@ -6,7 +6,7 @@ namespace game
 {
     VARP(scoreboard2d, 0, 1, 1);
     VARP(showservinfo, 0, 1, 1);
-    VARP(showclientnum, 0, 0, 1);
+    VARP(showclientnum, 0, 0, 2); //NEW 1 -> 2
     VARP(showpj, 0, 0, 1);
     VARP(showping, 0, 1, 1);
     VARP(showspectators, 0, 1, 1);
@@ -620,7 +620,7 @@ namespace game
             if(oldscoreboard) goto name; //NEW
             cn:; //NEW
 
-            if(showclientnum || player1->privilege>=PRIV_MASTER)
+            if(showclientnum==1 || player1->privilege>=PRIV_MASTER) //NEW showclientnum || --> showclientnum==1 ||
             {
                 g.space(1);
                 g.pushlist();
@@ -666,11 +666,14 @@ namespace game
                 }
                 g.poplist();
 
-                g.space(1);
-                g.pushlist();
-                g.text("cn", scoreboardtextcolorhead);
-                loopv(spectators) g.textf("%d", scoreboardtextcolor, NULL, spectators[i]->clientnum);
-                g.poplist();
+                if(showclientnum==1) //NEW
+                {
+                    g.space(1);
+                    g.pushlist();
+                    g.text("cn", scoreboardtextcolorhead);
+                    loopv(spectators) g.textf("%d", scoreboardtextcolor, NULL, spectators[i]->clientnum);
+                    g.poplist();
+                }
 
                 //NEW
                 if(showspectatorping)
