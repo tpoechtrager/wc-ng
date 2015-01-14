@@ -737,7 +737,8 @@ namespace game
     const char *colorname(fpsent *d, const char *name, const char *prefix, const char *suffix, const char *alt)
     {
         if(!name) name = alt && d == player1 ? alt : d->name; 
-        bool dup = !name[0] || duplicatename(d, name, alt) || d->aitype != AI_NONE;
+        extern int showclientnum; //NEW
+        bool dup = showclientnum == 2 || !name[0] || duplicatename(d, name, alt) || d->aitype != AI_NONE; //NEW showclientnum == 2 ||
         if(dup || prefix[0] || suffix[0])
         {
             cidx = (cidx+1)%3;
