@@ -980,7 +980,13 @@ static void cmdopt_maxclientsperip(const char *val)
     maxclientsperip = min(atoi(val), NUMMAXCLIENTS);
 }
 
-static const char *const helptext[] =
+static void cmdopt_opensslversion(const char *)
+{
+    conoutf("openssl version: %s", SSLeay_version(SSLEAY_VERSION));
+    exit(EXIT_SUCCESS);
+}
+
+const char *const helptext[] =
 {
     "server password",
     "prompt for a server password on startup",
@@ -992,6 +998,7 @@ static const char *const helptext[] =
     "disable forward secrecy",
     "max clients",
     "max clients per ip",
+    "show openssl version",
     "help"
 };
 
@@ -1007,7 +1014,8 @@ static cmdopt cmdopts[] =
     { cmdopt_nopfs,           { "no-pfs", "npfs",         }, helptext[7]  },
     { cmdopt_maxclients,      { "maxclients", "mc"        }, helptext[8]  },
     { cmdopt_maxclientsperip, { "maxclientsperip", "mcpi" }, helptext[9]  },
-    { cmdopt_help,            { "help", "h"               }, helptext[10] },
+    { cmdopt_opensslversion,  { "openssl-version", "ov"   }, helptext[10] },
+    { cmdopt_help,            { "help", "h"               }, helptext[11] },
 };
 
 static void cmdopt_help(const char *val)
