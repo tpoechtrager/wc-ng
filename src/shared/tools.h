@@ -32,16 +32,6 @@ typedef unsigned long long int ullong;
 #define UNUSED
 #endif
 
-//NEW
-#ifdef __GNUC__
-#if !defined(__clang__) && __GNUC__ == 4 &&  __GNUC_MINOR__ <= 6
-// GCC 4.6 + range based for
-#define USE_STD_NEW
-#include <iterator>
-#endif
-#endif
-//NEW END
-
 #ifndef USE_STD_NEW //NEW
 //NEW throw()
 void operator delete(void *p) throw();
