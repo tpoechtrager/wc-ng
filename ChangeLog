@@ -1,6 +1,7 @@
 wc-ng v0.7.3 2014-xx-xx
 
   added:
+    - '/showclientnum 2': always show clientnum
     - '/showdamagedealt': show damage dealt
     - '/wcver [1]' which represents the current version of the client
       '/wcversion' should be avoided from now on
@@ -24,7 +25,7 @@ wc-ng v0.7.3 2014-xx-xx
     - '/scoreboardtextcolorhead': change scoreboard text color
 
   changed:
-    - in sync with sauerbraten r5064
+    - in sync with sauerbraten r5067
     - libcurl update to 7.39.0
     - libgeoip update to 1.6.0
     - windows client is now linked statically against its required libs
