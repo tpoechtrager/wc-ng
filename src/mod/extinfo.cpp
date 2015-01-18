@@ -53,6 +53,16 @@ namespace extinfo
         return exthost;
     }
 
+    struct brokenserver
+    {
+        ENetAddress addr;
+        int added;
+        bool operator==(const ENetAddress &in) const { return addressequal(addr, in); }
+        bool operator!=(const ENetAddress &in) const { return !(*this == in); }
+        static constexpr int MAX = 255;
+        static constexpr int MAX_TIME_DIFF = 1*60*60;
+    };
+
     struct exthost
     {
         int lastextping;
@@ -66,6 +76,7 @@ namespace extinfo
         ENetAddress addr;
         ENetSocket extsock;
 
+        vector<brokenserver> brokenservers;
         vector<callback> recvcallbacks;
 
         bool validatepacket(ucharbuf &p, bool ignorerequest = false, bool checknoerror = true)
@@ -134,6 +145,17 @@ namespace extinfo
                     case EXT_PLAYERSTATS:
                     {
                         if (!validatepacket(p)) break;
+
+                        if (!p.remaining())
+                        {
+                            if (brokenservers.find(addr)<0)
+                            {
+                                brokenservers.add({addr, totalmillis});
+                                if (brokenservers.length() > brokenserver::MAX) brokenservers.remove(0);
+                                requestplayer(-1, &addr);
+                            }
+                            break;
+                        }
 
                         switch (int type = getint(p))
                         {
@@ -300,10 +322,13 @@ namespace extinfo
             buf.data = p.buf;
             buf.dataLength = p.length();
 
-            if (address.host == ENET_HOST_TO_NET_32(2953399138u) && buf.dataLength >= 2)
+            if (buf.dataLength >= 2) loopvrev(brokenservers)
             {
-                // 176.9.75.98
+                const brokenserver &bs = brokenservers[i];
+                if (totalmillis-bs.added > brokenserver::MAX_TIME_DIFF) brokenservers.remove(i);
+                if (bs != address) continue;
                 ((uchar*)buf.data)[1] += 100u;
+                break;
             }
 
             if (addressequal(*addr, bouncerextinfohost))
