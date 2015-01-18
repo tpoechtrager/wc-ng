@@ -60,7 +60,7 @@ namespace extinfo
         bool operator==(const ENetAddress &in) const { return addressequal(addr, in); }
         bool operator!=(const ENetAddress &in) const { return !(*this == in); }
         static constexpr int MAX = 255;
-        static constexpr int MAX_TIME_DIFF = 1*60*60;
+        static constexpr int MAX_TIME_DIFF = 1000*60*60;
     };
 
     struct exthost
