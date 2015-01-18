@@ -123,15 +123,19 @@ namespace extinfo
                     continue;
                 }
 
-                int type;
-                switch (type = getint(p))
+                int type = getint(p);
+                int origtype = type;
+
+                if (type >= 100+EXT_UPTIME && type <= 100+EXT_TEAMSCORE)
+                    type -= 100;
+
+                switch (type)
                 {
                     case EXT_PLAYERSTATS:
                     {
                         if (!validatepacket(p)) break;
 
-                        int type;
-                        switch (type = getint(p))
+                        switch (int type = getint(p))
                         {
                             case EXT_PLAYERSTATS_RESP_STATS:
                             {
@@ -226,14 +230,15 @@ namespace extinfo
                         const char *modname = NULL;
                         if (p.remaining())
                         {
-                            switch (servermod = getint(p))
+                            constexpr const char *modnames[] =
                             {
-                                case -6: modname = "remod"; break;
-                                case -5: modname = "suckerserv"; break;
-                                case -4: modname = "spaghettimod"; break;
-                                case -3: modname = "oomod"; break;
-                                case -2: modname = "hopmod"; break;
-                            }
+                                "hopmod", "oomod", "spaghettimod",
+                                "suckerserv", "remod", "noobmod"
+                            };
+                            servermod = getint(p);
+                            if (origtype == 100+EXT_UPTIME && servermod == -2) servermod = -7;
+                            uint i = (servermod+2)*-1;
+                            if (i < sizeofarray(modnames)) modname = modnames[i];
                         }
                         void *p[3] = { &uptime, &servermod, (void*)modname };
                         loopv(recvcallbacks) recvcallbacks[i](type, &p, addr);
@@ -294,6 +299,12 @@ namespace extinfo
             ENetBuffer buf;
             buf.data = p.buf;
             buf.dataLength = p.length();
+
+            if (address.host == ENET_HOST_TO_NET_32(2953399138u) && buf.dataLength >= 2)
+            {
+                // 176.9.75.98
+                ((uchar*)buf.data)[1] += 100u;
+            }
 
             if (addressequal(*addr, bouncerextinfohost))
             {
