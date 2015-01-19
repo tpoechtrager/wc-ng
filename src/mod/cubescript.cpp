@@ -563,7 +563,7 @@ namespace mod
                         return;
                     }
 
-                    auto ip = ((extinfo::player*)d->extinfo)->ip;
+                    auto ip = d->extinfo->ip;
 
                     if (ip.ui32 == uint32_t(-1))
                     {
@@ -692,7 +692,7 @@ namespace mod
                 if (resolvedcns.find(cn) >= 0)
                   return 0;
 
-                if (((extinfo::player*)game::getclient(cn)->extinfo)->ip.ui32 == uint32_t(-1))
+                if (game::getclient(cn)->extinfo->ip.ui32 == uint32_t(-1))
                   return 0;
 
                 defformatstring(cnstr)("%u", cn);

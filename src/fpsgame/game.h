@@ -532,7 +532,9 @@ struct fpsstate
 struct fpsent : dynent, fpsstate
 {
     //NEW
-    void *extinfo;
+#ifndef STANDALONE
+    mod::extinfo::playerv2 *extinfo;
+#endif //STANDALONE
     const char *country, *countrycode;
     //NEW END
     int weight;                         // affects the effectiveness of hitpush
@@ -563,7 +565,9 @@ struct fpsent : dynent, fpsstate
     {
         name[0] = team[0] = info[0] = 0;
         //NEW
+#ifndef STANDALONE
         extinfo = NULL;
+#endif //STANDALONE
         resetcountry();
         //NEW END
         highresping = 0.0f;
@@ -583,7 +587,9 @@ struct fpsent : dynent, fpsstate
     fpsent(const fpsent &client)
     {
         *this = client;
-        extinfo = NULL; //prevent double free's in destructor
+#ifndef STANDALONE
+        extinfo = NULL; //prevent double frees in destructor
+#endif //STANDALONE
     }
     //NEW END
 
@@ -627,11 +633,7 @@ struct fpsent : dynent, fpsstate
 
     //NEW
 #ifndef STANDALONE
-    void resetextinfo()
-    {
-        if(extinfo)
-            ::mod::extinfo::freeextinfo(&extinfo);
-    }
+    void resetextinfo() { DELETEP(extinfo); }
 #endif //STANDALONE
 
     void resetcountry()

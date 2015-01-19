@@ -505,9 +505,9 @@ namespace game
     //NEW extended commands to support other clients
     ICOMMAND(getfrags, "s", (const char *cn), fpsent *o = getclient(cn); if(!o) o = player1; intret(o->frags));
     ICOMMAND(getflags, "s", (const char *cn), fpsent *o = getclient(cn); if(!o) o = player1; intret(o->flags));
-    ICOMMAND(getdeaths, "s", (const char *cn), fpsent *o = getclient(cn); if(!o) o = player1; intret(o->extinfo ? ((mod::extinfo::player *)o->extinfo)->deaths : o->deaths));
-    ICOMMAND(getteamkills, "s", (const char *cn), fpsent *o = getclient(cn); if(!o) o = player1; intret(o->extinfo ? ((mod::extinfo::player *)o->extinfo)->teamkills : o->teamkills)); //NEW
-    ICOMMAND(getaccuracy, "s", (const char *cn), fpsent *o = getclient(cn); if(!o) o = player1; intret(o->extinfo ? ((mod::extinfo::player *)o->extinfo)->acc : (o->totaldamage*100)/max(o->totalshots, 1)));
+    ICOMMAND(getdeaths, "s", (const char *cn), fpsent *o = getclient(cn); if(!o) o = player1; intret(o->extinfo ? o->extinfo->deaths : o->deaths));
+    ICOMMAND(getteamkills, "s", (const char *cn), fpsent *o = getclient(cn); if(!o) o = player1; intret(o->extinfo ? o->extinfo->teamkills : o->teamkills)); //NEW
+    ICOMMAND(getaccuracy, "s", (const char *cn), fpsent *o = getclient(cn); if(!o) o = player1; intret(o->extinfo ? o->extinfo->acc : (o->totaldamage*100)/max(o->totalshots, 1)));
     ICOMMAND(gettotaldamage, "s", (const char *cn), fpsent *o = getclient(cn); if(!o) o = player1; intret(o->totaldamage));
     ICOMMAND(gettotalshots, "s", (const char *cn), fpsent *o = getclient(cn); if(!o) o = player1; intret(o->totalshots));
     ICOMMAND(getping, "s", (const char *cn), fpsent *o = getclient(cn); if(!o) o = player1; intret(o->ping)); //NEW
@@ -1262,14 +1262,14 @@ namespace game
     #define loopexintofplayers(o, b) \
         loopv(ti.players) \
         { \
-            mod::extinfo::player& o = ti.players[i]->ep; \
+            auto &o = ti.players[i]->ep; \
             b; \
         }
 
     #define loopexintofplayerinfos(o, b) \
         loopv(ti.players) \
         { \
-            mod::extinfo::playerinfo& o = *ti.players[i]; \
+            mod::extinfo::playerinfo &o = *ti.players[i]; \
             b; \
         }
 
