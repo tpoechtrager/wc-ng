@@ -79,6 +79,14 @@ namespace extinfo
         vector<brokenserver> brokenservers;
         vector<callback> recvcallbacks;
 
+        bool addbrokenserver(const ENetAddress &addr)
+        {
+            if (brokenservers.find(addr)>=0) return false;
+            brokenservers.add({addr, totalmillis});
+            if (brokenservers.length() > brokenserver::MAX) brokenservers.remove(0);
+            return true;
+        }
+
         bool validatepacket(ucharbuf &p, bool ignorerequest = false, bool checknoerror = true)
         {
             int version;
@@ -148,12 +156,7 @@ namespace extinfo
 
                         if (!p.remaining())
                         {
-                            if (brokenservers.find(addr)<0)
-                            {
-                                brokenservers.add({addr, totalmillis});
-                                if (brokenservers.length() > brokenserver::MAX) brokenservers.remove(0);
-                                requestplayer(-1, &addr);
-                            }
+                            if (addbrokenserver(addr)) requestplayer(-1, &addr);
                             break;
                         }
 
@@ -246,8 +249,12 @@ namespace extinfo
                     case EXT_UPTIME:
                     {
                         if (p.get() != 1 || !validatepacket(p, true, false)) break;
+                        if (!p.remaining())
+                        {
+                            if (addbrokenserver(addr)) requestuptime(&addr);
+                            break;
+                        }
                         int uptime = getint(p);
-                        if (p.overread()) break;
                         int servermod = 0;
                         const char *modname = NULL;
                         if (p.remaining())
@@ -324,7 +331,7 @@ namespace extinfo
 
             if (buf.dataLength >= 2) loopvrev(brokenservers)
             {
-                const brokenserver &bs = brokenservers[i];
+                const brokenserver bs = brokenservers[i];
                 if (totalmillis-bs.added > brokenserver::MAX_TIME_DIFF) brokenservers.remove(i);
                 if (bs != address) continue;
                 ((uchar*)buf.data)[1] += 100u;

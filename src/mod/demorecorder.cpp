@@ -572,6 +572,8 @@ namespace demorecorder
                     if (p.maxlen-p.len != (int)extinfo::playerv1::basesize()) return NULL;
                     extinfo::playerv1 &v1 = *((extinfo::playerv1*)(p.buf+p.len));
                     v1.swap();
+                    v1.team[sizeof(v1.team)-1] = '\0';
+                    v1.name[sizeof(v1.name)-1] = '\0';
                     if (!buf) buf = new extinfo::playerv2(v1);
                     else *buf = v1;
                     v1.swap();
