@@ -64,8 +64,8 @@ namespace demorecorder
         void jumppad(int jp, void *d);
         void teleport(int n, int td, void *d);
 
-        void putextinfoobj(extinfo::player *ep);
-        extinfo::player *getextinfoobj(ucharbuf &p, extinfo::player *buf = NULL, bool getptr = false);
+        void putextinfoobj(extinfo::playerv2 *ep);
+        extinfo::playerv2 *getextinfoobj(ucharbuf &p, extinfo::playerv2 *buf = NULL);
 
         void putdemoinfoobj(ucharbuf &p);
         demoinfo_t* getdemoinfoobj(ucharbuf &p, demoinfo_t *demoinfo);
@@ -145,7 +145,7 @@ namespace searchdemo
     {
         const char *gamemode;
         char *demo;
-        vector<extinfo::player*> result;
+        vector<extinfo::playerv2*> result;
         demorecorder::demoinfo_t *demoinfo;
 
         searchdemoinfo() : demoinfo(NULL) { }
@@ -207,8 +207,8 @@ namespace searchdemo
     struct parsedemo_t
     {
         const char *demo;
-        const extinfo::player *fp;
-        vector<extinfo::player*> *result;
+        const extinfo::playerv2 *fp;
+        vector<extinfo::playerv2*> *result;
         demorecorder::demoinfo_t *demoinfo;
         llong *demofilesize;
         ullong *uncompressticks;

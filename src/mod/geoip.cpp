@@ -133,7 +133,7 @@ namespace geoip
     void lookupplayercountry(void *client)
     {
         fpsent *d = (fpsent*)client;
-        extinfo::player *ep = (extinfo::player*)d->extinfo;
+        auto *ep = d->extinfo;
 
         if (d->countrycode)
             return;

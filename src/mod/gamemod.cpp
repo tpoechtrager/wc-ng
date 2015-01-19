@@ -60,12 +60,12 @@ namespace gamemod
     const char *calcteamkills(void *c, char *buf, size_t len, bool scoreboard, bool increase)
     {
         fpsent *d = (fpsent*)c;
-        extinfo::player *ep = (extinfo::player*)d->extinfo;
+        auto *ep = d->extinfo;
 
         if (!ep)
             return NULL;
 
-        int16_t &teamkills = ep->teamkills;
+        auto &teamkills = ep->teamkills;
 
         if (increase)
         {
@@ -90,7 +90,7 @@ namespace gamemod
                                    fpsent *d, mod::strtool &error, const char *currentmode = NULL,
                                    bool notmatching = false);
 
-    static bool formatplayerstats(int type, fpsent *d, extinfo::player *ep, mod::strtool &str)
+    static bool formatplayerstats(int type, fpsent *d, extinfo::playerv2 *ep, mod::strtool &str)
     {
         switch (type)
         {
@@ -455,7 +455,7 @@ namespace gamemod
         static const int RECURSIONLIMIT = 50;
         CHECKCALLDEPTH(RECURSIONLIMIT, error = "too many recursive game mode checks"; return NULL);
 
-        extinfo::player *ep = d ? (extinfo::player*)d->extinfo : NULL;
+        extinfo::playerv2 *ep = d ? d->extinfo : NULL;
 
         const char *start = fmt;
         --fmt;
@@ -674,7 +674,7 @@ namespace gamemod
                 {
                     fpsent *c = clients[i];
                     if (!c || c->aitype != AI_NONE) continue;
-                    extinfo::player *ep = (extinfo::player*)c->extinfo;
+                    auto *ep = c->extinfo;
                     if (ep && ep->ip.ui32 != uint32_t(-1))
                     {
                         rv = true;
@@ -700,8 +700,3 @@ namespace gamemod
         return false;
     }
 }
-
-#if PROTOCOL_VERSION > 259
-// this check must be in here, because we don't have PROTOCOL_VERSION defined in extinfo.h
-#warning fix mod::extinfo::player struct alignment (get rid of unneeded padding bytes)
-#endif

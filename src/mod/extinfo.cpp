@@ -161,7 +161,7 @@ namespace extinfo
                         {
                             case EXT_PLAYERSTATS_RESP_STATS:
                             {
-                                player cp;
+                                playerv2 cp;
 
                                 cp.cn = getint(p);
                                 cp.ping = getint(p);
@@ -200,9 +200,9 @@ namespace extinfo
                                 if (d)
                                 {
                                     if (!d->extinfo)
-                                        d->extinfo = new player;
+                                        d->extinfo = new playerv2;
 
-                                    *(extinfo::player*)d->extinfo = cp;
+                                    *d->extinfo = cp;
 
                                     bool hadcountry = !!d->country;
                                     geoip::lookupplayercountry(d);
@@ -429,9 +429,9 @@ namespace extinfo
     void slice() { if (eh) eh->extprocess(); }
     void connect() { if (curpeer && eh) eh->connect(); }
     void newplayer(int cn) { if (curpeer && eh && game::hasextinfo) eh->requestplayer(cn, &curpeer->address); }
-    void requestplayers(ENetAddress& addr) { if (eh) eh->requestplayer(-1, &addr); }
-    void requestteaminfo(ENetAddress& addr) { if (eh) eh->requestteaminfo(&addr); }
-    void requestuptime(ENetAddress& addr) { if (eh) eh->requestuptime(&addr); }
+    void requestplayers(ENetAddress &addr) { if (eh) eh->requestplayer(-1, &addr); }
+    void requestteaminfo(ENetAddress &addr) { if (eh) eh->requestteaminfo(&addr); }
+    void requestuptime(ENetAddress &addr) { if (eh) eh->requestuptime(&addr); }
     void addrecvcallback(callback cb) { if (eh) eh->recvcallbacks.add(cb); }
     void delrecvcallback(callback cb) { if (eh) eh->recvcallbacks.removeobj(cb); }
     int getserveruptime()
@@ -452,7 +452,7 @@ namespace extinfo
         return eh->servermodname;
     }
 
-    void extinfoupdateevent(player& cp)
+    void extinfoupdateevent(playerv2 &cp)
     {
         const char *eventargs;
 
@@ -466,15 +466,6 @@ namespace extinfo
                    cp.cn, cp.ping, cp.name, cp.team, cp.frags, cp.flags, cp.deaths, cp.teamkills,
                    cp.acc, cp.health, cp.armour, cp.gunselect, cp.priv, cp.state,
                    cp.ip.ia[0], cp.ip.ia[1], cp.ip.ia[2], cp.ip.ia[3]);
-    }
-
-    void freeextinfo(void **extinfo)
-    {
-        if (!*extinfo)
-            return;
-
-        delete (extinfo::player*)*extinfo;
-        *extinfo = NULL;
     }
 } // namespace extinfo
 } // namespace mod

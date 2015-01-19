@@ -306,7 +306,7 @@ namespace gamemod
                 int c = d->name[playerdisplaymaxnamelen];
                 d->name[playerdisplaymaxnamelen] = 0;
 
-                extinfo::player *ep = (extinfo::player*)d->extinfo;
+                auto *ep = d->extinfo;
 
                 int top = conh;
 

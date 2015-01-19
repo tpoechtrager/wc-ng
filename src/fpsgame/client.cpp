@@ -2100,22 +2100,23 @@ namespace game
                 if(isconnected(false, false)) return;
                 DEMORECORDER_SKIP_PACKET_NC;
 
-                mod::extinfo::player *ep = mod::demorecorder::self::getextinfoobj(p, NULL, true);
 
-                if(ep)
+                mod::extinfo::playerv2 ep;
+
+                if(mod::demorecorder::self::getextinfoobj(p, &ep))
                 {
-                    fpsent *d = getclient(ep->cn);
+                    fpsent *d = getclient(ep.cn);
 
                     if(!d)
                         break;
 
                     if(!d->extinfo)
-                        d->extinfo = new mod::extinfo::player;
+                        d->extinfo = new mod::extinfo::playerv2;
 
-                    *(mod::extinfo::player*)d->extinfo = *ep;
+                    *d->extinfo = ep;
                     mod::geoip::lookupplayercountry(d);
 
-                    mod::extinfo::extinfoupdateevent(*ep);
+                    mod::extinfo::extinfoupdateevent(ep);
                     demohasextinfo = true;
                     break;
                 }

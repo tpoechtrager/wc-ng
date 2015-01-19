@@ -99,7 +99,7 @@ namespace ipignore
                 return;
             }
 
-            ip.ip = (((extinfo::player*)d->extinfo)->ip.ui32);
+            ip.ip = d->extinfo->ip.ui32;
             ip.setbitcount(24);
             ok = true;
         }
@@ -267,13 +267,13 @@ namespace ipignore
     bool isignored(int cn, const char *text)
     {
         fpsent *d = game::getclient(cn);
-        extinfo::player *ep = NULL;
+        extinfo::playerv2 *ep = NULL;
         ipmask ip;
 
         if (!d)
             return false;
 
-        ep = (extinfo::player*)d->extinfo;
+        ep = d->extinfo;
         ip.ip = ep ? ep->ip.ui32 : 0;
         ip.setbitcount(24);
 

@@ -538,47 +538,63 @@ namespace demorecorder
             writedemo(0, p.buf, p.length());
         }
 
-        void putextinfoobj(extinfo::player *ep)
+        void putextinfoobj(extinfo::playerv2 *ep)
         {
-            uchar buf[sizeof(extinfo::player)*2];
+            uchar buf[extinfo::playerv2::basesize()*2];
             ucharbuf p(buf, sizeof(buf));
 
             putint(p, N_DEMORECORDER_EXTINFO_INT);
-            putint(p, extinfo::player::VERSION);
-            putint(p, sizeof(extinfo::player));
+            putint(p, extinfo::playerv2::version());
+            putint(p, extinfo::playerv2::basesize());
 
-            if ((p.maxlen-p.length()) < (int)sizeof(extinfo::player))
+            if ((p.maxlen-p.length()) < (int)extinfo::playerv2::basesize())
                 return;
 
-            ep->swap();
-            memcpy(p.buf+p.length(), ep, sizeof(extinfo::player));
-            ep->swap();
+            ep->swapbase();
+            memcpy(p.buf+p.length(), ep, extinfo::playerv2::basesize());
+            ep->swapbase();
 
-            p.len += sizeof(extinfo::player);
+            p.len += extinfo::playerv2::basesize();
 
             writedemo(2, p.buf, p.length());
         }
 
-        extinfo::player *getextinfoobj(ucharbuf &p, extinfo::player *buf, bool getptr)
+        extinfo::playerv2 *getextinfoobj(ucharbuf &p, extinfo::playerv2 *buf)
         {
-            if (getint(p) != extinfo::player::VERSION || getint(p) != (int)sizeof(extinfo::player) ||
-                p.maxlen-p.len != (int)sizeof(extinfo::player))
-                 return NULL;
+            int version = getint(p);
+            int basesize = getint(p);
 
-            if (!buf)
+            switch (version)
             {
-                if (getptr)
-                    buf = (extinfo::player*)(p.buf+p.len);
-                else
-                    buf = new extinfo::player(*(extinfo::player*)(p.buf+p.len));
+                case extinfo::playerv1::version():
+                {
+                    if (basesize != (int)extinfo::playerv1::basesize()) return NULL;
+                    if (p.maxlen-p.len != (int)extinfo::playerv1::basesize()) return NULL;
+                    extinfo::playerv1 &v1 = *((extinfo::playerv1*)(p.buf+p.len));
+                    v1.swap();
+                    if (!buf) buf = new extinfo::playerv2(v1);
+                    else *buf = v1;
+                    v1.swap();
+                    break;
+                }
+
+                case extinfo::playerv2::version():
+                {
+                    if (basesize != (int)extinfo::playerv2::basesize()) return NULL;
+                    if (p.maxlen-p.len != (int)extinfo::playerv2::basesize()) return NULL;
+                    if (!buf) buf = new extinfo::playerv2(p.buf+p.len);
+                    else buf->initbase(p.buf+p.len);
+                    buf->swapbase();
+                    break;
+                }
+
+                default: return NULL;
             }
 
-            p.len += sizeof(extinfo::player);
+            p.len += basesize;
 
-            buf->name[sizeof(buf->name)-1] = 0;
-            buf->team[sizeof(buf->team)-1] = 0;
-
-            buf->swap();
+            buf->name[sizeof(buf->name)-1] = '\0';
+            buf->team[sizeof(buf->team)-1] = '\0';
 
             return buf;
         }
@@ -743,6 +759,8 @@ namespace searchdemo
 
         size_t ulen;
         void *udata = NULL;
+
+        extinfo::playerv2 ep;
 
         {
             //
@@ -935,46 +953,43 @@ namespace searchdemo
                 {
                     extinfocount++;
 
-                    // get a pointer to the extinfo object in the demo buffer
-                    extinfo::player *ep = demorecorder::self::getextinfoobj(p, NULL, true);
-
-                    if (!ep || !pd->fp || !pd->result)
+                    if (!demorecorder::self::getextinfoobj(p, &ep) || !pd->fp || !pd->result)
                         break;
 
                     bool update = false;
                     bool ok = false;
 
-                    const extinfo::player &fp = *pd->fp;
-                    vector<extinfo::player*> &result = *pd->result;
+                    const extinfo::playerv2 &fp = *pd->fp;
+                    vector<extinfo::playerv2*> &result = *pd->result;
 
-                    if (*fp.name)          { ok = strstr(ep->name, fp.name) != NULL;  if (!ok) goto cont; }
-                    if (fp.frags > -1)     { ok = ep->frags >= fp.frags;              if (!ok) goto cont; }
-                    if (fp.deaths > -1)    { ok = ep->deaths >= fp.deaths;            if (!ok) goto cont; }
-                    if (fp.flags > -1)     { ok = ep->flags >= fp.flags;              if (!ok) goto cont; }
-                    if (fp.teamkills > -1) { ok = ep->teamkills >= fp.teamkills;      if (!ok) goto cont; }
-                    if (fp.ping > -1)      { ok = ep->ping >= fp.ping;                if (!ok) goto cont; }
-                    if (fp.acc > -1)       { ok = ep->acc >= fp.acc;                  if (!ok) goto cont; }
-                    if (fp.priv > -1)      { ok = ep->priv >= fp.priv;                if (!ok) goto cont; }
+                    if (*fp.name)          { ok = strstr(ep.name, fp.name) != NULL;  if (!ok) goto cont; }
+                    if (fp.frags > -1)     { ok = ep.frags >= fp.frags;              if (!ok) goto cont; }
+                    if (fp.deaths > -1)    { ok = ep.deaths >= fp.deaths;            if (!ok) goto cont; }
+                    if (fp.flags > -1)     { ok = ep.flags >= fp.flags;              if (!ok) goto cont; }
+                    if (fp.teamkills > -1) { ok = ep.teamkills >= fp.teamkills;      if (!ok) goto cont; }
+                    if (fp.ping > -1)      { ok = ep.ping >= fp.ping;                if (!ok) goto cont; }
+                    if (fp.acc > -1)       { ok = ep.acc >= fp.acc;                  if (!ok) goto cont; }
+                    if (fp.priv > -1)      { ok = ep.priv >= fp.priv;                if (!ok) goto cont; }
 
                     ok = false;
 
                     loopvj(result)
                     {
-                        if (result[j]->ip.ui32 == ep->ip.ui32)
+                        if (result[j]->ip.ui32 == ep.ip.ui32)
                         {
                             if (*fp.name)
-                                ok = !strcmp(result[j]->name, ep->name);
+                                ok = !strcmp(result[j]->name, ep.name);
 
                             if (!ok)
                             {
-                                if (result[j]->cn == ep->cn)
+                                if (result[j]->cn == ep.cn)
                                     ok = true;
                             }
 
                             if (!ok)
                                 continue;
 
-                            *result[j] = *ep;
+                            *result[j] = ep;
                             update = true;
 
                             break;
@@ -984,7 +999,7 @@ namespace searchdemo
                     if (update)
                         continue;
 
-                    result.add(new extinfo::player(*ep));
+                    result.add(new extinfo::playerv2(ep));
                     continue;
 
                     cont:;
@@ -1082,7 +1097,7 @@ namespace searchdemo
         {
             string error;
             string demo;
-            vector<extinfo::player*> result;
+            vector<extinfo::playerv2*> result;
             llong demofilesize;
             ullong uncompressticks;
             ullong parsedemoticks;
@@ -1186,7 +1201,7 @@ namespace searchdemo
             processresult = false;
         }
 
-        demothread_t(const extinfo::player &fp, int filecount, int gamemode, const char *servername,
+        demothread_t(const extinfo::playerv2 &fp, int filecount, int gamemode, const char *servername,
                      const char *mapname, llong mindemosize, int threadid, SDL_cond *availablecond) :
                      threadid(threadid), mutex(SDL_CreateMutex()), cond(SDL_CreateCond()), jointhread(false),
                      waiting(false), availablecond(availablecond), filecount(filecount)
@@ -1280,7 +1295,7 @@ namespace searchdemo
         }
     }
 
-    void processthreadresult(demothread_t *thread, const char *mode, const extinfo::player &fp,
+    void processthreadresult(demothread_t *thread, const char *mode, const extinfo::playerv2 &fp,
                              vector<searchdemoinfo*> &totalresult, int &readerrors, int &noextinfocount,
                              llong &totalfilesize, ullong &totaluncompressticks, ullong &totalparsedemoticks,
                              ullong &totalpacketcount, ullong &totalcputicks, const int &processnum, llong mindemosize = -1)
@@ -1347,7 +1362,7 @@ namespace searchdemo
         thread->reset();
     }
 
-    void checkdemos(const char *dir, vector<char*> &files, const char *mode, const extinfo::player &fp,
+    void checkdemos(const char *dir, vector<char*> &files, const char *mode, const extinfo::playerv2 &fp,
                     vector<searchdemoinfo*> &totalresult, int &readerrors, int &noextinfocount, llong &totalfilesize,
                     ullong &totaluncompressticks, ullong &totalparsedemoticks, ullong &totalpacketcount, ullong &totalcputicks,
                     int gamemode = -1, const char *servername = NULL, const char *mapname = NULL, llong mindemosize = -1,
@@ -1471,7 +1486,7 @@ namespace searchdemo
         #undef CHECKJOIN
     }
 
-    void searchinalldemos(const extinfo::player &fp, vector<searchdemoinfo*> &totalresult,
+    void searchinalldemos(const extinfo::playerv2 &fp, vector<searchdemoinfo*> &totalresult,
                           int gamemode = -1, const char *servername = NULL, const char *mapname = NULL,
                           llong mindemosize = -1, int maxthreads = MAXTHREADS)
     {
@@ -1566,7 +1581,7 @@ namespace searchdemo
         return 0; // same time..?
     }
 
-    static int compareplayer_frags_desc(const extinfo::player *a, const extinfo::player *b)
+    static int compareplayer_frags_desc(const extinfo::playerv2 *a, const extinfo::playerv2 *b)
     {
         if (a->frags > b->frags) return -1;
         if (a->frags < b->frags) return 0;
@@ -1577,7 +1592,7 @@ namespace searchdemo
                               int frags, int deaths, int acc, int teamkills, int flags, int priv, int maxresults = -1,
                               llong mindemosize = -1, int maxthreads = MAXTHREADS)
     {
-        extinfo::player fp;
+        extinfo::playerv2 fp;
 
         fp.frags = frags;
         fp.deaths = deaths;
@@ -1707,7 +1722,7 @@ namespace searchdemo
 
                 loopvj(sdi.result)
                 {
-                    extinfo::player &p = *sdi.result[j];
+                    extinfo::playerv2 &p = *sdi.result[j];
                     escapebuf.clear();
 
 #ifdef ENABLE_IPS

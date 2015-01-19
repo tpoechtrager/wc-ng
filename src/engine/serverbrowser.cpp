@@ -684,7 +684,7 @@ void extinforecv(int type, void *p, ENetAddress &addr)
         }
         case EXT_PLAYERSTATS_RESP_STATS:
         {
-            mod::extinfo::player *ep = (mod::extinfo::player*)p;
+            auto *ep = (mod::extinfo::playerv2*)p;
             int index = si->playersfollowing.find(ep->cn);
             if (index < 0) break;
             si->playerstmp.add(ep);
@@ -887,7 +887,7 @@ void loopextinfoplayers(const char *name, const char *country, const char *callb
         loopvk(si->players)
         {
             mod::extinfo::playerinfo &p = si->players[k];
-            mod::extinfo::player &ep = p.ep;
+            mod::extinfo::playerv2 &ep = p.ep;
 
             if (!find.empty())
             {
