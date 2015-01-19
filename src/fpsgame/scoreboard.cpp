@@ -524,9 +524,7 @@ namespace game
 
                     loopscoregroup(o,
                     {
-                        if(o->extinfo) g.textf("%.2f", scoreboardtextcolor, NULL,
-                            float((float)(o->extinfo->frags / (o->extinfo->deaths > 0 ? (float)o->extinfo->deaths : 1.00f)))
-                        );
+                        if(o->extinfo) g.textf("%.2f", scoreboardtextcolor, NULL, o->extinfo->frags / (o->extinfo->deaths > 0 ? o->extinfo->deaths*1.f : 1.00f));
                         else g.textf("%s", scoreboardtextcolor, NULL, "??");
                     });
 
