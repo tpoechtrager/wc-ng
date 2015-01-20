@@ -270,7 +270,7 @@ namespace game
     static inline void renderip(g3d_gui &g, fpsent *o)
     {
         if(o->extinfo) g.textf("%u.%u.%u", scoreboardtextcolor, NULL, o->extinfo->ip.ia[0], o->extinfo->ip.ia[1], o->extinfo->ip.ia[2]);
-        else g.textf("%s", scoreboardtextcolor, NULL, "??");
+        else g.text("??", scoreboardtextcolor);
     }
     //NEW END
 
@@ -492,7 +492,7 @@ namespace game
                     loopscoregroup(o,
                     {
                         if(o->extinfo) g.textf("%d", scoreboardtextcolor, NULL, o->extinfo->deaths);
-                        else g.textf("%s", scoreboardtextcolor, NULL, "??");
+                        else g.text("??", scoreboardtextcolor);
                     });
 
                     g.poplist();
@@ -525,7 +525,7 @@ namespace game
                     loopscoregroup(o,
                     {
                         if(o->extinfo) g.textf("%.2f", scoreboardtextcolor, NULL, o->extinfo->frags / (o->extinfo->deaths > 0 ? o->extinfo->deaths*1.f : 1.00f));
-                        else g.textf("%s", scoreboardtextcolor, NULL, "??");
+                        else g.text("??", scoreboardtextcolor);
                     });
 
                     g.poplist();
@@ -540,7 +540,7 @@ namespace game
                     loopscoregroup(o,
                     {
                         if(o->extinfo) g.textf("%d%%", scoreboardtextcolor, NULL, o->extinfo->acc);
-                        else g.textf("%s", scoreboardtextcolor, NULL, "??");
+                        else g.text("??", scoreboardtextcolor);
                     });
 
                     g.poplist();

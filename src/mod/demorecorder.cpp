@@ -587,6 +587,8 @@ namespace demorecorder
                     if (!buf) buf = new extinfo::playerv2(p.buf+p.len);
                     else buf->initbase(p.buf+p.len);
                     buf->swapbase();
+                    buf->name[sizeof(buf->name)-1] = '\0';
+                    buf->team[sizeof(buf->team)-1] = '\0';
                     break;
                 }
 
@@ -594,9 +596,6 @@ namespace demorecorder
             }
 
             p.len += basesize;
-
-            buf->name[sizeof(buf->name)-1] = '\0';
-            buf->team[sizeof(buf->team)-1] = '\0';
 
             return buf;
         }
