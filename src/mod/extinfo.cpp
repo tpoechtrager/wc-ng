@@ -262,7 +262,8 @@ namespace extinfo
                             constexpr const char *modnames[] =
                             {
                                 "hopmod", "oomod", "spaghettimod",
-                                "suckerserv", "remod", "noobmod"
+                                "suckerserv", "remod", "noobmod",
+                                "zeromod"
                             };
                             servermod = getint(p);
                             if (origtype == 100+EXT_UPTIME && servermod == -2) servermod = -7;
