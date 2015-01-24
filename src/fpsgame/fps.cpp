@@ -1465,8 +1465,11 @@ namespace game
         loopv(teams)
         {
             teaminfo& ti = teams[i];
-
             if (ti.players.empty()) continue;
+
+            bool extended = false;
+            loopexintofplayers(ep, { if (ep.ext.ishopmodcompatible()) { extended = true; break; } });
+
             if (i > 0) g.separator();
 
             bool isspecteam;
@@ -1542,6 +1545,20 @@ namespace game
             g.text("deaths", color);
             loopexintofplayers(ep, g.textf("%d", 0xFFFFDD, NULL, ep.deaths));
             g.poplist();
+
+            extern int showdamagedealt;
+            if (extended && showdamagedealt)
+            {
+                g.pushlist();
+                g.strut(6);
+                g.text("dd", color);
+                loopexintofplayers(ep,
+                {
+                    bool get = ep.ext.damage>=1000 || showdamagedealt==2;
+                    g.textf(get ? "%.2fk" : "%.0f", 0xFFFFDD, NULL, get ? ep.ext.damage/1000.f : ep.ext.damage*1.f);
+                });
+                g.poplist();
+            }
 
             g.pushlist();
             g.strut(6);

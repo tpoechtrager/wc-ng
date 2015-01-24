@@ -510,7 +510,10 @@ namespace game
                     loopscoregroup(o,
                     {
                         bool get = o->damagedealt>=1000 || showdamagedealt==2;
-                        g.textf(get ? "%.2fk" : "%.0f", scoreboardtextcolor, NULL, get ?  o->damagedealt/1000.f :  o->damagedealt*1.f));
+                        int damagedealt;
+                        if(o->extinfo && o->extinfo->ext.ishopmodcompatible()) damagedealt = max(o->damagedealt, o->extinfo->ext.damage);
+                        else damagedealt = o->damagedealt;
+                        g.textf(get ? "%.2fk" : "%.0f", scoreboardtextcolor, NULL, get ? damagedealt/1000.f : damagedealt*1.f));
                     }
 
                     g.poplist();

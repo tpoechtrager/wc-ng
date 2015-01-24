@@ -91,7 +91,12 @@ namespace extinfo
         {
             int version;
 
-            if (!ignorerequest) getint(p); // request
+            if (!ignorerequest)
+            {
+                getint(p); // request
+                int len = p.len;
+                if (getint(p) != 0xC8343F2) p.len = len;
+            }
             if (getint(p) != EXT_ACK) goto error;
 
             version = getint(p);
@@ -193,6 +198,34 @@ namespace extinfo
 
                                 if (ip != 0)
                                     cp.ip.ui32 = ip;
+
+                                if (p.remaining())
+                                {
+                                    getint(p);
+
+                                    switch (int type = getint(p))
+                                    {
+                                        case -2: /* hopmod */
+                                        case -4: /* spaghettimod */
+                                        case -5: /* suckerserv */
+                                        {
+                                            cp.ext.mod = type;
+                                            cp.ext.suicides = getint(p);
+                                            cp.ext.shotdamage = getint(p);
+                                            cp.ext.damage = getint(p);
+                                            cp.ext.explosivedamage = getint(p);
+                                            cp.ext.hits = getint(p);
+                                            cp.ext.misses = getint(p);
+                                            cp.ext.shots = getint(p);
+                                        }
+                                    }
+
+                                    if (p.overread())
+                                    {
+                                        cp.ext.mod = 0;
+                                        conoutf("fail");
+                                    }
+                                }
 
                                 loopv(recvcallbacks) recvcallbacks[i](type, &cp, addr);
 
@@ -358,6 +391,26 @@ namespace extinfo
             enet_socket_send(extsock, &address, &buf, 1);
         }
 
+        bool isogrosserver(const ENetAddress &addr)
+        {
+            constexpr const char *ooserverips[] = { "85.214.66.181", "81.169.152.17" };
+            static ENetAddress ooservers[sizeofarray(ooserverips)];
+
+            if (!ooservers[0].host)
+            {
+                int i = 0;
+
+                for (auto ooserver : ooserverips)
+                {
+                    if (enet_address_set_host(&ooservers[i++], ooserver) < 0)
+                        abort();
+                }
+            }
+
+            for (auto &ooserver : ooservers) if (ooserver.host == addr.host) return true;
+            return false;
+        }
+
         void requestplayer(int cn, ENetAddress *addr = NULL)
         {
             uchar ubuf[100];
@@ -366,6 +419,14 @@ namespace extinfo
             putint(p, 0);
             putint(p, EXT_PLAYERSTATS);
             putint(p, cn);
+
+            // this is broken in the current ogros servers,
+            // so exclude them for now.
+            if (!isogrosserver(*addr))
+            {
+                // request more informations
+                putint(p, 0xC8343F2);
+            }
 
             sendbuf(p, addr);
         }
