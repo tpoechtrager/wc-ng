@@ -115,6 +115,9 @@ namespace extinfo
 
         struct /* extension */
         {
+            bool ishopmod() { return mod == -2 || mod == -5; }
+            bool ishopmodcompatible() { return ishopmod() || mod == -4; }
+
             int mod;
             int suicides;
             int shotdamage;

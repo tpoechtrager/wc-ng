@@ -31,7 +31,7 @@ wc-ng v0.7.3 2015-xx-xx
       still play flawlessly!). it may be worth to mention that old demos *are*
       compatible with this version, but not the other way around.
     - enhanced server mod detection (including: hopmod, oomod, spaghettimod,
-      suckerserv, remod & noobmod)
+      suckerserv, remod, noobmod & zeromod)
     - in sync with sauerbraten r5067
     - libcurl update to 7.40.0
     - libgeoip update to 1.6.4
