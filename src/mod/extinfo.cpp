@@ -220,11 +220,7 @@ namespace extinfo
                                         }
                                     }
 
-                                    if (p.overread())
-                                    {
-                                        cp.ext.mod = 0;
-                                        conoutf("fail");
-                                    }
+                                    if (p.overread()) cp.ext.mod = 0;
                                 }
 
                                 loopv(recvcallbacks) recvcallbacks[i](type, &cp, addr);
