@@ -1472,7 +1472,7 @@ namespace game
             if (ti.players.empty()) continue;
 
             bool extended = false;
-            loopexintofplayers(ep, { if (ep.ext.ishopmodcompatible()) { extended = true; break; } });
+            loopexintofplayers(ep, { if (ep.ext.ishopmodcompatible() || ep.ext.isoomod()) { extended = true; break; } });
 
             if (i > 0) g.separator();
 

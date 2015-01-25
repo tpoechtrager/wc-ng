@@ -511,7 +511,7 @@ namespace game
                     {
                         bool get = o->damagedealt>=1000 || showdamagedealt==2;
                         int damagedealt;
-                        if(o->extinfo && o->extinfo->ext.ishopmodcompatible()) damagedealt = max(o->damagedealt, o->extinfo->ext.damage);
+                        if(o->extinfo && (o->extinfo->ext.ishopmodcompatible() || o->extinfo->ext.isoomod())) damagedealt = max(o->damagedealt, o->extinfo->ext.damage);
                         else damagedealt = o->damagedealt;
                         g.textf(get ? "%.2fk" : "%.0f", scoreboardtextcolor, NULL, get ? damagedealt/1000.f : damagedealt*1.f));
                     }
