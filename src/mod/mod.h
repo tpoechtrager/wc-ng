@@ -284,6 +284,12 @@ namespace game
     int getactioncn(bool cubescript = false);
 }
 
+template <class L, class R>
+void assign(L &l, R &&r)
+{
+    l = (L)r;
+}
+
 class noncopyable
 {
 protected:

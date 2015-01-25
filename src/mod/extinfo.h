@@ -42,6 +42,25 @@
 namespace mod {
 namespace extinfo
 {
+    enum servermod : int
+    {
+        SM_INVALID       = 0,
+        SM_HOPMOD        = -2,
+        SM_OOMOD         = -3,
+        SM_SPAGHETTIMOD  = -4,
+        SM_SUCKERSERV    = -5,
+        SM_REMOD         = -6,
+        SM_NOOBMOD       = -7,
+        SM_ZEROMOD       = -8
+    };
+
+    constexpr const char *SERVERMODNAMES[] =
+    {
+        "hopmod", "oomod", "spaghettimod",
+        "suckerserv", "remod", "noobmod",
+        "zeromod"
+    };
+
     struct playerv1
     {
         uint8_t cn;
@@ -115,11 +134,11 @@ namespace extinfo
 
         struct /* extension */
         {
-            bool ishopmod() { return mod == -2 || mod == -5; }
-            bool isoomod() { return mod == -3; }
-            bool ishopmodcompatible() { return ishopmod() || mod == -4; }
+            bool ishopmod() { return mod == SM_HOPMOD || mod == SM_SUCKERSERV; }
+            bool ishopmodcompatible() { return ishopmod() || mod == SM_SPAGHETTIMOD; }
+            bool isoomod() { return mod == SM_OOMOD; }
 
-            int mod;
+            servermod mod;
             int suicides;
             int shotdamage;
             int damage;
