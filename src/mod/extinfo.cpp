@@ -202,14 +202,14 @@ namespace extinfo
                                 if (p.remaining())
                                 {
                                     getint(p);
+                                    int mod = getint(p);
 
-                                    switch (int type = getint(p))
+                                    switch (mod)
                                     {
-                                        case -2: /* hopmod */
-                                        case -4: /* spaghettimod */
-                                        case -5: /* suckerserv */
+                                        case SM_HOPMOD:
+                                        case SM_SPAGHETTIMOD:
+                                        case SM_SUCKERSERV:
                                         {
-                                            cp.ext.mod = type;
                                             cp.ext.suicides = getint(p);
                                             cp.ext.shotdamage = getint(p);
                                             cp.ext.damage = getint(p);
@@ -217,22 +217,31 @@ namespace extinfo
                                             cp.ext.hits = getint(p);
                                             cp.ext.misses = getint(p);
                                             cp.ext.shots = getint(p);
+                                            break;
                                         }
 
-                                        case -3: /* oomod */
+                                        case SM_OOMOD:
                                         {
                                             if (getint(p) != 1) break; // version
-                                            cp.ext.mod = type;
                                             cp.ext.suicides = getint(p);
                                             cp.ext.shotdamage = getint(p);
                                             cp.ext.damage = getint(p);
                                             cp.ext.captured = getint(p);
                                             cp.ext.stolen = getint(p);
                                             cp.ext.defended = getint(p);
+                                            break;
                                         }
+
+                                        default: goto error;
                                     }
 
-                                    if (p.overread()) cp.ext.mod = 0;
+                                    assign(cp.ext.mod, mod);
+
+                                    if (p.overread())
+                                    {
+                                        error:;
+                                        cp.ext.mod = SM_INVALID;
+                                    }
                                 }
 
                                 loopv(recvcallbacks) recvcallbacks[i](type, &cp, addr);
@@ -300,16 +309,10 @@ namespace extinfo
                         const char *modname = NULL;
                         if (p.remaining())
                         {
-                            constexpr const char *modnames[] =
-                            {
-                                "hopmod", "oomod", "spaghettimod",
-                                "suckerserv", "remod", "noobmod",
-                                "zeromod"
-                            };
                             servermod = getint(p);
                             if (origtype == 100+EXT_UPTIME && servermod == -2) servermod = -7;
                             uint i = (servermod+2)*-1;
-                            if (i < sizeofarray(modnames)) modname = modnames[i];
+                            if (i < sizeofarray(SERVERMODNAMES)) modname = SERVERMODNAMES[i];
                         }
                         void *p[3] = { &uptime, &servermod, (void*)modname };
                         loopv(recvcallbacks) recvcallbacks[i](type, &p, addr);

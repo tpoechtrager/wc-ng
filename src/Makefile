@@ -220,6 +220,10 @@ ifneq (,$(findstring mingw,$(PLATFORM)))
   PLUGIN_LIBS= -L$(WINLIB) -Wl,-Bstatic -lz -lSDL2 -Wl,-Bdynamic
   PLUGIN_LIBS+= -lws2_32 $(SDL_DEP_LIBS)
 
+  # Old MinGW-w64-crt doesn't have strtok_r.
+  # Referenced in libcurl.a.
+  CLIENT_OBJS+= mod/quirks/mingw-w64/strtok_r.o
+
   ################ MINGW TARGETS  ################ 
 
   plugins: g15lcd hwtemp
