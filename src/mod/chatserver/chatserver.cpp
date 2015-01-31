@@ -444,15 +444,17 @@ static void printtime()
 
 void fatal(const char *fmt, ...)
 {
-    if (!logfd) return;
-    va_list args;
-    va_start(args, fmt);
-    printtime();
-    fprintf(logfd, "fatal: ");
-    vfprintf(logfd, fmt, args);
-    fputc('\n', logfd);
-    va_end(args);
-    exit(EXIT_FAILURE);
+    if (logfd)
+    {
+        va_list args;
+        va_start(args, fmt);
+        printtime();
+        fprintf(logfd, "fatal: ");
+        vfprintf(logfd, fmt, args);
+        fputc('\n', logfd);
+        va_end(args);
+    }
+    _exit(EXIT_FAILURE);
 }
 
 void conoutfv(int type, const char *fmt, va_list args)

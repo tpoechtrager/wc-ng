@@ -30,6 +30,7 @@
 #define EXT_PLAYERSTATS_RESP_STATS      -11
 #define EXT_UPTIME                      0
 #define EXT_PLAYERSTATS                 1
+#define EXT_EXTENDED_PLAYERSTATS        0xC8343F2
 #define EXT_TEAMSCORE                   2
 
 #define EXT_VERSION_MIN                104
