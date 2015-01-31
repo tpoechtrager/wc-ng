@@ -28,8 +28,10 @@ typedef unsigned long long int ullong;
 
 #ifdef __GNUC__
 #define UNUSED __attribute__((unused))
+#define NORETURN __attribute__((noreturn)) //NEW
 #else
 #define UNUSED
+#define NORETURN //NEW
 #endif
 
 #ifndef USE_STD_NEW //NEW
