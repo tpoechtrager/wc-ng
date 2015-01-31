@@ -59,8 +59,56 @@ namespace extinfo
         int added;
         bool operator==(const ENetAddress &in) const { return addressequal(addr, in); }
         bool operator!=(const ENetAddress &in) const { return !(*this == in); }
-        static constexpr int MAX = 255;
+        static constexpr int MAX_SERVERS = 1024;
         static constexpr int MAX_TIME_DIFF = 1000*60*60;
+    };
+
+    struct pingcolor : brokenserver
+    {
+        struct
+        {
+            int val;
+            int validuntil;
+            void newval()
+            {
+                volatile int *junk = new volatile int[5];
+                int seedval = totalmillis;
+                loopi(5) seedval ^= junk[i];
+                delete[] junk;
+                seedMT(seedval);
+                do { val = randomMT(); } while (!val);
+                validuntil = totalmillis+RAND_INTERVALL;
+            }
+            bool valid() { return totalmillis <= validuntil; }
+            int get() { return val; }
+        } vals[2]{};
+        void update()
+        {
+            auto &cur = vals[0];
+            auto &old = vals[1];
+            if (!cur.valid())
+            {
+                old = cur;
+                old.validuntil += OLD_VALID_MILLIS;
+                cur.newval();
+            }
+        }
+        int get()
+        {
+            update();
+            auto &cur = vals[0];
+            return cur.get();
+        }
+        bool check(const int pingcolor)
+        {
+            update();
+            for (auto &v : vals) if (v.valid() && v.get() == pingcolor) return true;
+            return false;
+        }
+        pingcolor(ENetAddress addr, int added) : brokenserver({addr, added}) {}
+        static constexpr int RAND_INTERVALL = 10000;
+        static constexpr int OLD_VALID_MILLIS = 5000;
+        static constexpr int MAX_SERVERS = 10000;
     };
 
     struct exthost
@@ -77,26 +125,37 @@ namespace extinfo
         ENetSocket extsock;
 
         vector<brokenserver> brokenservers;
+        vector<pingcolor> pingcolors;
         vector<callback> recvcallbacks;
 
         bool addbrokenserver(const ENetAddress &addr)
         {
-            if (brokenservers.find(addr)>=0) return false;
+            if (brokenservers.find(addr) >= 0) return false;
+            if (brokenservers.length() >= brokenserver::MAX_SERVERS) brokenservers.remove(0);
             brokenservers.add({addr, totalmillis});
-            if (brokenservers.length() > brokenserver::MAX) brokenservers.remove(0);
             return true;
         }
 
-        bool validatepacket(ucharbuf &p, bool ignorerequest = false, bool checknoerror = true)
+        pingcolor &getpingcolor(const ENetAddress &addr)
+        {
+            int i = pingcolors.find(addr);
+            if (i>=0) return pingcolors[i];
+            if (pingcolors.length() >= pingcolor::MAX_SERVERS) pingcolors.remove(0);
+            pingcolors.add({addr, totalmillis});
+            return pingcolors.last();
+        }
+
+        bool validatepacket(const ENetAddress &addr, const int type, ucharbuf &p,
+                            const bool ignorerequest = false, const bool checknoerror = true)
         {
             int version;
 
             if (!ignorerequest)
             {
                 getint(p); // request
-                int len = p.len;
-                if (getint(p) != 0xC8343F2) p.len = len;
+                if (type == EXT_PLAYERSTATS && getint(p) != EXT_EXTENDED_PLAYERSTATS) goto error;
             }
+            if (!getpingcolor(addr).check(getint(p))) goto error;
             if (getint(p) != EXT_ACK) goto error;
 
             version = getint(p);
@@ -104,7 +163,7 @@ namespace extinfo
 
             if (checknoerror && getint(p) != EXT_NO_ERROR) goto error;
 
-            return true;
+            return !p.overread();
 
             error:;
             brokenpackets++;
@@ -157,7 +216,7 @@ namespace extinfo
                 {
                     case EXT_PLAYERSTATS:
                     {
-                        if (!validatepacket(p)) break;
+                        if (!validatepacket(addr, type, p)) break;
 
                         if (!p.remaining())
                         {
@@ -217,6 +276,11 @@ namespace extinfo
                                             cp.ext.hits = getint(p);
                                             cp.ext.misses = getint(p);
                                             cp.ext.shots = getint(p);
+#if 0
+                                            conoutf("%s (%d): suicides: %d  shotdamage: %d  damage: %d  explosivedamage: %d  "
+                                                    "hits: %d  misses: %d  shots: %d", cp.name, cp.cn, cp.ext.suicides, cp.ext.shotdamage,
+                                                    cp.ext.damage, cp.ext.explosivedamage, cp.ext.hits, cp.ext.misses, cp.ext.shots);
+#endif
                                             break;
                                         }
 
@@ -298,7 +362,7 @@ namespace extinfo
 
                     case EXT_UPTIME:
                     {
-                        if (p.get() != 1 || !validatepacket(p, true, false)) break;
+                        if (p.get() != 1 || !validatepacket(addr, type, p, true, false)) break;
                         if (!p.remaining())
                         {
                             if (addbrokenserver(addr)) requestuptime(&addr);
@@ -330,7 +394,7 @@ namespace extinfo
 
                     case EXT_TEAMSCORE:
                     {
-                        if (!validatepacket(p, true, false)) break;
+                        if (!validatepacket(addr, type, p, true, false)) break;
                         bool teammode = getint(p) == 0; // teammode
                         getint(p); // gamemode
                         getint(p); // timeleft
@@ -369,6 +433,8 @@ namespace extinfo
                 address.port++;
             }
             else address = *addr;
+
+            putint(p, getpingcolor(address).get());
 
             ENetBuffer buf;
             buf.data = p.buf;
@@ -410,7 +476,7 @@ namespace extinfo
             putint(p, 0);
             putint(p, EXT_PLAYERSTATS);
             putint(p, cn);
-            putint(p, 0xC8343F2);
+            putint(p, EXT_EXTENDED_PLAYERSTATS);
 
             sendbuf(p, addr);
         }
