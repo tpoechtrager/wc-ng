@@ -298,6 +298,7 @@ ifeq (darwin,$(PLATFORM))
 
   override CXXFLAGS+= -mmacosx-version-min=$(OSXVERSIONMIN) $(TARGETS)
   override CFLAGS+= -mmacosx-version-min=$(OSXVERSIONMIN) $(TARGETS)
+  override OBJCFLAGS+= -mmacosx-version-min=$(OSXVERSIONMIN) $(TARGETS)
   override LDFLAGS+= -mmacosx-version-min=$(OSXVERSIONMIN) $(TARGETS)
 
   SDL_DEP_LIBS= -framework CoreAudio -framework AudioUnit -framework Cocoa 
