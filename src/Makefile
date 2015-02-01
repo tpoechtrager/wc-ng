@@ -298,10 +298,12 @@ ifeq (darwin,$(PLATFORM))
   OBJCC ?= $(CC)
   OBJCXX ?= $(CXX)
 
-  override CXXFLAGS+= -mmacosx-version-min=$(OSXVERSIONMIN) $(TARGETS)
-  override CFLAGS+= -mmacosx-version-min=$(OSXVERSIONMIN) $(TARGETS)
-  override OBJCFLAGS+= -mmacosx-version-min=$(OSXVERSIONMIN) $(TARGETS)
-  override LDFLAGS+= -mmacosx-version-min=$(OSXVERSIONMIN) $(TARGETS)
+  override OSXMINFLAGS= -mmacosx-version-min=$(OSXVERSIONMIN) $(TARGETS)
+
+  override CXXFLAGS+= $(OSXMINFLAGS)
+  override CFLAGS+= $(OSXMINFLAGS)
+  override OBJCFLAGS+= $(OSXMINFLAGS)
+  override LDFLAGS+= $(OSXMINFLAGS)
 
   SDL_DEP_LIBS= -framework CoreAudio -framework AudioUnit -framework Cocoa 
   SDL_DEP_LIBS+= -framework IOKit -framework Carbon -liconv
