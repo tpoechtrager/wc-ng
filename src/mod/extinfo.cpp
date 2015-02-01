@@ -63,7 +63,9 @@ namespace extinfo
         static constexpr int MAX_TIME_DIFF = 1000*60*60;
     };
 
-    struct pingcolor : brokenserver
+    typedef brokenserver server;
+
+    struct pingcolor : server
     {
         struct
         {
@@ -105,7 +107,7 @@ namespace extinfo
             for (auto &v : vals) if (v.valid() && v.get() == pingcolor) return true;
             return false;
         }
-        pingcolor(ENetAddress addr, int added) : brokenserver({addr, added}) {}
+        pingcolor(ENetAddress addr, int added) : server({addr, added}) {}
         static constexpr int RAND_INTERVALL = 10000;
         static constexpr int OLD_VALID_MILLIS = 5000;
         static constexpr int MAX_SERVERS = 10000;

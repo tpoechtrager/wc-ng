@@ -1,5 +1,5 @@
-This is the original vanilla Sauerbraten license, this license doc *NOT* cover
-the WC-NG modifications.
+This is the original vanilla Sauerbraten license, this license doc
+does *NOT* cover the WC-NG modifications.
 
 WC-NG is released under the GPLv2 license terms (with exceptions),
 please see COPYING.
