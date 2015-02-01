@@ -853,8 +853,8 @@ void showextinfo(g3d_gui &g, uint *header, mod::strtool &command)
 
     if (!waiting && s->ping == serverinfo::WAITING) waiting = true;
 
-    game::renderextinfo(g, command, s->address, waiting, s->password, s->ping, s->name, s->port, s->sdesc, s->attr.length(),
-                        s->attr.getbuf(), s->teaminfo.length(), s->teaminfo.getbuf(), s->map, s->numplayers, &s->players);
+    mod::extinfo::renderplayerpreview(g, command, s->address, waiting, s->password, s->ping, s->name, s->port, s->sdesc, s->attr.length(),
+                                      s->attr.getbuf(), s->teaminfo.length(), s->teaminfo.getbuf(), s->map, s->numplayers, &s->players);
 }
 
 void loopextinfoplayers(const char *name, const char *country, const char *callbackargs, const char *callbackcode)

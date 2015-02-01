@@ -132,7 +132,7 @@ Certain features were contributed by other people:
     * Documentation improvements
     * Work on the ogros menu
 * WahnFred
-    * Some parts of the Build Scripts / Documentation
+    * Some parts of the Build Scripts / Menu / Documentation
     * Time Left timer
 
 I would also like to thank the following people for excessive testing

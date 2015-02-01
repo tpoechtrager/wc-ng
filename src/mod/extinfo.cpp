@@ -63,8 +63,11 @@ namespace extinfo
         static constexpr int MAX_TIME_DIFF = 1000*60*60;
     };
 
-    struct pingcolor : brokenserver
+    typedef brokenserver server;
+
+    struct pingcolor : server
     {
+        int lastaction = totalmillis;
         struct
         {
             int val;
@@ -82,6 +85,7 @@ namespace extinfo
             bool valid() { return totalmillis <= validuntil; }
             int get() { return val; }
         } vals[2]{};
+
         void update()
         {
             auto &cur = vals[0];
@@ -89,9 +93,10 @@ namespace extinfo
             if (!cur.valid())
             {
                 old = cur;
-                old.validuntil += OLD_VALID_MILLIS;
+                old.validuntil = totalmillis+OLD_VALID_MILLIS;
                 cur.newval();
             }
+            lastaction = totalmillis;
         }
         int get()
         {
@@ -105,9 +110,12 @@ namespace extinfo
             for (auto &v : vals) if (v.valid() && v.get() == pingcolor) return true;
             return false;
         }
-        pingcolor(ENetAddress addr, int added) : brokenserver({addr, added}) {}
+        bool inactive() { return totalmillis-lastaction <= MAX_INACTIVITY; }
+
+        pingcolor(ENetAddress addr, int added) : server({addr, added}) {}
         static constexpr int RAND_INTERVALL = 10000;
         static constexpr int OLD_VALID_MILLIS = 5000;
+        static constexpr int MAX_INACTIVITY = 10*60*1000;
         static constexpr int MAX_SERVERS = 10000;
     };
 
@@ -518,6 +526,16 @@ namespace extinfo
                     ENetAddress extaddress = getextinfoaddress();
                     requestplayer(-1, &extaddress);
                     lastextping = totalmillis;
+                }
+            }
+
+            {
+                static int last = totalmillis;
+
+                if (totalmillis-last >= 10000)
+                {
+                    loopvrev(pingcolors) if (pingcolors[i].inactive()) pingcolors.remove(i);
+                    last = totalmillis;
                 }
             }
 

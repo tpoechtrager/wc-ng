@@ -254,6 +254,14 @@ namespace extinfo
     void requestuptime(ENetAddress &addr);
     void addrecvcallback(callback cb);
     void delrecvcallback(callback cb);
+
+    // extinfo-playerpreview.cpp
+    void renderplayerpreview(g3d_gui& g, mod::strtool& command, const ENetAddress& eaddr, bool waiting,
+                             const char *pass, int ping, const char *addr, int port, const char *desc,
+                             int numattr, const int *attr, int numteams, const void *ti, const char *mapname,
+                             int numplayers, void *pplayers);
+
+
 } // namespace extinfo
 } // namespace mod
 
