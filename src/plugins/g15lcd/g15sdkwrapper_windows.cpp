@@ -1,6 +1,6 @@
 /***********************************************************************
  *  WC-NG G15 LCD Plugin                                               *
- *  Copyright (C) 2014 by Thomas Poechtrager                           *
+ *  Copyright (C) 2014, 2015 by Thomas Poechtrager                     *
  *  t.poechtrager@gmail.com                                            *
  *                                                                     *
  *  This program is free software; you can redistribute it and/or      *
