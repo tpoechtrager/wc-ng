@@ -104,11 +104,6 @@ namespace game
     extern bool serverinfostartcolumn(g3d_gui *g, int i);
     extern void serverinfoendcolumn(g3d_gui *g, int i);
     extern bool serverinfoentry(g3d_gui *g, bool &shown, int i, const char *name, int port, const char *desc, const char *map, int ping, const vector<int> &attr, int np, int servermod, const char *country, const char *countrycode); //NEW shown, servermod, country, countrycode
-//NEW
-#ifndef STANDALONE
-    void renderextinfo(g3d_gui& g, mod::strtool& command, const ENetAddress& eaddr, bool waiting, const char *pass, int ping, const char *addr, int port, const char *desc, int numattr, const int *attr, int numteams, const void *ti, const char *mapname, int numplayers, void *pplayers);
-#endif //!STANDALONE
-//NEW END
     extern bool needminimap();
 } 
  
