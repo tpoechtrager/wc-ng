@@ -13,7 +13,15 @@ PKGDIR="${PKGDIR:-${PWD}/../..}"
 
 type="$(basename $0)"
 
-which makensis &>/dev/null || exit 1
+if [[ $(uname -s) == CYGWIN* ]]; then
+    if [ -d "/cygdrive/c/Program Files (x86)/NSIS" ]; then
+        PATH="$PATH:/cygdrive/c/Program Files (x86)/NSIS:"
+    elif [ -d "/cygdrive/c/Program Files/NSIS" ]; then
+        PATH="$PATH:/cygdrive/c/Program Files/NSIS:"
+    fi
+fi
+
+which makensis &>/dev/null || { echo "nsis is required" 1>&2; exit 1; }
 
 cleanup()
 {
@@ -54,7 +62,7 @@ if [[ "`uname -s`" != *MINGW32* ]]; then
     sed -i "s/_windows_setup.exe/_windows${PKGSUFFIX}_setup.exe/g" wc.nsi
 fi
 
-makensis wc.nsi
+sh -c "makensis wc.nsi" # cygwin's bash shell is doing weird things without "sh -c"
 mv *.exe "${PKGDIR}/"
 
 if [ -n "$SIGNPACKAGE" ]; then
