@@ -72,9 +72,9 @@ Cross compiling from Unix/Linux to Windows:
 Using Cygwin on Windows:
 
   * Prerequisites:
-    * Install the following Cygwin packages:
-          git (devel), mingw64-i686-gcc-g++ (devel), mingw64-x86_64-gcc-g++ (devel),
-          gcc-g++ (devel), make (devel), zip (archive), unzip (archive), dos2unix (utils)
+    * Install the following Cygwin packages:  
+      `git` (devel), `mingw64-i686-gcc-g++` (devel), `mingw64-x86_64-gcc-g++` (devel),  
+      `gcc-g++` (devel), `make (devel)`, `zip` (archive), `unzip` (archive), `dos2unix` (utils)
     * Install [nsis](http://prdownloads.sourceforge.net/nsis/nsis-2.46-setup.exe?download) (if you want to create an installer)
 
   * Either run `make` now to compile the client or follow the instructions below  
