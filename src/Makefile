@@ -15,6 +15,17 @@ PLATFORM_PREFIX= native
 override PLATFORMNATIVE= $(shell uname -s | tr '[:upper:]' '[:lower:]')
 override PLATFORM:= $(shell echo $(PLATFORM) | tr '[:upper:]' '[:lower:]')
 
+### Cygwin
+
+ifneq (,$(findstring cygwin,$(PLATFORM)))
+  override PLATFORM=mingw
+  ifeq ($(shell uname -m),x86_64)
+    ARCH= x86_64
+  else
+    ARCH= i686
+  endif
+endif
+
 ### Build client, plugins and chatserver by default
 
 all: client plugins chatserver
@@ -136,7 +147,6 @@ ifneq (,$(findstring mingw,$(PLATFORM)))
     $(error ARCH must be given! i686 or x86_64)
   endif
 
-  ifeq (,$(findstring nt,$(PLATFORMNATIVE)))
   ifeq (,$(MINGWPREFIX))
   ifneq (,$(findstring x86_64,$(ARCH)))
     MINGWPREFIX=x86_64-w64-mingw32
@@ -149,7 +159,6 @@ ifneq (,$(findstring mingw,$(PLATFORM)))
     else
       MINGWCLANGPREFIX=i686-w64-mingw32-clang
     endif
-  endif
   endif
   endif
 
