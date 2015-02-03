@@ -501,19 +501,18 @@ namespace game
     MODHVARP(cgflarecolor, 0, 0xFFC864, 0xFFFFFF);
     MODHVARP(piflarecolor, 0, 0xFFC864, 0xFFFFFF);
     MODHVARP(riflarecolor, 0, 0x404040, 0xFFFFFF);
+    MODHVARP(rlflarecolor, 0, 0x404040, 0xFFFFFF);
     // gun particle_flare sizes
     MODFVARP(sgflaresize, 0, 0.28f, 5.0f);
     MODFVARP(cgflaresize, 0, 0.28f, 5.0f);
     MODFVARP(piflaresize, 0, 0.28f, 5.0f);
     MODFVARP(riflaresize, 0, 0.6f, 5.0f);
+    MODFVARP(rlflaresize, 0, 2.4f, 5.0f);
     // gun particle_flare trail time in ms
     MODVARP(sgtrailtime, 0, 300, 1000);
     MODVARP(cgtrailtime, 0, 600, 1000);
     MODVARP(pitrailtime, 0, 600, 1000);
     MODVARP(ritrailtime, 0, 400, 1000);
-    //NEW END
-    MODHVARP(rlflarecolor, 0, 0x404040, 0xFFFFFF);
-    MODFVARP(rlflaresize, 0, 2.4f, 5.0f);
     MODVARP(rltrailtime, 0, 300, 1000);
     //NEW END
 
