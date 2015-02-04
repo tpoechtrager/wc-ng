@@ -171,7 +171,7 @@ namespace extinfo
 
             if (checknoerror && getint(p) != EXT_NO_ERROR) goto error;
 
-            return !p.overread();
+            return true;
 
             error:;
             brokenpackets++;
