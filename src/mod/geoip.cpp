@@ -107,7 +107,7 @@ namespace geoip
         if (!geoip)
             return NULL;
 
-        return GeoIP_country_name_by_ipnum(geoip, ENET_HOST_TO_NET_32(ip));
+        return GeoIP_country_name_by_ipnum(geoip, ENET_NET_TO_HOST_32(ip));
     }
 
     const char *countrycode(const char *ip)
@@ -127,7 +127,7 @@ namespace geoip
         if (!geoip)
             return NULL;
 
-        return GeoIP_country_code_by_ipnum(geoip, ENET_HOST_TO_NET_32(ip));
+        return GeoIP_country_code_by_ipnum(geoip, ENET_NET_TO_HOST_32(ip));
     }
 
     void lookupplayercountry(void *client)
