@@ -474,6 +474,18 @@ static inline void createpingsock()
         lanpings.setoffset();
     }
 }
+
+MODVARP(randomizepingport, 0, 0, 1);
+
+void rebindpingport()
+{
+    if(!randomizepingport || pingsock == ENET_SOCKET_NULL) return;
+    ENetSocket oldpingsock = pingsock;
+    pingsock = ENET_SOCKET_NULL;
+    createpingsock();
+    enet_socket_destroy(oldpingsock);
+    mod::extinfo::rebindpingport();
+}
 //NEW END
 
 void pingservers()

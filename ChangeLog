@@ -1,6 +1,8 @@
 wc-ng v0.7.4 2015-xx-xx
 
   added:
+    - '/randomizepingport' var (use a new ping port every time you open
+      the server browser / player search window)
     - country names / flags should now work on zeromod servers
     - '/<WEAPON>flarecolor', '/<WEAPON>flaresize', '/<WEAPON>trailtime' vars
     - implemented extinfo ping coloring

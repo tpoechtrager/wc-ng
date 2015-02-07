@@ -1,5 +1,6 @@
 document:
-- document gunflare variables
+- '/randomizepingport'
+- gunflare variables
 - '/wcver'
 - '/wcrev'
 - '/wcchatloopclients'

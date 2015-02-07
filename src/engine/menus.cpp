@@ -161,6 +161,12 @@ void pushgui(menu *m, int pos = -1)
             game::disableradar = true;
             extern bool disablehwdisplay;
             disablehwdisplay = true;
+            goto rebind;
+        }
+        if(!strcmp(m->name, "player search") || !strcmp(m->name, "find players"))
+        {
+            rebind:;
+            rebindpingport();
         }
         extern bool disableplayerdisplay;
         extern bool disablehwdisplay;

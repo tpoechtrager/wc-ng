@@ -579,10 +579,23 @@ namespace extinfo
             requestuptime(&extaddress);
         }
 
+        void createsocket()
+        {
+            extsock = enet_socket_create(ENET_SOCKET_TYPE_DATAGRAM);
+            if (extsock == ENET_SOCKET_NULL) abort();
+            enet_socket_set_option(extsock, ENET_SOCKOPT_NONBLOCK, 1);
+        }
+
+        void rebindpingport()
+        {
+            ENetSocket oldextsock = extsock;
+            createsocket();
+            enet_socket_destroy(oldextsock);
+        }
+
         exthost() : lastextping(0), lastextpong(0), lastextupdate(0), lastplayerrecv(0), brokenpackets(0)
         {
-            if ((extsock = enet_socket_create(ENET_SOCKET_TYPE_DATAGRAM)) == ENET_SOCKET_NULL) abort();
-            enet_socket_set_option(extsock, ENET_SOCKOPT_NONBLOCK, 1);
+            createsocket();
         }
 
         ~exthost() { enet_socket_destroy(extsock); }
@@ -592,6 +605,7 @@ namespace extinfo
     void shutdown() { DELETEP(eh); }
     void slice() { if (eh) eh->extprocess(); }
     void connect() { if (curpeer && eh) eh->connect(); }
+    void rebindpingport() { if (eh) eh->rebindpingport(); }
     void newplayer(int cn) { if (curpeer && eh && game::hasextinfo) eh->requestplayer(cn, &curpeer->address); }
     void requestplayers(ENetAddress &addr) { if (eh) eh->requestplayer(-1, &addr); }
     void requestteaminfo(ENetAddress &addr) { if (eh) eh->requestteaminfo(&addr); }
