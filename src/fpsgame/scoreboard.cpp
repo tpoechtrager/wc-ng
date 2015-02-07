@@ -277,7 +277,7 @@ namespace game
 
     void renderscoreboard(g3d_gui &g, bool firstpass)
     {
-        bool haveextinfoips = displayextinfo(showcountry) && gamemod::haveextinfoplayerips(gamemod::EXTINFO_IPS_SCOREBOARD); //NEW
+        bool havecountrynames = displayextinfo(showcountry) && mod::extinfo::havecountrynames(mod::extinfo::EXTINFO_COUNTRY_NAMES_SCOREBOARD); //NEW
         const ENetAddress *address = connectedpeer();
         if(showservinfo && (address || demohasservertitle)) //NEW || demohasservertitle
         {
@@ -604,7 +604,7 @@ namespace game
                 }
 
                 //NEW
-                if(displayextinfo(showcountry) && haveextinfoips)
+                if(displayextinfo(showcountry) && havecountrynames)
                 {
                     g.pushlist();
                     g.text("country", fgcolor);
@@ -692,7 +692,7 @@ namespace game
                     g.poplist();
                 }
 
-                if(displayextinfo(showcountry) && haveextinfoips)
+                if(displayextinfo(showcountry) && havecountrynames)
                 {
                     g.space(1);
                     g.pushlist();

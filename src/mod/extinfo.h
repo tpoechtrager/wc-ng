@@ -105,16 +105,14 @@ namespace extinfo
         static constexpr int version() { return 1; }
     };
 
-    static constexpr size_t align(size_t n, size_t a) { return n+n%a; }
-
     struct playerv2
     {
         struct /* base */
         {
             int cn;
             int ping;
-            char name[align(MAXNAMELEN+1, 4)];
-            char team[align(MAXTEAMLEN+1, 4)];
+            char name[MAXNAMELEN+1]; // 16
+            char team[MAXTEAMLEN+4]; // 8
             int frags;
             int flags;
             int deaths;
@@ -130,14 +128,18 @@ namespace extinfo
                 uint8_t ia[sizeof(uint32_t)];
                 uint32_t ui32;
             } ip;
-            uint8_t reserved[4];
+            uint8_t dataflags;
+            uint8_t data[3];
         };
 
         struct /* extension */
         {
-            bool ishopmod() { return mod == SM_HOPMOD || mod == SM_SUCKERSERV; }
-            bool ishopmodcompatible() { return ishopmod() || mod == SM_SPAGHETTIMOD; }
-            bool isoomod() { return mod == SM_OOMOD; }
+            bool ishopmod() const { return mod == SM_HOPMOD || mod == SM_SUCKERSERV; }
+            bool ishopmodcompatible() const { return ishopmod() || mod == SM_ZEROMOD; }
+            bool iszeromod() const { return mod == SM_ZEROMOD; }
+            bool isoomod() const { return mod == SM_OOMOD; }
+
+            bool havecountrycode() const { return countrycode[0] && countrycode[1]; }
 
             servermod mod;
             int suicides;
@@ -150,6 +152,7 @@ namespace extinfo
             int captured;
             int stolen;
             int defended;
+            char countrycode[4];
         } ext;
 
         const char *getname() const
@@ -197,6 +200,7 @@ namespace extinfo
         {
             memcpy(this, base, basesize());
             zeroextbytes();
+            if (dataflags & COUNTRYCODE) memcpy(ext.countrycode, data, 2);
         }
 
         void zeroextbytes() { memset((uchar*)this+basesize(), 0, extsize());  }
@@ -207,6 +211,8 @@ namespace extinfo
         #pragma clang diagnostic push
         #pragma clang diagnostic ignored "-Winvalid-offsetof"
         #endif
+
+        enum : uint8_t { COUNTRYCODE = 0x1 };
 
         static constexpr size_t basesize() { return __builtin_offsetof(playerv2, ext.mod); }
         static constexpr size_t extsize() { return sizeof(playerv2)-basesize(); }
@@ -234,8 +240,7 @@ namespace extinfo
 
         playerinfo(extinfo::playerv2 *e) : ep(*e)
         {
-            country = mod::geoip::country(e->ip.ui32);
-            countrycode = mod::geoip::countrycode(e->ip.ui32);
+            geoip::lookupcountry(e, country, countrycode);
         }
     };
 
@@ -254,6 +259,13 @@ namespace extinfo
     void requestuptime(ENetAddress &addr);
     void addrecvcallback(callback cb);
     void delrecvcallback(callback cb);
+
+    enum
+    {
+        EXTINFO_COUNTRY_NAMES_SCOREBOARD,
+        EXTINFO_COUNTRY_NAMES_SERVERBROWSER
+    };
+    bool havecountrynames(int type, void *pplayers = NULL);
 
     // extinfo-playerpreview.cpp
     void renderplayerpreview(g3d_gui& g, mod::strtool& command, const ENetAddress& eaddr, bool waiting,

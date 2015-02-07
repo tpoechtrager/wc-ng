@@ -2110,7 +2110,6 @@ namespace game
                 if(isconnected(false, false)) return;
                 DEMORECORDER_SKIP_PACKET_NC;
 
-
                 mod::extinfo::playerv2 ep;
 
                 if(mod::demorecorder::self::getextinfoobj(p, &ep))
@@ -2124,7 +2123,9 @@ namespace game
                         d->extinfo = new mod::extinfo::playerv2;
 
                     *d->extinfo = ep;
-                    mod::geoip::lookupplayercountry(d);
+
+                    if(!d->country)
+                        mod::geoip::lookupcountry(d->extinfo, d->country, d->countrycode);
 
                     mod::extinfo::extinfoupdateevent(ep);
                     demohasextinfo = true;

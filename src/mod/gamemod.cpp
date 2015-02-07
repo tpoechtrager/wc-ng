@@ -661,42 +661,4 @@ namespace gamemod
     {
         return (num == PROTOCOL_VERSION);
     }
-
-    bool haveextinfoplayerips(int type, void *pplayers)
-    {
-        switch (type)
-        {
-            case EXTINFO_IPS_SCOREBOARD:
-            {
-                bool rv = false;
-                clients.add(player1);
-                loopv(clients)
-                {
-                    fpsent *c = clients[i];
-                    if (!c || c->aitype != AI_NONE) continue;
-                    auto *ep = c->extinfo;
-                    if (ep && ep->ip.ui32 != uint32_t(-1))
-                    {
-                        rv = true;
-                        break;
-                    }
-                }
-                clients.pop();
-                return rv;
-            }
-
-            case EXTINFO_IPS_SERVERBROWSER:
-            {
-                vector<extinfo::playerinfo> &players = *(vector<extinfo::playerinfo>*)pplayers;
-                loopv(players)
-                {
-                    extinfo::playerinfo &pi = players[i];
-                    if (pi.ep.cn < 128 && pi.ep.ip.ui32 != uint32_t(-1)) return true;
-                }
-                break;
-            }
-        }
-
-        return false;
-    }
 }
