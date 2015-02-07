@@ -130,22 +130,50 @@ namespace geoip
         return GeoIP_country_code_by_ipnum(geoip, ENET_NET_TO_HOST_32(ip));
     }
 
-    void lookupplayercountry(void *client)
+    static_assert(sizeofarray(GeoIP_country_code) == sizeofarray(GeoIP_country_name), "");
+
+    const char *staticcountry(size_t index)
     {
-        fpsent *d = (fpsent*)client;
-        auto *ep = d->extinfo;
+        if (index >= sizeofarray(GeoIP_country_name)) return NULL;
+        return GeoIP_country_name[index];
+    }
 
-        if (d->countrycode)
-            return;
-
-        d->countrycode = NULL;
-        d->country = NULL;
-
-        if (ep)
+    const char *staticcountrycode(const char *countrycode, size_t *index)
+    {
+        if (*index) *index = 0;
+        assert(countrycode[0] && countrycode[1]);
+        for (const char *scountrycode : GeoIP_country_code)
         {
-            d->country = country(ep->ip.ui32);
-            d->countrycode = countrycode(ep->ip.ui32);
+            if (!scountrycode) break;
+            if (*(uint16_t*)scountrycode == *(uint16_t*)countrycode) return scountrycode;
+            if (index) ++*index;
         }
+        return NULL;
+    }
+
+    void lookupcountry(const extinfo::playerv2 *ep, const char *&country, const char *&countrycode)
+    {
+        if (ep->ip.ui32 != uint32_t(-1))
+        {
+            countrycode = geoip::countrycode(ep->ip.ui32);
+            if (countrycode)
+            {
+                country = geoip::country(ep->ip.ui32);
+                return;
+            }
+        }
+        if (ep->ext.havecountrycode())
+        {
+            size_t index;
+            countrycode = staticcountrycode(ep->ext.countrycode, &index);
+            if (countrycode)
+            {
+                country = staticcountry(index);
+                return;
+            }
+        }
+        country = NULL;
+        countrycode = NULL;
     }
 
     static bool completeupdate();

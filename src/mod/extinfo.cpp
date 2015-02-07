@@ -274,8 +274,8 @@ namespace extinfo
                                     switch (mod)
                                     {
                                         case SM_HOPMOD:
-                                        case SM_SPAGHETTIMOD:
                                         case SM_SUCKERSERV:
+                                        case SM_ZEROMOD:
                                         {
                                             cp.ext.suicides = getint(p);
                                             cp.ext.shotdamage = getint(p);
@@ -284,11 +284,29 @@ namespace extinfo
                                             cp.ext.hits = getint(p);
                                             cp.ext.misses = getint(p);
                                             cp.ext.shots = getint(p);
+
+                                            if (mod == SM_ZEROMOD && p.remaining() >= 2)
+                                            {
+                                                char tmp[2];
+                                                p.get((uchar*)&tmp, 2);
+                                                // lower case is a continent name
+                                                if (tmp[0] && tmp[1] && isupper(tmp[0]))
+                                                {
+                                                    static_assert(sizeof(cp.ext.countrycode) >= sizeof(tmp), "");
+                                                    memcpy(cp.ext.countrycode, tmp, sizeof(tmp));
+                                                    // needed for demos
+                                                    cp.dataflags |= playerv2::COUNTRYCODE;
+                                                    static_assert(sizeof(cp.data) >= 2, "");
+                                                    memcpy(&cp.data, tmp, 2);
+                                                }
+                                            }
+
 #if 0
                                             conoutf("%s (%d): suicides: %d  shotdamage: %d  damage: %d  explosivedamage: %d  "
                                                     "hits: %d  misses: %d  shots: %d", cp.name, cp.cn, cp.ext.suicides, cp.ext.shotdamage,
                                                     cp.ext.damage, cp.ext.explosivedamage, cp.ext.hits, cp.ext.misses, cp.ext.shots);
 #endif
+
                                             break;
                                         }
 
@@ -328,9 +346,10 @@ namespace extinfo
                                         d->extinfo = new playerv2;
 
                                     *d->extinfo = cp;
-
                                     bool hadcountry = !!d->country;
-                                    geoip::lookupplayercountry(d);
+
+                                    if (!d->country)
+                                        geoip::lookupcountry(d->extinfo, d->country, d->countrycode);
 
                                     if (!hadcountry && d->country)
                                         event::run(event::EXTINFO_COUNTRY_UPDATE, "dss",
@@ -604,5 +623,38 @@ namespace extinfo
                    cp.acc, cp.health, cp.armour, cp.gunselect, cp.priv, cp.state,
                    cp.ip.ia[0], cp.ip.ia[1], cp.ip.ia[2], cp.ip.ia[3]);
     }
+
+    bool havecountrynames(int type, void *pplayers)
+    {
+        switch (type)
+        {
+            case EXTINFO_COUNTRY_NAMES_SCOREBOARD:
+            {
+                bool rv = false;
+                game::clients.add(game::player1);
+                loopv(game::clients)
+                {
+                    fpsent *c = game::clients[i];
+                    if (c && c->country)
+                    {
+                        rv = true;
+                        break;
+                    }
+                }
+                game::clients.pop();
+                return rv;
+            }
+
+            case EXTINFO_COUNTRY_NAMES_SERVERBROWSER:
+            {
+                vector<extinfo::playerinfo> &players = *(vector<extinfo::playerinfo>*)pplayers;
+                loopv(players) if (players[i].country) return true;
+                break;
+            }
+        }
+
+        return false;
+    }
+
 } // namespace extinfo
 } // namespace mod

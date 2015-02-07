@@ -20,6 +20,7 @@
  ***********************************************************************/
 
 namespace mod {
+namespace extinfo { struct playerv2; }
 namespace geoip
 {
     bool loaddatabase(const char *db);
@@ -28,7 +29,9 @@ namespace geoip
     const char *country(uint ip);
     const char *countrycode(const char *ip);
     const char *countrycode(uint ip);
-    void lookupplayercountry(void *client);
+    const char *staticcountry(size_t index);
+    const char *staticcountrycode(const char *countrycode, size_t *index);
+    void lookupcountry(const extinfo::playerv2 *ep, const char *&country, const char *&countrycode);
     void startup();
     void shutdown();
 } //namespace geoip

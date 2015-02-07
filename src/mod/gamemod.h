@@ -89,10 +89,4 @@ namespace gamemod
     int guiprivcolor(int priv);
     int getgamemodenum(const char *gamemode);
     bool validprotocolversion(int num);
-    enum
-    {
-        EXTINFO_IPS_SCOREBOARD,
-        EXTINFO_IPS_SERVERBROWSER
-    };
-    bool haveextinfoplayerips(int type, void *pplayers = NULL);
 }

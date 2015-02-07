@@ -33,6 +33,7 @@ namespace game
 
 using namespace game;
 using namespace gamemod;
+using namespace mod::extinfo;
 
 namespace mod {
 namespace extinfo {
@@ -293,7 +294,7 @@ void renderplayerpreview(g3d_gui& g, strtool& command, const ENetAddress& eaddr,
         });
         g.poplist();
 
-        if (showcountry && haveextinfoplayerips(EXTINFO_IPS_SERVERBROWSER, &players))
+        if (showcountry && havecountrynames(EXTINFO_COUNTRY_NAMES_SERVERBROWSER, &players))
         {
             g.pushlist();
             g.text("country", color);
