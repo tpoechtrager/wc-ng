@@ -290,6 +290,9 @@ void assign(L &l, R &&r)
     l = (L)r;
 }
 
+template<class T>
+bool isaligned(const void *p) { return (const uintptr_t)p % sizeof(T) == 0; }
+
 class noncopyable
 {
 protected:
