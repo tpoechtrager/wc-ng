@@ -212,7 +212,7 @@ namespace extinfo
         #pragma clang diagnostic ignored "-Winvalid-offsetof"
         #endif
 
-        enum : uint8_t { COUNTRYCODE = 0x1 };
+        enum : uint8_t { COUNTRYCODE = 0x1, CONTINENT = 0x2 };
 
         static constexpr size_t basesize() { return __builtin_offsetof(playerv2, ext.mod); }
         static constexpr size_t extsize() { return sizeof(playerv2)-basesize(); }

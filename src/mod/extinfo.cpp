@@ -289,13 +289,21 @@ namespace extinfo
                                             {
                                                 char tmp[2];
                                                 p.get((uchar*)&tmp, 2);
-                                                // lower case is a continent name
-                                                if (tmp[0] && tmp[1] && isupper(tmp[0]))
+                                                if (tmp[0] && tmp[1])
                                                 {
-                                                    static_assert(sizeof(cp.ext.countrycode) >= sizeof(tmp), "");
-                                                    memcpy(cp.ext.countrycode, tmp, sizeof(tmp));
+                                                    bool iscontinent;
+                                                    if ((iscontinent = islower(tmp[0])))
+                                                    {
+                                                        tmp[0] = toupper(tmp[0]);
+                                                        tmp[1] = toupper(tmp[1]);
+                                                    }
+                                                    else
+                                                    {
+                                                        static_assert(sizeof(cp.ext.countrycode) >= sizeof(tmp), "");
+                                                        memcpy(cp.ext.countrycode, tmp, sizeof(tmp));
+                                                    }
                                                     // needed for demos
-                                                    cp.dataflags |= playerv2::COUNTRYCODE;
+                                                    cp.dataflags |= (iscontinent ? playerv2::CONTINENT : playerv2::COUNTRYCODE);
                                                     static_assert(sizeof(cp.data) >= 2, "");
                                                     memcpy(&cp.data, tmp, 2);
                                                 }
