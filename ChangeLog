@@ -38,7 +38,7 @@ wc-ng v0.7.4 2015-xx-xx
       compatible with this version, but not the other way around.
     - enhanced server mod detection (including: hopmod, oomod, spaghettimod,
       suckerserv, remod, noobmod & zeromod)
-    - in sync with sauerbraten r5067
+    - in sync with sauerbraten r5078
     - libcurl update to 7.40.0
     - libgeoip update to 1.6.4
     - windows client is now linked statically against its required libs
