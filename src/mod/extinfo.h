@@ -250,6 +250,7 @@ namespace extinfo
     void shutdown();
     void slice();
     void connect();
+    void rebindpingport();
     void newplayer(int cn);
     int getserveruptime();
     const char *getservermodname();

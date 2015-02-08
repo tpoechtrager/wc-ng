@@ -1,4 +1,5 @@
 #include "game.h"
+extern void rebindpingport(); //NEW
 
 extern int identflags;
 
@@ -10,7 +11,8 @@ namespace game
     FVARP(minimapalpha, 0, 1, 1);
     //NEW
     int demogamespeedold;
-    MODVARFP(demogamespeed, 0, 0, 1, {
+    MODVARFP(demogamespeed, 0, 0, 1,
+    {
         if (demoplayback)
         {
             conoutf(CON_ERROR, "demogamespeed variable can't be changed during demo playback.");
@@ -1326,7 +1328,8 @@ namespace game
             {
                 connected = true;
                 notifywelcome();
-                fullyconnected = true; //NEW
+                fullyconnected = true;      //NEW
+                rebindpingport();           //NEW
                 mod::extinfo::connect();    //NEW
                 break;
             }

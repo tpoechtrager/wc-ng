@@ -570,13 +570,18 @@ namespace demorecorder
                 {
                     if (basesize != (int)extinfo::playerv1::basesize()) return NULL;
                     if (p.maxlen-p.len != (int)extinfo::playerv1::basesize()) return NULL;
-                    extinfo::playerv1 &v1 = *((extinfo::playerv1*)(p.buf+p.len));
-                    v1.swap();
-                    v1.team[sizeof(v1.team)-1] = '\0';
-                    v1.name[sizeof(v1.name)-1] = '\0';
-                    if (!buf) buf = new extinfo::playerv2(v1);
-                    else *buf = v1;
-                    v1.swap();
+                    extinfo::playerv1 *v1 = (extinfo::playerv1*)(p.buf+p.len);
+                    uchar v1buf[sizeof(extinfo::playerv1)];
+                    if (!isaligned<int>(v1))
+                    {
+                        memcpy(v1buf, p.buf+p.len, sizeof(extinfo::playerv1));
+                        v1 = (extinfo::playerv1*)v1buf;
+                    }
+                    v1->swap();
+                    v1->team[sizeof(v1->team)-1] = '\0';
+                    v1->name[sizeof(v1->name)-1] = '\0';
+                    if (!buf) buf = new extinfo::playerv2(*v1);
+                    else *buf = *v1;
                     break;
                 }
 
@@ -585,7 +590,7 @@ namespace demorecorder
                     if (basesize != (int)extinfo::playerv2::basesize()) return NULL;
                     if (p.maxlen-p.len != (int)extinfo::playerv2::basesize()) return NULL;
                     if (!buf) buf = new extinfo::playerv2(p.buf+p.len);
-                    else buf->initbase(p.buf+p.len);
+                    else buf->initbase(p.buf+p.len); // uses memcpy - no need to check alignment
                     buf->swapbase();
                     buf->name[sizeof(buf->name)-1] = '\0';
                     buf->team[sizeof(buf->team)-1] = '\0';
@@ -711,12 +716,12 @@ namespace searchdemo
     ICOMMAND(searchdemoactive, "", (), intret(searchdemothread ? 1 : 0));
 
     template<class T>
-    static inline bool readdemobuf(uint &position, const llong &filesize, void *buf, T **p)
+    static inline bool readdemobuf(uint &position, const llong &filesize, void *buf, T &p)
     {
         if (position+sizeof(T) <= (ullong)filesize)
         {
-            *p = (T*)(((char*)buf)+position);
-            position += sizeof(**p);
+            memcpy(&p, (((uchar*)buf)+position), sizeof(T));
+            position += sizeof(T);
             return true;
         }
         return false;
@@ -864,28 +869,28 @@ namespace searchdemo
             *pd->demomillis = 0;
 
         {
-            demoheader *hdr;
-            READ(&hdr, RETURN_ERROR(ERROR_FAILED_TO_READ_PACKET, "failed to read demo header"));
+            demoheader hdr;
+            READ(hdr, RETURN_ERROR(ERROR_FAILED_TO_READ_PACKET, "failed to read demo header"));
 
-            if (memcmp(hdr->magic, DEMO_MAGIC, sizeof(hdr->magic)))
+            if (memcmp(hdr.magic, DEMO_MAGIC, sizeof(hdr.magic)))
                 RETURN_ERROR(ERROR_INVALID_DEMO_HEADER, "invalid demo header");
 
-            lilswap(&hdr->version, 2);
+            lilswap(&hdr.version, 2);
 
             #ifndef IGNOREDEMOVERSION
-            if (hdr->version != DEMO_VERSION || hdr->protocol != PROTOCOL_VERSION)
+            if (hdr.version != DEMO_VERSION || hdr.protocol != PROTOCOL_VERSION)
                 RETURN_ERROR(ERROR_INVALID_DEMO_VERSION, "demo version");
             #endif
 
             if (pd->stripdemo)
-                pd->stripdemo->write(hdr, sizeof(*hdr));
+                pd->stripdemo->write(&hdr, sizeof(hdr));
         }
 
         for (;; packetnum++)
         {
-            int *chan, *len, *nextplayback;
+            int chan, len, nextplayback;
 
-            READ(&nextplayback,
+            READ(nextplayback,
             {
                 if (packetnum >= 10)
                 {
@@ -898,35 +903,35 @@ namespace searchdemo
                     RETURN_ERROR(ERROR_FAILED_TO_READ_PACKET, "read error (nextplayback 2)");
             });
 
-            READ(&chan, RETURN_ERROR(ERROR_FAILED_TO_READ_PACKET, "read error (packet channel)"));
-            READ(&len, RETURN_ERROR(ERROR_FAILED_TO_READ_PACKET, "read error (packet length)"));
+            READ(chan, RETURN_ERROR(ERROR_FAILED_TO_READ_PACKET, "read error (packet channel)"));
+            READ(len, RETURN_ERROR(ERROR_FAILED_TO_READ_PACKET, "read error (packet length)"));
 
-            lilswap(chan, 1);
-            lilswap(len, 1);
-            lilswap(nextplayback, 1);
+            lilswap(&chan, 1);
+            lilswap(&len, 1);
+            lilswap(&nextplayback, 1);
 
-            if (uint(*len) > (*chan == 2 ? 10*1024*1024u : MAXTRANS))
+            if (uint(len) > (chan == 2 ? 10*1024*1024u : MAXTRANS))
                 RETURN_ERROR(ERROR_INVALID_PACKET_SIZE, "invalid packet size");
 
-            if (*chan != 2)
+            if (chan != 2)
             {
                 if (pd->stripdemo)
                     pd->stripdemo->position = position;
 
-                JUMP(*len, {}, RETURN_ERROR(ERROR_FAILED_TO_JUMP_BUF, "failed to jump packet buffer"));
+                JUMP(len, {}, RETURN_ERROR(ERROR_FAILED_TO_JUMP_BUF, "failed to jump packet buffer"));
 
                 if (pd->stripdemo)
-                    pd->stripdemo->write(*len, *chan, *nextplayback);
+                    pd->stripdemo->write(len, chan, nextplayback);
 
                 continue;
             }
 
-            if (position+uint(*len) > ulen)
+            if (position+uint(len) > ulen)
                 RETURN_ERROR(ERROR_FAILED_TO_READ_PACKET, "failed to read extinfo packet");
 
             if (pd->stripdemo)
             {
-                position += *len;
+                position += len;
 
                 pd->stripdemo->skippacketcount++;
                 continue;
@@ -934,14 +939,14 @@ namespace searchdemo
 
             if (pd->demomillis)
             {
-                position += *len;
+                position += len;
 
-                *pd->demomillis = *nextplayback;
+                *pd->demomillis = nextplayback;
                 continue;
             }
 
-            ucharbuf p((uchar*)udata+position, *len);
-            position += *len;
+            ucharbuf p((uchar*)udata+position, len);
+            position += len;
 
             switch (int type = getint(p))
             {

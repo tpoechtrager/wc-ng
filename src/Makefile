@@ -541,10 +541,12 @@ ifeq ($(LTO),1)
   ifneq ($(LTOFLAGS),$(CLTOFLAGS))
     $(error CC/CXX compiler vendor mismatch)
   endif
+
   override CXXFLAGS+= $(LTOFLAGS)
   override CFLAGS+= $(LTOFLAGS)
   override LDFLAGS+= $(LTOFLAGS)
 
+  ifneq (,$(LTOFLAGS))
   ifneq (,$(findstring clang,$(CXX)))
     override LIBDIR=llvm-lto
     ifneq (,$(findstring mingw,$(PLATFORM)))
@@ -555,6 +557,7 @@ ifeq ($(LTO),1)
         override LDFLAGS+= -Wl,-plugin-opt=mtriple=$(ARCH)-pc-$(PLATFORM)
       endif
     endif
+  endif
   endif
 endif
 

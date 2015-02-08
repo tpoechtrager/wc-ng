@@ -362,6 +362,7 @@ extern bool resolverwait(const char *name, ENetAddress *address);
 extern int connectwithtimeout(ENetSocket sock, const char *hostname, const ENetAddress &address);
 struct serverinfo; //NEW
 extern serverinfo *addserver(const char *name, int port = 0, const char *password = NULL, bool keep = false); //NEW void -> serverinfo *
+extern void rebindpingport(); //NEW
 extern void writeservercfg();
 extern void cleanupextinfo();
 
