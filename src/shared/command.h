@@ -331,7 +331,7 @@ inline void ident::getval(tagval &v) const
 // anonymous commands, uses nasty __LINE__ trick to keep names unique
 #define ICOMMANDNS(name, cmdname, nargs, proto, b) \
  UNUSED static void TOKENPASTE(cmdname, __LINE__) proto { b; } \
- UNUSED static bool TOKENPASTE(init, __LINE__) = addcommand(name, (identfun)TOKENPASTE(cmdname, __LINE__), nargs);
+ UNUSED static bool TOKENPASTE(cmdname, TOKENPASTE(init, __LINE__)) = addcommand(name, (identfun)TOKENPASTE(cmdname, __LINE__), nargs);
 //NEW END
 
 #if 0 //NEW replaced
