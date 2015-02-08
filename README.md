@@ -2,9 +2,7 @@
 
 ## Latest Release: ##
 
-Nightly Builds: [http://wc-ng.sauerworld.org/builds/nightly/b/](http://wc-ng.sauerworld.org/builds/nightly/b/)
-
-GPG Signature Key: [32079601](https://github.com/tpoechtrager/wc-ng/tree/master/src/build/signkeys).
+Nightly Builds: [http://wc-ng.sauerworld.org/builds/nightly/b/list](http://wc-ng.sauerworld.org/builds/nightly/b/list)
 
 ### Installation: ###
 
