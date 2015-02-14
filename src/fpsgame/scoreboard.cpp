@@ -170,10 +170,14 @@ namespace game
         return cond && showextinfo && ((isconnected(false) && hasextinfo) || (demoplayback && demohasextinfo));
     }
 
-    const char *countryflag(const char *code, bool staticstring = true)
+    static const char *countryflag(const char *code, const char *name = NULL, bool staticstring = true)
     {
         static hashtable<const char* /* code */, const char* /* filename */> cache;
-        bool nullcode = !code;
+        bool nullcode;
+
+        // claim we don't have continent flags
+        if(name && name[0] && mod::geoip::iscontinent(name)) nullcode = true;
+        else nullcode = !code || !code[0];
 
         if(nullcode)
         {
@@ -223,7 +227,7 @@ namespace game
         goto ret;
     }
 
-    ICOMMAND(countryflagpath, "s", (const char *code), const char *fn = countryflag(code, false); result(fn ? fn : ""));
+    ICOMMAND(countryflagpath, "ss", (const char *c, const char *n), const char *fn = countryflag(c, n, false); result(fn ? fn : ""));
 
     void rendercountry(g3d_gui &g, const char *code, const char *name, int mode, bool *clicked, int scoreboard)
     {
@@ -250,7 +254,7 @@ namespace game
 
         static string cnamebuf;
         static mod::strtool cname(cnamebuf, sizeof(cnamebuf));
-        const char *cflag = mode>2 ? countryflag(code) : NULL;
+        const char *cflag = mode>2 ? countryflag(code, name) : NULL;
 
         if(mode<5)
         {
@@ -371,8 +375,7 @@ namespace game
                 static uint32_t lastip = 0;
                 if(lastip != ip)
                 {
-                    country = mod::geoip::country(ip);
-                    countrycode = mod::geoip::countrycode(ip);
+                    mod::geoip::country(ip, &country, &countrycode);
                     lastip = ip;
                 }
                 if(country && countrycode)

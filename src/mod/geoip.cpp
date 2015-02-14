@@ -66,9 +66,7 @@ namespace geoip
     {
         SDL_Mutex_Locker m(geoipmutex);
 
-        if (geoip)
-            GeoIP_delete(geoip);
-
+        if (geoip) GeoIP_delete(geoip);
         geoip = GeoIP_open(db, GEOIP_MEMORY_CACHE);
 
         if (geoip)
@@ -83,94 +81,92 @@ namespace geoip
     void closedatabase()
     {
         SDL_Mutex_Locker m(geoipmutex);
-
-        if (geoip)
-            GeoIP_delete(geoip);
-
+        if (geoip) GeoIP_delete(geoip);
         geoip = NULL;
     }
 
-    const char *country(const char *ip)
+    bool country(uint ip, const char **country, const char **countrycode)
     {
         SDL_Mutex_Locker m(geoipmutex);
-
-        if (!geoip)
-            return NULL;
-
-        return GeoIP_country_name_by_addr(geoip, ip);
-    }
-
-    const char *country(uint ip)
-    {
-        SDL_Mutex_Locker m(geoipmutex);
-
-        if (!geoip)
-            return NULL;
-
-        return GeoIP_country_name_by_ipnum(geoip, ENET_NET_TO_HOST_32(ip));
-    }
-
-    const char *countrycode(const char *ip)
-    {
-        SDL_Mutex_Locker m(geoipmutex);
-
-        if (!geoip)
-            return NULL;
-
-        return GeoIP_country_code_by_addr(geoip, ip);
-    }
-
-    const char *countrycode(uint ip)
-    {
-        SDL_Mutex_Locker m(geoipmutex);
-
-        if (!geoip)
-            return NULL;
-
-        return GeoIP_country_code_by_ipnum(geoip, ENET_NET_TO_HOST_32(ip));
+        if (!geoip) return false;
+        int id = GeoIP_id_by_ipnum(geoip, ENET_NET_TO_HOST_32(ip));
+        if (id < 0)
+        {
+            if (country) *country = NULL;
+            if (countrycode) *countrycode = NULL;
+            return false;
+        }
+        if (country) *country = GeoIP_country_name[id];
+        if (countrycode) *countrycode = GeoIP_country_code[id];
+        return true;
     }
 
     static_assert(sizeofarray(GeoIP_country_code) == sizeofarray(GeoIP_country_name), "");
 
-    const char *staticcountry(size_t index)
+    constexpr const char *continents[][2] =
     {
-        if (index >= sizeofarray(GeoIP_country_name)) return NULL;
-        return GeoIP_country_name[index];
+        { "AF", "Africa" },
+        { "AS", "Asia" },
+        { "EU", "Europe" },
+        { "NA", "North America" },
+        { "SA", "South America" },
+        { "OC", "Ocenia" }
+    };
+
+    bool iscontinent(const char *name)
+    {
+        for (auto continent : continents) if (!strcmp(continent[1], name)) return true;
+        return false;
     }
 
-    const char *staticcountrycode(const char *countrycode, size_t *index)
+    bool staticcontinent(const char *nscontinentcode, const char **continent, const char **continentcode)
     {
-        if (*index) *index = 0;
-        assert(countrycode[0] && countrycode[1]);
-        for (const char *scountrycode : GeoIP_country_code)
+        for (auto &c : continents)
         {
-            if (!scountrycode) break;
-            if (*(uint16_t*)scountrycode == *(uint16_t*)countrycode) return scountrycode;
-            if (index) ++*index;
+            if (*(const uint16_t*)c[0] == *(const uint16_t*)nscontinentcode)
+            {
+                if (continent) *continent = c[1];
+                if (continentcode) *continentcode = c[0];
+                return true;
+            }
         }
-        return NULL;
+        if (continent) *continent = NULL;
+        if (continentcode) *continentcode = NULL;
+        return false;
+    }
+
+    bool staticcountry(const char *nscountrycode, const char **country, const char **countrycode)
+    {
+        loopi(sizeofarray(GeoIP_country_code))
+        {
+            const char *scountrycode = GeoIP_country_code[i];
+            if (!scountrycode) break;
+            if (*(const uint16_t*)scountrycode == *(const uint16_t*)nscountrycode)
+            {
+                if (country) *country = GeoIP_country_name[i];
+                if (countrycode) *countrycode = GeoIP_country_code[i];
+                return true;
+            }
+        }
+        if (country) *country = NULL;
+        if (countrycode) *countrycode = NULL;
+        return false;
     }
 
     void lookupcountry(const extinfo::playerv2 *ep, const char *&country, const char *&countrycode)
     {
         if (ep->ip.ui32 != uint32_t(-1))
         {
-            countrycode = geoip::countrycode(ep->ip.ui32);
-            if (countrycode)
-            {
-                country = geoip::country(ep->ip.ui32);
-                return;
-            }
+            if (geoip::country(ep->ip.ui32, &country, &countrycode)) return;
         }
         if (ep->ext.havecountrycode())
         {
-            size_t index;
-            countrycode = staticcountrycode(ep->ext.countrycode, &index);
-            if (countrycode)
+            if (ep->ext.iscontinentcode())
             {
-                country = staticcountry(index);
-                return;
+                char tmp[2]{(char)toupper(ep->ext.countrycode[0]), (char)toupper(ep->ext.countrycode[1])};
+                if (staticcontinent(tmp, &country, &countrycode)) return;
             }
+            else if (staticcountry(ep->ext.countrycode, &country, &countrycode)) return;
         }
         country = NULL;
         countrycode = NULL;
@@ -291,8 +287,7 @@ namespace geoip
 
     static bool statuscallback(uint requestid, int *info, size_t totalsize, size_t downloaded, ullong mselapsed)
     {
-        if (!totalsize)
-            return true;
+        if (!totalsize) return true;
 
         int &guispawned = info[3];
 

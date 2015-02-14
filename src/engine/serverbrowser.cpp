@@ -330,9 +330,7 @@ struct serverinfo : pingattempts
     void lookupcountry()
     {
         if(resolved == UNRESOLVED) return;
-        country = mod::geoip::country(address.host);
-        if(!country) return;
-        countrycode = mod::geoip::countrycode(address.host);
+        mod::geoip::country(address.host, &country, &countrycode);
     }
     //NEW END
 

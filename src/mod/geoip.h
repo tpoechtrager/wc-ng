@@ -25,12 +25,10 @@ namespace geoip
 {
     bool loaddatabase(const char *db);
     void closedatabase();
-    const char *country(const char *ip);
-    const char *country(uint ip);
-    const char *countrycode(const char *ip);
-    const char *countrycode(uint ip);
-    const char *staticcountry(size_t index);
-    const char *staticcountrycode(const char *countrycode, size_t *index);
+    bool country(uint ip, const char **country, const char **countrycode);
+    bool iscontinent(const char *name);
+    bool staticcontinent(const char *nscontinentcode, const char **continent, const char **continentcode = NULL);
+    bool staticcountry(const char *nscountrycode, const char **country, const char **countrycode = NULL);
     void lookupcountry(const extinfo::playerv2 *ep, const char *&country, const char *&countrycode);
     void startup();
     void shutdown();

@@ -140,6 +140,7 @@ namespace extinfo
             bool isoomod() const { return mod == SM_OOMOD; }
 
             bool havecountrycode() const { return countrycode[0] && countrycode[1]; }
+            bool iscontinentcode() const { return havecountrycode() && islower(countrycode[0]); }
 
             servermod mod;
             int suicides;
@@ -200,7 +201,9 @@ namespace extinfo
         {
             memcpy(this, base, basesize());
             zeroextbytes();
-            if (dataflags & COUNTRYCODE) memcpy(ext.countrycode, data, 2);
+
+            if ((dataflags & COUNTRYCODE) || (dataflags & CONTINENT))
+                memcpy(ext.countrycode, data, 2);
         }
 
         void zeroextbytes() { memset((uchar*)this+basesize(), 0, extsize());  }

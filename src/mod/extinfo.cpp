@@ -291,17 +291,9 @@ namespace extinfo
                                                 p.get((uchar*)&tmp, 2);
                                                 if (tmp[0] && tmp[1])
                                                 {
-                                                    bool iscontinent;
-                                                    if ((iscontinent = islower(tmp[0])))
-                                                    {
-                                                        tmp[0] = toupper(tmp[0]);
-                                                        tmp[1] = toupper(tmp[1]);
-                                                    }
-                                                    else
-                                                    {
-                                                        static_assert(sizeof(cp.ext.countrycode) >= sizeof(tmp), "");
-                                                        memcpy(cp.ext.countrycode, tmp, sizeof(tmp));
-                                                    }
+                                                    bool iscontinent = islower(tmp[0]);
+                                                    static_assert(sizeof(cp.ext.countrycode) >= sizeof(tmp), "");
+                                                    memcpy(cp.ext.countrycode, tmp, sizeof(tmp));
                                                     // needed for demos
                                                     cp.dataflags |= (iscontinent ? playerv2::CONTINENT : playerv2::COUNTRYCODE);
                                                     static_assert(sizeof(cp.data) >= 2, "");
