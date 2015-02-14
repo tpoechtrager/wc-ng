@@ -19,26 +19,43 @@ case $PLATFORM in
 esac
 
 # prefer clang when CXX/CC are not set
-test -z "$CXX" && which clang++ &>/dev/null && export CXX="clang++"
-test -z "$CC" && which clang &>/dev/null && export CC="clang"
+[ -z "$CXX" ] && which clang++ &>/dev/null && export CXX="clang++"
+[ -z "$CC" ] && which clang &>/dev/null && export CC="clang"
 
 # optimize for host architecture
 export CFLAGS+=" -march=native"
 export CXXFLAGS+=" -march=native"
 
+SANITIZERS=0
+
 # sanitizers
-if [ -n "$ASAN" ]; then
-  export CFLAGS+=" -fsanitize=address"
-  export CXXFLAGS+=" -fsanitize=address -DUSE_STD_NEW"
+if [ -n "$SANITIZE" ]; then
+    ASAN=1
+    UBSAN=1
 fi
 
-if [ -n "$UBSAN" ]; then
-  export CFLAGS+=" -fsanitize=undefined"
-  export CXXFLAGS+=" -fsanitize=undefined"
+[ -n "$ASAN" ] && SANFLAGS+=" -fsanitize=address"
+[ -n "$TSAN" ] && SANFLAGS+=" -fsanitize=thread"
+[ -n "$UBSAN" ] && SANFLAGS+=" -fsanitize=undefined -fno-sanitize=function"
+
+if [ -n "$SANFLAGS" ]; then
+    export OPTIMIZE=0
+    export DEBUG=3
+
+    export CXXFLAGS+=" $SANFLAGS"
+    export CFLAGS+=" $SANFLAGS"
+
+    if [[ $CXX != *clang* ]]; then
+        # assume it's gcc
+        CXXFLAGS+=" -fpic -pie"
+        CFLAGS+=" -fpic -pie"
+        export USESTATICLIBS=0
+        export GLIBCCOMPAT=0
+    fi
 fi
 
 # append WCCXXFLAGS to CXXFLAGS
-test -n "$WCCXXFLAGS" && CXXFLAGS+=" $WCCXXFLAGS"
+[ -n "$WCCXXFLAGS" ] && CXXFLAGS+=" $WCCXXFLAGS"
 
 # exit on error
 set -e
