@@ -340,13 +340,10 @@ namespace http
 
                     http->canuninstall  = true;
                 }
-
-                requests[i] = NULL;
-                delete req;
             }
         }
 
-        loopvrev(requests) if (!requests[i]) requests.remove(i);
+        loopvrev(requests) if (requests[i]->isprocessed()) delete requests.remove(i);
     }
 
     time_t getfiletime(uint id)

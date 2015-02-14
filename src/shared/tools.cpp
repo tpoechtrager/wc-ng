@@ -3,24 +3,24 @@
 #include "cube.h"
 
 #ifndef USE_STD_NEW //NEW
-//NEW throw()
-void *operator new(size_t size) throw()
+//NEW WEAK & throw()
+WEAK void *operator new(size_t size) throw()
 {
     void *p = malloc(size);
     if(!p) abort();
     return p;
 }
 
-void *operator new[](size_t size) throw()
+WEAK void *operator new[](size_t size) throw()
 {
     void *p = malloc(size);
     if(!p) abort();
     return p;
 }
 
-void operator delete(void *p) throw() { if(p) free(p); }
+WEAK void operator delete(void *p) throw() { if(p) free(p); }
 
-void operator delete[](void *p) throw() { if(p) free(p); }
+WEAK void operator delete[](void *p) throw() { if(p) free(p); }
 #endif //!USE_STD_NEW
 
 #ifndef WIN32

@@ -41,7 +41,8 @@ int resolverloop(void * data)
         SDL_LockMutex(resolvermutex);
         while(resolverqueries.empty()) SDL_CondWait(querycond, resolvermutex);
         rt->query = resolverqueries.pop();
-        rt->starttime = totalmillis; /* data race */
+        extern atomic<int> atotalmillis; //NEW
+        rt->starttime = atotalmillis;    //NEW totalmillis -> atotalmillis
         SDL_UnlockMutex(resolvermutex);
 
         ENetAddress address = { ENET_HOST_ANY, ENET_PORT_ANY };

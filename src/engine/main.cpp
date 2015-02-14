@@ -90,6 +90,7 @@ int screenw = 0, screenh = 0, desktopw = 0, desktoph = 0;
 SDL_GLContext glcontext = NULL;
 
 int lastmillis = 1, totalmillis = 1;
+atomic<int> atotalmillis(1); //NEW
 
 dynent *player = NULL;
 
@@ -1474,6 +1475,7 @@ int main(int argc, char **argv)
         double elapsedmillis = double(curticks - lasticks)/1000.0;
         lasticks = curticks;
         totalmillis = (finetotalmillis += elapsedmillis);
+        atotalmillis = totalmillis; //NEW
         int oldlastmillis = lastmillis;
         lastmillis = (finelastmillis += game::ispaused() ? 0 : game::scaletime(1) * elapsedmillis / 100);
         bool lightupdate = oldlastmillis == lastmillis;
