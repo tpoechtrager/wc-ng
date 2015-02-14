@@ -44,19 +44,20 @@ public:
     {
         __atomic_store(&var, &val, __ATOMIC_SEQ_CST);
     }
-    T load()
+    T load() const
     {
         T val;
         __atomic_load(&var, &val, __ATOMIC_SEQ_CST);
         return val;
     }
-    operator T() { return load(); }
+    operator T() const { return load(); }
     T operator++(int) { return __atomic_fetch_add(&var, 1, __ATOMIC_SEQ_CST); }
     T operator--(int) { return __atomic_fetch_sub(&var, 1, __ATOMIC_SEQ_CST); }
     T operator+=(T val) { return __atomic_fetch_add(&var, val, __ATOMIC_SEQ_CST); }
     T operator-=(T val) { return __atomic_fetch_sub(&var, val, __ATOMIC_SEQ_CST); }
     void operator=(T val) { store(val); }
     atomic(T val = T(0)) { store(val); }
+    atomic(const atomic<T> &in) { store(in.load()); }
 private:
     T var;
 };

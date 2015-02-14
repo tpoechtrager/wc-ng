@@ -75,6 +75,7 @@ void fatal(const char *s, ...)    // failure exit
 SDL_Surface *screen = NULL;
 
 int curtime = 0, lastmillis = 1, elapsedtime = 0, totalmillis = 1;
+atomic<int> atotalmillis(1); //NEW
 
 dynent *player = NULL;
 
@@ -1429,6 +1430,7 @@ int main(int argc, char **argv)
         if(game::ispaused()) curtime = 0;
 		lastmillis += curtime;
         totalmillis = millis;
+        atotalmillis = millis; //NEW
         updatetime();
  
         checkinput();

@@ -1147,9 +1147,12 @@ namespace searchdemo
             return true;
         }
 
-        void signal()
+        void signal(bool needlock = true)
         {
+            if (needlock) lock();
             isprocessing = true;
+            if (needlock) unlock();
+
             SDL_CondSignal(cond);
         }
 
@@ -1157,9 +1160,9 @@ namespace searchdemo
         {
             lock();
             jointhread = true;
+            signal(false);
             unlock();
 
-            signal();
             SDL_WaitThread(thread, NULL);
         }
 
@@ -1197,6 +1200,7 @@ namespace searchdemo
 
         void reset()
         {
+            lock();
             pd.result->setsize(0);
             pd.demoinfo = NULL;
             *pd.packetcount = 0;
@@ -1205,6 +1209,7 @@ namespace searchdemo
             *pd.parsedemoticks = 0;
             isprocessing = false;
             processresult = false;
+            unlock();
         }
 
         demothread_t(const extinfo::playerv2 &fp, int filecount, int gamemode, const char *servername,
@@ -1805,13 +1810,17 @@ namespace searchdemo
             return;
         }
 
-        strtool sname(sdti->servername, sizeof(sdti->servername));
+        uchar x1[sizeof(strtool)], x2[sizeof(strtool)];
+
+        strtool &sname = *new (x1) strtool(sdti->servername, sizeof(sdti->servername));
         sname = servername;
         sname.lowerstring();
+        sname.~strtool();
 
-        strtool mname(sdti->mapname, sizeof(sdti->mapname));
+        strtool &mname = *new (x2) strtool(sdti->mapname, sizeof(sdti->mapname));
         mname = mapname;
         mname.lowerstring();
+        mname.~strtool();
 
         copystring(sdti->name, name);
 
@@ -1834,7 +1843,8 @@ namespace searchdemo
     }
     COMMAND(searchdemo, "ssssiiiiii");
 
-    ICOMMAND(stopsearchdemo, "", (), {
+    ICOMMAND(stopsearchdemo, "", (),
+    {
         if (!searchdemothread || !searchmutex)
             return;
 
