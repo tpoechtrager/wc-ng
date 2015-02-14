@@ -1007,12 +1007,10 @@ static bool parsemessages(ucharbuf &p)
             {
                 c.server.addr.host = (enet_uint32)getint(p);
                 c.server.addr.port = (enet_uint16)getint(p);
-                c.server.country = geoip::country(c.server.addr.host);
-                c.server.countrycode = geoip::countrycode(c.server.addr.host);
+                geoip::country(c.server.addr.host, &c.server.country, &c.server.countrycode);
             }
             if (getclient(c.id) || clients.length() >= NUMMAXCLIENTS) break;
-            c.country = geoip::country(c.ip.ui32);
-            c.countrycode = geoip::countrycode(c.ip.ui32);
+            geoip::country(c.ip.ui32, &c.country, &c.countrycode);
             clients.add(new client_t(c));
             if (!showconnects || c.id == myid) break;
             consoleoutf("connect: %s (%s)", c.getname().str(),

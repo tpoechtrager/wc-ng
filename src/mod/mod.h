@@ -33,6 +33,50 @@
 
 #define declfun(fun, name) decltype(&fun) name = fun
 
+template<class T> struct removeconst { typedef T type; };
+template<class T> struct removeconst<const T> { typedef T type; };
+
+#define loop_(v,m) for(removeconst<decltype(m)>::type v = decltype(m)(); v < m; ++v)
+#define loopai(m) loop_(i,m)
+#define loopaj(m) loop_(j,m)
+#define loopak(m) loop_(k,m)
+#define loopal(m) loop_(l,m)
+
+template<class L, class R> void assign(L &l, R &&r) { l = (L)r; }
+
+template<class T>
+bool isaligned(const void *p) { return (const uintptr_t)p % sizeof(T) == 0; }
+
+class noncopyable
+{
+protected:
+    noncopyable() {}
+    ~noncopyable() {}
+private:
+    noncopyable (const noncopyable &);
+    noncopyable &operator=(const noncopyable &);
+};
+
+template<class T>
+class uniqueptr : noncopyable
+{
+public:
+    uniqueptr(T data, bool isarray = false) : data(data), isarray(isarray) {}
+    ~uniqueptr()
+    {
+        if (isarray) delete[] data;
+        else delete data;
+    }
+
+    T &operator*() { return *data; }
+    T operator->() { return data; }
+    operator T() { return data; }
+
+private:
+    T data;
+    const bool isarray;
+};
+
 #include "compiler.h"
 #include "strtool.h"
 #include "crypto.h"
@@ -283,45 +327,6 @@ namespace game
     // cubescript func
     int getactioncn(bool cubescript = false);
 }
-
-template <class L, class R>
-void assign(L &l, R &&r)
-{
-    l = (L)r;
-}
-
-template<class T>
-bool isaligned(const void *p) { return (const uintptr_t)p % sizeof(T) == 0; }
-
-class noncopyable
-{
-protected:
-    noncopyable() {}
-    ~noncopyable() {}
-private:
-    noncopyable (const noncopyable &);
-    noncopyable &operator=(const noncopyable &);
-};
-
-template<class T>
-class uniqueptr : noncopyable
-{
-    public:
-        uniqueptr(T data, bool isarray = false) : data(data), isarray(isarray) {}
-        ~uniqueptr()
-        {
-            if (isarray) delete[] data;
-            else delete data;
-        }
-
-        T &operator*() { return *data; }
-        T operator->() { return data; }
-        operator T() { return data; }
-
-    private:
-        T data;
-        const bool isarray;
-};
 
 #ifndef STANDALONE
 

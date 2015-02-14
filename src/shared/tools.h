@@ -94,13 +94,6 @@ constexpr T clamp(T a, U b, U c) //NEW constexpr instead of static inline
 #define loopj(m) loop(j,m)
 #define loopk(m) loop(k,m)
 #define loopl(m) loop(l,m)
-//NEW
-#define loop_(v,m) for(decltype(m) v = decltype(m)(); v < m; ++v)
-#define loopai(m) loop_(i,m)
-#define loopaj(m) loop_(j,m)
-#define loopak(m) loop_(k,m)
-#define loopal(m) loop_(l,m)
-//NEW END
 #define looprev(v,m) for(int v = int(m); --v >= 0;)
 #define loopirev(m) looprev(i,m)
 #define loopjrev(m) looprev(j,m)
