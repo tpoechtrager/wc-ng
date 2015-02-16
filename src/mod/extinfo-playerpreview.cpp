@@ -38,6 +38,8 @@ using namespace mod::extinfo;
 namespace mod {
 namespace extinfo {
 
+MODVARP(extinfoguihorizontal, 0, 0, 1);
+
 #define loopexintofplayers(o, b) \
     loopv(ti.players) \
     { \
@@ -93,6 +95,8 @@ void renderplayerpreview(g3d_gui& g, strtool& command, const ENetAddress& eaddr,
     int protocol = 0, gamemode = 0, secleft = 0, maxplayers = 0, mastermode = 0;
     bool gamepaused = false;
     int gamespeed = 100;
+    int count = 0;
+    int rnumteams = 0;
 
     if (!waiting && errstr.empty())
     {
@@ -222,8 +226,11 @@ void renderplayerpreview(g3d_gui& g, strtool& command, const ENetAddress& eaddr,
     else if (!players.empty())
     {
         teaminfo &ti = teams.add();
-        loopv(players) if (players[i].ep.state != CS_SPECTATOR) ti.players.add(&players[i]);
-        else specs.add(&players[i]);
+        loopv(players)
+        {
+            if (players[i].ep.state != CS_SPECTATOR) ti.players.add(&players[i]);
+            else specs.add(&players[i]);
+        }
     }
 
     if (!specs.empty())
@@ -231,7 +238,6 @@ void renderplayerpreview(g3d_gui& g, strtool& command, const ENetAddress& eaddr,
         teaminfo &ti = teams.add();
         ti.team = "spectators";
         ti.players = specs;
-        specs.setsize(0);
     }
 
     if (teams.empty() && !numplayers)
@@ -248,15 +254,30 @@ void renderplayerpreview(g3d_gui& g, strtool& command, const ENetAddress& eaddr,
         loopv(teams) teams[i].players.sort(compareplayer);
     }
 
+    if (extinfoguihorizontal)
+    {
+        loopv(teams) if (!teams[i].players.empty()) rnumteams++;
+        if (rnumteams == 2 && !specs.empty()) rnumteams = 1;
+    }
+
     loopv(teams)
     {
-        teaminfo& ti = teams[i];
+        teaminfo &ti = teams[i];
         if (ti.players.empty()) continue;
 
         bool extended = false;
         loopexintofplayers(ep, { if (ep.ext.ishopmodcompatible() || ep.ext.isoomod()) { extended = true; break; } });
 
-        if (i > 0) g.separator();
+        if (rnumteams > 1)
+        {
+            if ((count%2) == 0)
+            {
+                if (count > 0) g.separator();
+                g.pushlist();
+            }
+            g.pushlist();
+        }
+        else if (count > 0) g.separator();
 
         bool isspecteam;
         if ((isspecteam = !strcmp(ti.team, "spectators")) || m_teammode)
@@ -273,8 +294,8 @@ void renderplayerpreview(g3d_gui& g, strtool& command, const ENetAddress& eaddr,
         g.pushlist(); // begin player listing
 
         g.spring(); // center players
-        g.pushlist(); // vertical
         g.pushlist(); // horizontal
+        g.pushlist(); // vertical
         g.spring();
 
         g.pushlist();
@@ -382,13 +403,20 @@ void renderplayerpreview(g3d_gui& g, strtool& command, const ENetAddress& eaddr,
         g.poplist();
 
         g.spring(); // center players
-
-        g.poplist();
-        g.poplist();
-
+        g.poplist(); // horizontal
+        g.poplist(); // vertical
         g.spring();
 
         g.poplist(); // end playerlisting
+
+        if (rnumteams > 1)
+        {
+            g.poplist();
+            if(count+1 < rnumteams && (count+1)%2) g.space(3);
+            else g.poplist();
+        }
+
+        count++;
     }
 
     g.separator();
