@@ -412,7 +412,7 @@ void renderplayerpreview(g3d_gui& g, strtool& command, const ENetAddress& eaddr,
         if (rnumteams > 1)
         {
             g.poplist();
-            if(count+1 < rnumteams && (count+1)%2) g.space(3);
+            if (count+1 < rnumteams && (count+1)%2) g.space(2);
             else g.poplist();
         }
 
