@@ -183,7 +183,7 @@ namespace hwtemp
             return PLUGIN_INIT_ERROR;
         }
 
-        plugin->version = plugin_version_t(0, 4, 7);
+        plugin->version = plugin_version_t(0, 4, 8);
         plugin->clientver = CLIENTVERSION;
         plugin->clientrev = WCREVISION;
         plugin->unload = unload;

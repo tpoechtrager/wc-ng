@@ -146,9 +146,13 @@ namespace hwtemp
         loopi(n)
         {
             mod::strtool &str = strs[i];
+            int n;
 
-            if (sscanf(str.str(), fmt, &temperature, &type) != 2)
+            if ((n = sscanf(str.str(), fmt, &temperature, &type)) < 1)
                 continue;
+
+            if (n == 1)
+              type = 'C';
 
             /*
              * attempt to filter implausible temperature values
@@ -184,7 +188,7 @@ namespace hwtemp
     // NVIDIA GPU
     //
 
-    GETTEMPFUN(nvgpugettemp, "GPU", "nvidia-smi -q -d TEMPERATURE", "\t\tGpu\t\t\t\t\t\t:%d %c")
+    GETTEMPFUN(nvgpugettemp, "GPU", "nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader", "%d")
 
     //
     // AMD GPU
