@@ -58,7 +58,7 @@ Nightly Builds: [http://wc-ng.sauerworld.org/builds/nightly/b/list](http://wc-ng
 * [Client Documentation](http://wc-ng.sauerworld.org/builds/nightly/readme)
 * [Chat Server](https://github.com/tpoechtrager/wc-ng/blob/master/CHATSERVER.md)
 * [Build Instructions](https://github.com/tpoechtrager/wc-ng/blob/master/BUILD_INSTRUCTIONS.md)
-* [Library Build Scripts](https://github.com/tpoechtrager/wc-ng/blob/master/scripts/lib-build-scripts/README.md)
+* [Library Build Scripts](https://github.com/tpoechtrager/wc-ng/blob/master/src/scripts/lib-build-scripts/README.md)
 * [ChangeLog](https://github.com/tpoechtrager/wc-ng/blob/master/ChangeLog)
 * [Screenshots](http://wc-ng.sauerworld.org/builds/nightly/screens)
 
