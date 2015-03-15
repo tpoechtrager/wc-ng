@@ -39,7 +39,9 @@ typedef unsigned long long int ullong;
 #ifndef USE_STD_NEW //NEW
 //NEW throw()
 void operator delete(void *p) throw();
+void operator delete(void *p, size_t) throw();   //NEW
 void operator delete[](void *p) throw();
+void operator delete[](void *p, size_t) throw(); //NEW
 inline void *operator new(size_t, void *p) throw() { return p; }
 inline void *operator new[](size_t, void *p) throw() { return p; }
 inline void operator delete(void *, void *) throw() {}

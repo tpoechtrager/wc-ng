@@ -1,4 +1,7 @@
 document:
+- '/playerinfofontsize'
+- '/showteamhealth'
+- '/extinfoguihorizontal'
 - '/randomizepingport'
 - gunflare variables
 - '/wcver'

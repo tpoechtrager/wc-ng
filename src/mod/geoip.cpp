@@ -92,12 +92,15 @@ namespace geoip
         int id = GeoIP_id_by_ipnum(geoip, ENET_NET_TO_HOST_32(ip));
         if (id < 0)
         {
+            ignore:;
             if (country) *country = NULL;
             if (countrycode) *countrycode = NULL;
             return false;
         }
+        const char *cc = GeoIP_country_code[id];
+        if (cc[0] == '-') goto ignore;
         if (country) *country = GeoIP_country_name[id];
-        if (countrycode) *countrycode = GeoIP_country_code[id];
+        if (countrycode) *countrycode = cc;
         return true;
     }
 
@@ -137,6 +140,7 @@ namespace geoip
 
     bool staticcountry(const char *nscountrycode, const char **country, const char **countrycode)
     {
+        if (nscountrycode[0] == '-') goto ignore;
         loopi(sizeofarray(GeoIP_country_code))
         {
             const char *scountrycode = GeoIP_country_code[i];
@@ -148,6 +152,7 @@ namespace geoip
                 return true;
             }
         }
+        ignore:;
         if (country) *country = NULL;
         if (countrycode) *countrycode = NULL;
         return false;

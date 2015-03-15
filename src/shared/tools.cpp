@@ -19,8 +19,10 @@ WEAK void *operator new[](size_t size) throw()
 }
 
 WEAK void operator delete(void *p) throw() { if(p) free(p); }
+WEAK void operator delete(void *p, size_t) throw() { if(p) free(p); }   //NEW
 
 WEAK void operator delete[](void *p) throw() { if(p) free(p); }
+WEAK void operator delete[](void *p, size_t) throw() { if(p) free(p); } //NEW
 #endif //!USE_STD_NEW
 
 #ifndef WIN32
