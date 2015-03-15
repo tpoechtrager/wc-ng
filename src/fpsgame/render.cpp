@@ -188,6 +188,9 @@ namespace game
 
     VARP(teamskins, 0, 0, 1);
 
+    MODVARP(showteamhealth, 0, 0, 1);                  //NEW
+    MODFVARP(playerinfofontsize, 1.5f, 2.0f, 10.0f);   //NEW
+
     void rendergame(bool mainpass)
     {
         if(mainpass) ai::render();
@@ -211,8 +214,8 @@ namespace game
             if(teamskins || m_teammode) team = isteam(player1->team, d->team) ? 1 : 2;
             renderplayer(d, getplayermodelinfo(d), team, 1, mainpass);
             copystring(d->info, colorname(d));
-            if(d->maxhealth>100) { defformatstring(sn)(" +%d", d->maxhealth-100); concatstring(d->info, sn); }
-            if(d->state!=CS_DEAD) particle_text(d->abovehead(), d->info, PART_TEXT, 1, team ? (team==1 ? 0x6496FF : 0xFF4B19) : 0x1EC850, 2.0f);
+            if(showteamhealth && team==1) { defformatstring(sn)(" | health: %d", d->health); concatstring(d->info, sn); } //NEW
+            if(d->state!=CS_DEAD) particle_text(d->abovehead(), d->info, PART_TEXT, 1, team ? (team==1 ? 0x6496FF : 0xFF4B19) : 0x1EC850, playerinfofontsize); //NEW 2.0f -> playerinfofontsizes
         }
         loopv(ragdolls)
         {
