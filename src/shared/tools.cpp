@@ -3,7 +3,14 @@
 #include "cube.h"
 
 #ifndef USE_STD_NEW //NEW
+// MinGW + LTO + weak new/delete causes troubles
+#if defined(__lto__) && defined(__MINGW32__) && !defined(__clang__)
+#undef WEAK
+#define WEAK
+#endif
+
 //NEW WEAK & throw()
+
 WEAK void *operator new(size_t size) throw()
 {
     void *p = malloc(size);
