@@ -1,12 +1,6 @@
 document:
-- '/playerinfofontsize'
-- '/showteamhealth'
-- '/extinfoguihorizontal'
-- '/randomizepingport'
 - gunflare variables
-- '/wcver'
-- '/wcrev'
-- '/wcchatloopclients'
-- '/wcchatisconnected'
-- '/showdamagedealt'
-- '/showclientnum 2'
+
+menu:
+- add gunflare gui
+
