@@ -1,7 +1,7 @@
 document:
 - gunflare variables
 - detectproxyusers
-- proxycolor
+- proxybgcolor
 - isproxy <ip>
 - guicolorfield <var>
 - guiplayerbgcolor <ip>,
