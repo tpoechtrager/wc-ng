@@ -963,8 +963,8 @@ namespace game
 
     void toserver(char *text) 
     { 
-        conoutf(CON_CHAT, "%s:\f0 %s", colorname(player1), text);
-        extern void sendmessages(); //NEW
+        conoutf(CON_CHAT, "%s:\f0 %s", chatcolorname(player1), text); //NEW colorname -> chatcolorname
+        extern void sendmessages();                     //NEW
         if(mod::bouncerserverhost.host) sendmessages(); //NEW
         addmsg(N_TEXT, "rcs", player1, text);
         if(mod::bouncerserverhost.host) sendmessages(); //NEW
@@ -973,7 +973,7 @@ namespace game
 
     COMMANDN(say, toserver, "C");
 
-    void sayteam(char *text) { conoutf(CON_TEAMCHAT, "%s:\f1 %s", colorname(player1), text); addmsg(N_SAYTEAM, "rcs", player1, text); }
+    void sayteam(char *text) { conoutf(CON_TEAMCHAT, "%s:\f1 %s", chatcolorname(player1), text); addmsg(N_SAYTEAM, "rcs", player1, text); } //NEW colorname -> chatcolorname
     COMMAND(sayteam, "C");
 
     ICOMMAND(servcmd, "C", (char *cmd), addmsg(N_SERVCMD, "rs", cmd));
@@ -1392,7 +1392,7 @@ namespace game
                 if(d->state!=CS_DEAD && d->state!=CS_SPECTATOR)
                     particle_textcopy(d->abovehead(), text, PART_TEXT, 2000, 0x32FF64, 4.0f, -8);
                 if(mod::event::run(mod::event::PLAYER_TEXT, "dss", d->clientnum, d->name, text) <= 0) //NEW
-                    conoutf(CON_CHAT, "%s:\f0 %s", colorname(d), text);
+                    conoutf(CON_CHAT, "%s:\f0 %s", chatcolorname(d), text); //NEW colorname -> chatcolorname
                 break;
             }
 
@@ -1407,7 +1407,7 @@ namespace game
                 if(t->state!=CS_DEAD && t->state!=CS_SPECTATOR)
                     particle_textcopy(t->abovehead(), text, PART_TEXT, 2000, 0x6496FF, 4.0f, -8);
                 if(mod::event::run(mod::event::PLAYER_TEAM_TEXT, "dss", t->clientnum, t->name, text) <= 0) //NEW
-                    conoutf(CON_TEAMCHAT, "%s:\f1 %s", colorname(t), text);
+                    conoutf(CON_TEAMCHAT, "%s:\f1 %s", chatcolorname(t), text); //NEW colorname -> chatcolorname
                 break;
             }
 
