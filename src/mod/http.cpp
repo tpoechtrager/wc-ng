@@ -25,26 +25,20 @@
 namespace mod {
 namespace http
 {
-    static const int THREADLIMIT = 10;
-    static const int RECEIVELIMIT = 2*1024*1024;
-    static const int RECEIVEPREALLOC = 100*1024;
-    static const long CONNECTTIMEOUT = 5L;
-
-    string defaultuseragent = {0};
+    static const int MAXTHREADS = 20;
+    string defaultuseragent     = {0};
 
     static inline void gendefaultuseragent()
     {
         static const char *os = getosstring();
-
-        formatstring(defaultuseragent)("wc-ng/%s (%s)",
-                     CLIENTVERSION.str().str(), os);
+        formatstring(defaultuseragent)("wc-ng/%s (%s)", CLIENTVERSION.str().str(), os);
     }
 
     struct http_t;
     static vector<http_t*> requests;
 
-    size_t contentcallback(void *data, size_t size, size_t nmemb, http_t *http);
-    int requestthread(http_t *http);
+    static size_t contentcallback(void *data, size_t size, size_t nmemb, http_t *http);
+    static int requestthread(http_t *http);
 
     static vector<uint> availableids;
 
@@ -151,18 +145,17 @@ namespace http
         }
     };
 
-    size_t contentcallback(void *data, size_t size, size_t nmemb, http_t *http)
+    static size_t contentcallback(void *data, size_t size, size_t nmemb, http_t *http)
     {
         request_t *req = http->request;
 
-        if (req->callback && data && !http->uninstallrequest()) // no need to store data, if there is no callback anyway
+        if (req->callback && data && !http->uninstallrequest()) // no need to store data if there is no callback anyway
         {
             if (!http->downloadstart)
                 http->downloadstart = getmilliseconds();
 
             size_t realsize = size*nmemb;
-
-            size_t size = min((int)realsize, RECEIVELIMIT-http->data.length());
+            size_t size = min<size_t>(realsize, req->maxdatalen-http->data.length());
             http->data.add(data, size);
 
             int speedlimit;
@@ -176,9 +169,13 @@ namespace http
 
             if (req->contentcallback)
             {
-                http->data.add('\0');
+                if (req->nullterminatorneeded)
+                    http->data.add('\0');
+
                 int v = req->contentcallback(http->getrequestid(), req->callbackdata, http->data.getbuf(), http->data.length()-1);
-                http->data.pop();
+
+                if (req->nullterminatorneeded)
+                    http->data.pop();
 
                 switch (v)
                 {
@@ -194,14 +191,14 @@ namespace http
         return 0;
     }
 
-    int downloadstatuscallback(http_t *http, double downloadsize, double downloaded, double uploadsize, double uploaded)
+    static int downloadstatuscallback(http_t *http, double downloadsize, double downloaded, double uploadsize, double uploaded)
     {
         request_t *req = http->request;
         ullong elapsed = http->downloadstart ? getmilliseconds()-http->downloadstart : 0;
         return req->statuscallback(http->getrequestid(), req->callbackdata, downloadsize, downloaded, elapsed) ? 0 : -1;
     }
 
-    int requestthread(http_t *http)
+    static int requestthread(http_t *http)
     {
         request_t *req = http->request;
         http->curl = curl_easy_init();
@@ -223,7 +220,8 @@ namespace http
             }                                                                      \
         } while (0)
 
-        setopt(CURLOPT_CONNECTTIMEOUT, CONNECTTIMEOUT);
+        setopt(CURLOPT_CONNECTTIMEOUT, req->connecttimeout);
+        setopt(CURLOPT_TIMEOUT, req->timeout);
         setopt(CURLOPT_URL, req->request.str());
         setopt(CURLOPT_WRITEFUNCTION, &contentcallback);
         setopt(CURLOPT_WRITEDATA, http);
@@ -248,10 +246,10 @@ namespace http
 
         if (!req->headers.empty())
         {
-             loopv(req->headers)
+            loopv(req->headers)
                 headers = curl_slist_append(headers, req->headers[i].header);
 
-             setopt(CURLOPT_HTTPHEADER, headers);
+            setopt(CURLOPT_HTTPHEADER, headers);
         }
 
         if (req->referer)
@@ -271,7 +269,9 @@ namespace http
         if (http->speedlimit)
             setopt(CURLOPT_MAX_RECV_SPEED_LARGE, (curl_off_t)http->speedlimit);
 
-        http->data.reserve(RECEIVEPREALLOC); // try to avoid re-allocs in contentcallback
+        // try to avoid re-allocs
+        if (req->expecteddatalen)
+            http->data.reserve(req->expecteddatalen);
 
         http->requestresult = curl_easy_perform(http->curl);
 
@@ -292,12 +292,18 @@ namespace http
                 http->responsecode = SSL_ERROR;
                 break;
 
+            case CURLE_OPERATION_TIMEDOUT:
+                http->responsecode = TIMEDOUT;
+                break;
+
             default:
                 if (curl_easy_getinfo(http->curl, CURLINFO_HTTP_CODE, &http->responsecode) != CURLE_OK)
                     http->responsecode = INVALID_RESPONSE_CODE;
         }
 
-        http->data.add('\0');
+        if (req->nullterminatorneeded)
+            http->data.add('\0');
+
         http->data.resize(); // save memory
 
         long lastmodified;
@@ -359,7 +365,7 @@ namespace http
         return 0;
     }
 
-    void startup()
+    void init()
     {
         gendefaultuseragent();
 
@@ -370,7 +376,7 @@ namespace http
             abort();
     }
 
-    void shutdown()
+    void deinit()
     {
         int maxwait = 250; // wait up to 250 msec until the requests will be killed forcefully
 
@@ -397,7 +403,7 @@ namespace http
 
     uint request(request_t *request)
     {
-        if (requests.length() >= THREADLIMIT)
+        if (requests.length() >= MAXTHREADS)
         {
             delete request;
             return UNABLE_TO_PROCESS_REQUEST_NOW;
@@ -454,7 +460,7 @@ namespace http
                     // timeout reached, kill thread forcefully
                     // only do this when quitting the whole client to avoid freezes
 
-                    conoutf(CON_DEBUG, "timeout reached, killing http request (%d) forcefully", http->getrequestid());
+                    conoutf(CON_DEBUG, "timeout reached; killing http request (%d) forcefully", http->getrequestid());
                     SDL_KillThread(http->thread);
                     http->thread = NULL;
                     http->data.disown();

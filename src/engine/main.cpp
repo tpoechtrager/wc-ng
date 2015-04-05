@@ -35,7 +35,7 @@ void cleanup()
 void quit(int *i = NULL)                     // normal exit     //NEW added int i
 {
     extern void writeinitcfg();
-    mod::shutdown(); //NEW
+    mod::deinit(); //NEW
     writeinitcfg();
     writeservercfg();
     abortconnect();
@@ -1397,7 +1397,7 @@ int main(int argc, char **argv)
     logoutf("init: sound");
     initsound();
 
-    mod::startup(); //NEW
+    mod::init(); //NEW
 
     logoutf("init: cfg");
     execfile("data/keymap.cfg");

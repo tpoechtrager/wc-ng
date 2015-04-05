@@ -1,12 +1,16 @@
 document:
-- '/playerinfofontsize'
-- '/showteamhealth'
-- '/extinfoguihorizontal'
-- '/randomizepingport'
 - gunflare variables
-- '/wcver'
-- '/wcrev'
-- '/wcchatloopclients'
-- '/wcchatisconnected'
-- '/showdamagedealt'
-- '/showclientnum 2'
+- detectproxyusers
+- proxycolor
+- isproxy <ip>
+- guicolorfield <var>
+- guiplayerbgcolor <ip>,
+- guiplayerprivcolor <priv>
+- guipushlist
+- guipoplist
+- updateproxydetectionlist
+- listproxydetectionips
+
+menu:
+- add gunflare gui
+

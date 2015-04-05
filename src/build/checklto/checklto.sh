@@ -6,7 +6,7 @@ function check()
 {
     $COMPILER $@ -xc 1.c 2.c -o test #&>/dev/null
     if [ $? -eq 0 ]; then
-        echo "$@"
+        echo "$@ -D__lto__"
         exit
     fi
 }

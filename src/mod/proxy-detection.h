@@ -1,6 +1,6 @@
 /***********************************************************************
  *  WC-NG - Cube 2: Sauerbraten Modification                           *
- *  Copyright (C) 2014, 2015 by Thomas Poechtrager                     *
+ *  Copyright (C) 2015 by Thomas Poechtrager                           *
  *  t.poechtrager@gmail.com                                            *
  *                                                                     *
  *  This program is free software; you can redistribute it and/or      *
@@ -20,17 +20,15 @@
  ***********************************************************************/
 
 namespace mod {
-namespace extinfo { struct playerv2; }
-namespace geoip
-{
-    bool loaddatabase(const char *db);
-    void closedatabase();
-    bool country(uint ip, const char **country, const char **countrycode);
-    bool iscontinent(const char *name);
-    bool staticcontinent(const char *nscontinentcode, const char **continent, const char **continentcode = NULL);
-    bool staticcountry(const char *nscountrycode, const char **country, const char **countrycode = NULL);
-    void lookupcountry(const extinfo::playerv2 *ep, const char *&country, const char *&countrycode);
-    void init();
-    void deinit();
-} //namespace geoip
-} //namespace mod
+namespace proxydetection {
+
+// server is known to send fake-ips
+bool isblacklistedserver(const ENetAddress &addr);
+
+bool isproxy(uint32_t ip);
+bool usesproxy(void *client);
+
+void init();
+
+} // namespace proxydetection
+} // namespace mod

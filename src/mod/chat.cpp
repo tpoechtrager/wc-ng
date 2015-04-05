@@ -1015,6 +1015,8 @@ static bool parsemessages(ucharbuf &p)
             if (!showconnects || c.id == myid) break;
             consoleoutf("connect: %s (%s)", c.getname().str(),
                         c.countrycode ? c.countrycode : "??");
+            if (proxydetection::isproxy(c.ip.ui32))
+                consoleoutf("%s is probably using a proxy - be careful", c.getname().str());
             break;
         }
         case C_CLIENT_DISCONNECT:

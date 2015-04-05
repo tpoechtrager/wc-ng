@@ -22,10 +22,12 @@
 namespace mod {
 namespace ipignore
 {
+
+    bool isignored(void *client, const char *text = NULL);
     bool isignored(int cn, const char *text = NULL);
     bool isignored(uint ip);
     bool checkaddress(const char *address, bool remove = false);
-    void startup();
-    void shutdown();
+    void init();
+    void deinit();
 } //namespace ipignore
 } //namespace mod

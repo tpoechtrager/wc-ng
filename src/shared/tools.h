@@ -28,12 +28,20 @@ typedef unsigned long long int ullong;
 
 #ifdef __GNUC__
 #define UNUSED __attribute__((unused))
-#define NORETURN __attribute__((noreturn)) //NEW
-#define WEAK __attribute__((weak))         //NEW
+#define NORETURN __attribute__((noreturn))            //NEW
+#define WEAK __attribute__((weak))                    //NEW
+#define NOINLINE __attribute__((noinline))            //NEW
+#define INLINE inline __attribute__((always_inline))  //NEW
+#define HOT __attribute__((hot))                      //NEW
+#define UNREACHABLE() __builtin_unreachable()         //NEW
 #else
 #define UNUSED
-#define NORETURN                           //NEW
-#define WEAK                               //NEW
+#define NORETURN                                      //NEW
+#define WEAK                                          //NEW
+#define NOINLINE                                      //NEW
+#define INLINE                                        //NEW
+#define HOT                                           //NEW
+#define UNREACHABLE() abort()                         //NEW
 #endif
 
 #ifndef USE_STD_NEW //NEW
@@ -464,23 +472,27 @@ static inline bool htcmp(GLuint x, GLuint y)
 }
 #endif
 
-template <class T> struct vector
+template <class T, bool GLOBAL=false> struct vector //NEW  bool GLOBAL=false
 {
     static const int MINSIZE = 8;
 
     T *buf;
     int alen, ulen;
 
+    // vector() : buf(NULL), alen(0), ulen(0) {} //NEW commented
+
     //NEW
     vector(int n) : buf(NULL), alen(0), ulen(0)
     {
         if(n) growbuf(n);
     }
-    //NEW END
 
-    vector() : buf(NULL), alen(0), ulen(0)
+    vector()
     {
+        if(GLOBAL) return;
+        buf = NULL; alen = 0; ulen = 0;
     }
+    //NEW END
 
     vector(const vector &v) : buf(NULL), alen(0), ulen(0)
     {
@@ -1356,7 +1368,15 @@ struct ipmask
         return ((tmp+(tmp>>3))&030707070707)%63;
     }
 
+    enet_uint32 gethostcount() const
+    {
+        int bitcount = getbitcount();
+        if(bitcount>=30) return 1;
+        return pow(2, 32-bitcount)-2u;
+    }
+
     ipmask(const char *name) : ip(0), mask(0) { parse(name); }
+    ipmask(enet_uint32 ip, enet_uint32 mask) : ip(ip), mask(mask) {}
     ipmask() : ip(0), mask(0) {}
     //NEW END
 };

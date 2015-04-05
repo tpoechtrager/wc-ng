@@ -86,7 +86,9 @@ namespace gamemod
     const char *calcteamkills(void *d, char *buf, size_t len, bool scoreboard = true, bool increase = false);
     const char *countteamkills(void *a, bool increase, char *buf, size_t len);
     const char *getgamestate(void *d, const char *fmt, char *buf, int len);
-    int guiprivcolor(int priv);
+    int guiplayerprivcolor(int priv);
+    int guiplayerbgcolor(uint32_t ip, const ENetAddress &serveraddr, void *client = NULL);
+    int guiplayerbgcolor(void *client, const ENetAddress &serveraddr);
     int getgamemodenum(const char *gamemode);
     bool validprotocolversion(int num);
 }

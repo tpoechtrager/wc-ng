@@ -197,6 +197,7 @@ extern void poparg(ident &id);                                      //NEW
 
 extern tagval *commandret;
 extern const char *intstr(int v);
+extern const char *hexstr(int v, bool iscolor = false); //NEW
 extern void intret(int v);
 extern const char *floatstr(float v);
 extern void floatret(float v);
@@ -218,6 +219,7 @@ static inline float parsefloat(const char *s)
 }
 
 static inline void intformat(char *buf, int v) { formatstring(buf)("%d", v); }
+static inline void hexformat(char *buf, int v, bool iscolor = false) { formatstring(buf)(iscolor ? "0x%06X" : "0x%08X", v); } //NEW
 static inline void floatformat(char *buf, float v) { formatstring(buf)(v==int(v) ? "%.1f" : "%.7g", v); }
 
 static inline const char *getstr(const identval &v, int type) 
@@ -271,8 +273,8 @@ inline void ident::getval(tagval &v) const
 }
 
 // nasty macros for registering script functions, abuses globals to avoid excessive infrastructure
-#define KEYWORD(name, type) UNUSED static bool TOKENPASTE(__dummy_##name_, __LINE__) = addkeyword(type, #name)                          //NEW __LINE__
-#define COMMANDN(name, fun, nargs) UNUSED static bool TOKENPASTE(__dummy_##fun_, __LINE__) = addcommand(#name, (identfun)fun, nargs)    //NEW __LINE__
+#define KEYWORD(name, type) UNUSED static bool TOKENPASTE(__dummy_##name_, __COUNTER__) = addkeyword(type, #name)                       //NEW __COUNTER__
+#define COMMANDN(name, fun, nargs) UNUSED static bool TOKENPASTE(__dummy_##fun_, __COUNTER__) = addcommand(#name, (identfun)fun, nargs) //NEW __COUNTER__
 #define COMMAND(name, nargs) COMMANDN(name, name, nargs)
 
 #define _VAR(name, global, min, cur, max, persist) int global = variable(#name, min, cur, max, &global, NULL, persist)
@@ -327,18 +329,9 @@ inline void ident::getval(tagval &v) const
 #define SVARFP(name, cur, body) _SVARF(name, name, cur, body, IDF_PERSIST)
 #define SVARFR(name, cur, body) _SVARF(name, name, cur, body, IDF_OVERRIDE)
 
-//NEW
-// anonymous commands, uses nasty __LINE__ trick to keep names unique
-#define ICOMMANDNS(name, cmdname, nargs, proto, b) \
- static void TOKENPASTE(cmdname, __LINE__) proto { b; } \
- UNUSED static bool TOKENPASTE(cmdname, TOKENPASTE(init, __LINE__)) = addcommand(name, (identfun)TOKENPASTE(cmdname, __LINE__), nargs);
-//NEW END
-
-#if 0 //NEW replaced
 // anonymous inline commands, uses nasty template trick with line numbers to keep names unique
 #define ICOMMANDNS(name, cmdname, nargs, proto, b) template<int N> struct cmdname; template<> struct cmdname<__LINE__> { static bool init; static void run proto; }; bool cmdname<__LINE__>::init = addcommand(name, (identfun)cmdname<__LINE__>::run, nargs); void cmdname<__LINE__>::run proto \
     { b; }
-#endif
 
 #define ICOMMANDN(name, cmdname, nargs, proto, b) ICOMMANDNS(#name, cmdname, nargs, proto, b)
 #define ICOMMANDNAME(name) _icmd_##name

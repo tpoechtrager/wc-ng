@@ -48,6 +48,12 @@
             <li><a href="#autofollowactioncn"><tt>autofollowactioncn</tt></a></li>
             <li><a href="#actioncnfollowtime"><tt>actioncnfollowtime</tt></a></li>
             <li><a href="#wcautoversioncheck"><tt>wcautoversioncheck</tt></a></li>
+            <li><a href="#showclientnum"><tt>showclientnum</tt></a></li>
+            <li><a href="#playerinfofontsize"><tt>playerinfofontsize</tt></a></li>
+            <li><a href="#showteamhealth"><tt>showteamhealth</tt></a></li>
+            <li><a href="#randomizepingport"><tt>randomizepingport</tt></a></li>
+            <li><a href="#wcver"><tt>wcver</tt></a></li>
+            <li><a href="#wcrev"><tt>wcrev</tt></a></li>
         </ul>
     </li>
 
@@ -116,6 +122,7 @@
             <li><a href="#server_browser_others"><tt>others</tt></a>
                 <ul class="contents2">
                     <li><a href="#extinfoserverbrowser"><tt>extinfoserverbrowser</tt></a></li>
+                    <li><a href="#extinfoguihorizontal"><tt>extinfoguihorizontal</tt></a></li>
                     <li><a href="#extinfoconnect"><tt>extinfoconnect</tt></a></li>
                     <li><a href="#processservers"><tt>processservers</tt></a></li>
                     <li><a href="#loopextinfoplayers"><tt>loopextinfoplayers</tt></a></li>
@@ -142,6 +149,7 @@
                     <li><a href="#showextinfo"><tt>showextinfo</tt></a></li>
                     <li><a href="#showfrags"><tt>showfrags</tt></a></li>
                     <li><a href="#showdeaths"><tt>showdeaths</tt></a></li>
+                    <li><a href="#showdamagedealt"><tt>showdamagedealt</tt></a></li>
                     <li><a href="#showkpd"><tt>showkpd</tt></a></li>
                     <li><a href="#showtks"><tt>showtks</tt></a></li>
                     <li><a href="#showacc"><tt>showacc</tt></a></li>
@@ -252,6 +260,8 @@
             <li><a href="#wcchatlatency"><tt>wcchatlatency</tt></a></li>
             <li><a href="#wcchatgoto"><tt>wcchatgoto</tt></a></li>
             <li><a href="#wcchat"><tt>wcchat</tt></a></li>
+            <li><a href="#wcchatloopclients"><tt>wcchatloopclients</tt></a></li>
+            <li><a href="#wcchatisconnected"><tt>wcchatisconnected</tt></a></li>
         </ul>
     </li>
 
@@ -443,6 +453,28 @@ Note: This variable can't be changed during demo playback.<br />(default: 0)<br 
 <p>Check for new versions of WC-NG on startup.<br />
 (default: 1)</p>
 
+<pre id="showclientnum">showclientnum &lt;0-2&gt;</pre>
+<p>2: Always show the client number (i.e.: unnamed (2)).<br />
+(default: 0)</p>
+
+<pre id="playerinfofontsize">playerinfofontsize &lt;1.5-10.0&gt;</pre>
+<p>Font size for the info text above the player head.<br />
+(default: 2.0)</p>
+
+<pre id="showteamhealth">showteamhealth &lt;0-1&gt;</pre>
+<p>Show health of team players above the player head.<br />
+(default: 0)</p>
+
+<pre id="randomizepingport">randomizepingport &lt;0-1&gt;</pre>
+<p>Randomize the source ping port every time you open the server browser.<br />
+(default: 0)</p>
+
+<pre id="wcver">wcver</pre>
+<p>Represents the client version number (i.e.: 0.7.4)</p>
+
+<pre id="wcrev">wcrev</pre>
+<p>Represents the client git revision (i.e.: 85dbee8)</p>
+
 <h2 id="additional_commands">Additional Commands</h2>
 
 <pre id="wcinfo">wcinfo [&lt;get&gt;]</pre>
@@ -602,6 +634,8 @@ before you click on a server, therefore players will be shown earlier when you c
 If you have problems using /extinfoserverbrowser 2 then use /extinfoserverbrowser 1 instead (increasing servpingrate may also help).<br />
 Some providers are dropping packets (german T-Com for example) - which may cause some servers to disappear.<br /><br />
 Note: Ping Rate is servpingrate and not extinfopingrate in this case.<br />(default: 1)</p>
+<pre id="extinfoguihorizontal">extinfoguihorizontal &lt;0|1&gt;</pre>
+<p>Show teams in horizontal order (like in the scoreboard)<br />(default: 1)</p>
 <pre id="extinfoconnect">extinfoconnect &lt;server&gt; [&lt;port&gt; [&lt;pass&gt;]]</pre>
 <p>Use this command instead of connect to see the players which are on the server before connecting.</p>
 <pre id="processservers">processservers</pre>
@@ -647,6 +681,8 @@ If no port is given, then the default master server port is used.</p>
 <p>Show extended info frags.<br />(default: 1)</p>
 <pre id="showdeaths">showdeaths &lt;0|1&gt;</pre>
 <p>Show extended info deaths.<br />(default: 1)</p>
+<pre id="showdamagedealt">showdamagedealt &lt;0|1&gt;</pre>
+<p>Show extended info damage dealt.<br />(default: 0)</p>
 <pre id="showkpd">showkpd &lt;0|1&gt;</pre>
 <p>Show extended info kills per death.<br />(default: 0)</p>
 <pre id="showacc">showacc &lt;0|1&gt;</pre>
@@ -656,17 +692,16 @@ If no port is given, then the default master server port is used.</p>
 <pre id="showspectatorping">showspectatorping &lt;0|1&gt;</pre>
 <p>Show ping of spectators.<br />(default: 0)</p>
 <pre id="showcountry">showcountry &lt;0|1|2|3|4|5&gt;</pre>
-<p>
 <table>
     <tr><td><b>Num</b></td><td><b>Desc</b></td></tr>
     <tr><td>0</td><td>Disabled</td></tr>
     <tr><td>1</td><td>Country Code</td></tr>
     <tr><td>2</td><td>Country Name</td></tr>
-    <tr><td>3</td><td>Country Flag | Country Code</td</tr>
+    <tr><td>3</td><td>Country Flag | Country Code</td></tr>
     <tr><td>4</td><td>Country Flag | Country Name</td></tr>
     <tr><td>5</td><td>Country Flag</td></tr>
 </table>
-<br />(default: 3)</p>
+<p><br />(default: 3)</p>
 <pre id="showserveruptime">showserveruptime &lt;0|1&gt;</pre>
 <p>Show Server Uptime in Scoreboard.<br />(default: 0)</p>
 <pre id="showservermod">showservermod &lt;0|1&gt;</pre>
@@ -1053,6 +1088,12 @@ Supported hash types are: MD5, SHA1, SHA224, SHA256, SHA384 and SHA512.
 
 <pre id="wcchat">wcchat &lt;msg&gt;</pre>
 <p>Write a chat message (this is bound to the keys P and C by default)</p>
+
+<pre id="wcchatisconnected">wcchatisconnected</pre>
+<p>Check if we are connected to a chat server.</p>
+
+<pre id="wcchatloopclients">wcchatloopclients &lt;callbackargs&gt; &lt;callbackcode&gt;</pre>
+<p>Loop through the chat clients.</p>
 
 <!-- global chat end -->
 

@@ -188,8 +188,8 @@ namespace event
         INTERRUPTED       = -0x7FFFFFFD
     };
 
-    void startup();
-    void shutdown();
+    void init();
+    void deinit();
     void scriptfileloading(const char *filename);
     void scriptfileloaded(const char *filename);
     bool isinstalled(const char *event);

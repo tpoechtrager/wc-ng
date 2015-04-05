@@ -27,7 +27,9 @@ namespace ipignore
     #define CFG_FILE "ipignore.cfg"
     #define LOG_FILE "ipignore.log"
 
-    static ipbuf ips;
+    struct ipignore;
+
+    static network::ipbuf<2, INT_MAX, ipignore*, true> ips;
     static stream *log = NULL;
 
     struct ipignore
@@ -50,12 +52,6 @@ namespace ipignore
                 copystring(reason, "-");
         }
     };
-
-    static void freeipignore(void *data)
-    {
-        ipignore *ipignoredata = (ipignore*)data;
-        delete ipignoredata;
-    }
 
     static int getcn(const char *msg)
     {
@@ -132,7 +128,10 @@ namespace ipignore
             return;
         }
 
-        ips.addip(ip, 0, new ipignore(reason, hits ? *hits : 0, lasthit ? *lasthit : 0), freeipignore);
+        auto *id = new ipignore(reason, hits ? *hits : 0, lasthit ? *lasthit : 0);
+
+        if (!ips.addip(ip, id))
+            delete id;
 
         string ipstr;
         ip.print(ipstr);
@@ -180,11 +179,8 @@ namespace ipignore
     }
 
 #ifdef ENABLE_IPS
-    static bool showignoredip(ipmask &ip, uint datatype, void *data, void *cbdata)
+    static bool showignoredip(const ipmask &ip, ipignore *ipignoredata, int *counter)
     {
-        ipignore *ipignoredata = (ipignore*)data;
-        int &counter = *(int*)cbdata;
-
         string ipstr;
         string lasthit;
 
@@ -203,7 +199,7 @@ namespace ipignore
             copystring(lasthit, "-");
         }
 
-        if (!cbdata) // push to cubescript
+        if (!counter) // push to cubescript
         {
             ip.print(ipstr);
             event::run(event::IPIGNORELIST, "suss", ipstr, ipignoredata->hits,
@@ -211,10 +207,10 @@ namespace ipignore
             return true;
         }
 
-        counter++;
+        (*counter)++;
 
         ip.print(ipstr);
-        conoutf("%d. ip address: %s  hits: %u  last hit: %s  reason: %s", counter,
+        conoutf("%d. ip address: %s  hits: %u  last hit: %s  reason: %s", *counter,
                 ipstr, ipignoredata->hits, lasthit, ipignoredata->reason);
 
         return true;
@@ -228,7 +224,7 @@ namespace ipignore
             return;
         }
 
-        conoutf("ignoring %u ip%s", (uint)ips.size(), plural(ips.size()));
+        conoutf("ignoring %u ip%s", (uint)ips.getsize(), plural(ips.getsize()));
 
         int counter = 0;
         ips.loopips(showignoredip, &counter);
@@ -236,7 +232,7 @@ namespace ipignore
 
     static void ignorelistcubescript()
     {
-        ips.loopips(showignoredip, NULL);
+        ips.loopips<int*>(showignoredip);
         event::run(event::IPIGNORELIST, "d", -1);
     }
 
@@ -264,18 +260,15 @@ namespace ipignore
         return true;
     }
 
-    bool isignored(int cn, const char *text)
+    bool isignored(void *client, const char *text)
     {
-        fpsent *d = game::getclient(cn);
-        extinfo::playerv2 *ep = NULL;
-        ipmask ip;
+        fpsent *d = (fpsent*)client;
+        extinfo::playerv2 *ep;
 
         if (!d)
             return false;
 
         ep = d->extinfo;
-        ip.ip = ep ? ep->ip.ui32 : 0;
-        ip.setbitcount(24);
 
         if (game::isignored(d->clientnum))
         {
@@ -288,19 +281,23 @@ namespace ipignore
         if (!ep)
             return false;
 
-        void *ignoredata;
+        ipignore *ignoredata;
 
-        if (ips.findip(ep->ip.ui32, NULL, &ignoredata))
+        if (ips.findip(ep->ip.ui32, &ignoredata))
         {
             if (!text)
                 return true;
 
-            ((ipignore*)ignoredata)->hit();
+            ignoredata->hit();
 
             isignored:;
 
             if (!log)
                 return true;
+
+            ipmask ip;
+            ip.ip = ep ? ep->ip.ui32 : 0;
+            ip.setbitcount(24);
 
             string ipstr;
             ip.print(ipstr);
@@ -320,12 +317,17 @@ namespace ipignore
         return false;
     }
 
+    bool isignored(int cn, const char *text)
+    {
+        return isignored(game::getclient(cn), text);
+    }
+
     bool isignored(uint ip)
     {
         return !!ips.findip(ip);
     }
 
-    void startup()
+    void init()
     {
 #ifndef ENABLE_IPS
         return;
@@ -338,13 +340,13 @@ namespace ipignore
             conoutf(CON_WARN, "couldn't open %s for writing", LOG_FILE);
     }
 
-    void shutdown()
+    void deinit()
     {
 #ifndef ENABLE_IPS
         return;
 #endif //!ENABLE_IPS
 
-        vector<ipaddr*> ipaddresses;
+        vector<network::ipaddr<ipignore*>* > ipaddresses;
         ips.getallips(ipaddresses);
 
         stream *f = openutf8file(CFG_FILE, "wb");

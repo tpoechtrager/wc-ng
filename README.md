@@ -112,9 +112,10 @@ Nightly Builds: [http://wc-ng.sauerworld.org/builds/nightly/b/list](http://wc-ng
 
 
 * And other useful things, such as:
-    * Multiple master servers
-    * Console history
+    * Multiple Master Servers
+    * Console History
     * Time Scaling
+    * Proxy User Detection
     * Everything can be turned off and on
     * And much more (See our documentation for a full reference)!
 

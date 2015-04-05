@@ -186,6 +186,7 @@ namespace game
     bool hasextinfo = false;               //NEW
     time_t gametimestamp = time(NULL);     //NEW
     int mapstart = 0;                      //NEW
+    int demoreqs = 0;                      //NEW
     ENetAddress demoserver;                //NEW
     string servinfo = "", servauth = "", connectpass = "";
 
@@ -569,6 +570,23 @@ namespace game
 
     void changemapserv(const char *name, int mode)        // forced map change from the server
     {
+        //NEW
+        const char *fixed[3] = { strrchr(name, '/'), strrchr(name, '\\') };
+
+        if(fixed[0] || fixed[1])
+        {
+            fixed[2] = max(fixed[0], fixed[1])+1;
+            conoutf("warning: fixing malicious mapname '%s' => '%s'", name, fixed[2]);
+            name = fixed[2];
+        }
+
+        if(strlen(name) > MAXSTRLEN/2 || strstr(name, ".."))
+        {
+            conoutf("warning: ignoring malicious map change");
+            return;
+        }
+        //NEW END
+
         if(multiplayer(false) && !m_mp(mode))
         {
             conoutf(CON_ERROR, "mode %s (%d) not supported in multiplayer", server::modename(gamemode), gamemode);
@@ -945,6 +963,7 @@ namespace game
         hasextinfo = false;
         mod::unsetbouncervars();
         fullyconnected = false;
+        demoreqs = 0;
         //NEW END
     }
 
@@ -2074,6 +2093,14 @@ namespace game
             case N_SENDDEMO:
             {
                 if(game::demoplayback) return; //NEW (fix for commented case N_DEMOPACKET)
+                //NEW
+                if(!demoreqs)
+                {
+                    conoutf("warning: ignoring received demo");
+                    return;
+                }
+                demoreqs--;
+                //NEW END
                 defformatstring(fname)("%d.dmo", lastmillis);
                 stream *demo = openrawfile(fname, "wb");
                 if(!demo) return;
@@ -2313,6 +2340,7 @@ namespace game
 
     void getdemo(int i)
     {
+        demoreqs++; //NEW
         if(i<=0) conoutf("getting demo...");
         else conoutf("getting demo %d...", i);
         addmsg(N_GETDEMO, "ri", i);

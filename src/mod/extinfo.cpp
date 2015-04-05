@@ -593,8 +593,8 @@ namespace extinfo
         ~exthost() { enet_socket_destroy(extsock); }
     };
 
-    void startup() { eh = new exthost; }
-    void shutdown() { DELETEP(eh); }
+    void init() { eh = new exthost; }
+    void deinit() { DELETEP(eh); }
     void slice() { if (eh) eh->extprocess(); }
     void connect() { if (curpeer && eh) eh->connect(); }
     void rebindpingport() { if (eh) eh->rebindpingport(); }

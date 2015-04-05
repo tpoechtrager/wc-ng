@@ -977,11 +977,11 @@ namespace event
         forcecheck = totalmillis;
     }
 
-    void startup()
+    void init()
     {
     }
 
-    void shutdown()
+    void deinit()
     {
         uninstallall();
     }

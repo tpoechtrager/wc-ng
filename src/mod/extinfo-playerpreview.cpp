@@ -24,7 +24,6 @@
 namespace game
 {
     extern int scaletimeleft;
-    extern int ipignorecolor;
     extern int showcountry;
     extern int showip;
     extern int showtks;
@@ -304,14 +303,14 @@ void renderplayerpreview(g3d_gui& g, strtool& command, const ENetAddress& eaddr,
 
         loopexintofplayers(ep,
         {
-            bool ignored = ipignore::isignored(ep.ip.ui32);
-            if(ignored)
+            int bgcolor = guiplayerbgcolor(ep.ip.ui32, eaddr);
+            if (bgcolor > -1)
             {
                 g.pushlist();
-                g.background(ipignorecolor, 3);
+                g.background(bgcolor, 3);
             }
-            g.text(ep.getname(), guiprivcolor(ep.priv), NULL);
-            if(ignored) g.poplist();
+            g.text(ep.getname(), guiplayerprivcolor(ep.priv), NULL);
+            if (bgcolor > -1) g.poplist();
         });
         g.poplist();
 

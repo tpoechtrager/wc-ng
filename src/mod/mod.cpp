@@ -506,7 +506,7 @@ namespace mod
         {
             if (cbdata[0] /* user request */)
             {
-                if (responsecode == http::SSL_ERROR) erroroutf_r("can't verify ssl certificate");
+                if (responsecode == http::SSL_ERROR) erroroutf_r("update check: can't verify ssl certificate");
                 else erroroutf_r("update check server unreachable");
             }
 
@@ -633,6 +633,7 @@ namespace mod
 
         copystrtool(httpreq->request, url);
         if (mirror.CACERT) httpreq->cacert = mirror.CACERT;
+        httpreq->expecteddatalen = 10*1024;
         httpreq->callbackdata = data;
         httpreq->callback = (http::callback_t)checkversioncallback;
 
@@ -884,7 +885,7 @@ namespace mod
 
     //events
 
-    void startup()
+    void init()
     {
         setnanosecondsbase(getnanoseconds());
 
@@ -898,28 +899,29 @@ namespace mod
             fatal("failed to create mutex");
 
         crypto::init();
-        geoip::startup();
-        extinfo::startup();
-        demorecorder::startup();
-        searchdemo::startup();
-        ipignore::startup();
-        http::startup();
-        event::startup();
+        geoip::init();
+        extinfo::init();
+        demorecorder::init();
+        searchdemo::init();
+        ipignore::init();
+        http::init();
+        event::init();
+        proxydetection::init();
 
         //run("startup"); // moved to main.cpp
     }
 
-    void shutdown()
+    void deinit()
     {
         event::run(event::SHUTDOWN);
 
-        extinfo::shutdown();
-        demorecorder::shutdown();
-        searchdemo::shutdown();
-        ipignore::shutdown();
-        http::shutdown(); // http needs to be shutdown before events, there might be event callbacks left
-        event::shutdown();
-        geoip::shutdown();
+        extinfo::deinit();
+        demorecorder::deinit();
+        searchdemo::deinit();
+        ipignore::deinit();
+        http::deinit(); // http needs to be shutdown before events, there might be event callbacks left
+        event::deinit();
+        geoip::deinit();
         crypto::deinit();
 
         Destroy_SDL_Mutex(threadmutex);
@@ -960,7 +962,37 @@ namespace mod
         event::scriptfileloaded(filename);
     }
 
-    int uncompress(const void *data, size_t datalen, void **buf_out, size_t& len_out, size_t maxlen)
+    const char *makenumreadable(strtool &num, strtool &buf, const char separator)
+    {
+        int len = (int)num.length();
+
+        if (len <= 3)
+        {
+            buf = num;
+            return buf.str();
+        }
+
+        int xlen = len+len/3-(len >= 6 && len%3 == 0 ? 1 : 0);
+
+        if (buf.isautostorage() && (int)buf.capacity() < xlen+1)
+            buf.growbuf(xlen+1);
+
+        buf.setstrlen(xlen);
+
+        const char *p = num.getrawbuf();
+        char *x = &buf[0]; // checkref
+        int j = xlen;
+
+        for (int i = len-1; i >= 0; i--)
+        {
+            x[--j] = p[i];
+            if ((len-i)%3 == 0 && i>0) x[--j] = separator;
+        }
+
+        return buf.str();
+    }
+
+    int uncompress(const void *data, size_t datalen, void **buf_out, size_t& len_out, size_t maxlen, bool neednullterminator)
     {
         if (datalen < sizeof(uint))
             return UNCOMPRESS_ERROR_INVALID_BUFFER;
@@ -971,7 +1003,7 @@ namespace mod
         if (len_out > maxlen)
             return UNCOMPRESS_ERROR_OUTPUT_SIZE_TOO_BIG;
 
-        void *ubuf = malloc(len_out);
+        void *ubuf = malloc(len_out+neednullterminator);
 
         if (!ubuf)
             return UNCOMPRESS_ERROR_FAILED_TO_ALLOCATE_BUFFER;
@@ -999,6 +1031,9 @@ namespace mod
 
         len_out = zstream.total_out;
         *buf_out = ubuf;
+
+        if (neednullterminator)
+            ((char*)ubuf)[len_out] = '\0';
 
         inflateEnd(&zstream);
 

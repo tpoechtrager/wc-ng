@@ -133,11 +133,34 @@ namespace mod
     int remove_execute_r(uint id);
 
     // misc
+    template<class T>
+    constexpr T endiancond(T little, T big)
+    {
+#if   __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+        return little;
+#elif __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
+        return big;
+#else
+        #error unknown endianness
+#endif
+    }
+
     template<class N>
     static inline const char *plural(N n)
     {
         if (n != N(1)) return "s";
         return "";
+    }
+
+    const char *makenumreadable(strtool &num, strtool &buf, const char separator = '.');
+
+    template<class T>
+    const char *makenumreadable(const T num, strtool &buf, const char separator = '.')
+    {
+        string tmp;
+        strtool stmp(tmp, sizeof(tmp));
+        stmp << num;
+        return makenumreadable(stmp, buf, separator);
     }
 
     static inline bool is64bitpointer()
@@ -175,7 +198,7 @@ namespace mod
         UNCOMPRESS_ERROR_ZLIB,
         UNCOMPRESS_ERROR_OTHER
     };
-    int uncompress(const void *data, size_t datalen, void **buf_out, size_t& len_out, size_t maxlen = -1);
+    int uncompress(const void *data, size_t datalen, void **buf_out, size_t& len_out, size_t maxlen = -1, bool neednullterminator = false);
     static const size_t RUNCOMAND_ERROR = (size_t)-1;
     bool getcommandpath(const char *command, strtool &path);
     size_t runcommand(const char *command, char *buf, size_t len);
@@ -228,8 +251,8 @@ namespace mod
     }
 
     // events
-    void startup();
-    void shutdown();
+    void init();
+    void deinit();
     void slice();
     void loadscripthook(const char *filename);
     void scriptloadedhook(const char *filename);
@@ -338,6 +361,7 @@ public:
     void reset() { running = false; }
     void start() { running = true; starttime = mod::getnanoseconds(); }
     void calc() { time = (mod::getnanoseconds()-starttime)/1000000.0; reset(); }
+    ullong overhead() { ullong a = mod::getnanoseconds(); return mod::getnanoseconds()-a; }
 
     benchmark(const char *desc_in, bool justinit = false)
     {
@@ -354,7 +378,7 @@ public:
         if (running)
         {
             calc();
-            mod::conoutf_r("%s took: %.6f ms", desc, time);
+            mod::conoutf_r("%s took: %.6f ms (overhead: %.6f ms)", desc, time, overhead()/1000000.0);
         }
     }
 
@@ -443,6 +467,7 @@ struct checkcalldepth
 #include "chat.h"
 #include "events.h"
 #include "thread.h"
+#include "proxy-detection.h"
 
 #endif //STANDALONE
 #endif //__MOD_H__

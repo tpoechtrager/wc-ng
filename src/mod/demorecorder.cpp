@@ -659,9 +659,9 @@ namespace demorecorder
 
     void freetimerdata(void *data) { delete (uint*)data; }
 
-    void startup() { }
+    void init() { }
 
-    void shutdown()
+    void deinit()
     {
         stopdemorecord();
 
@@ -2025,7 +2025,7 @@ namespace searchdemo
     }
     COMMAND(getdemoduration, "s");
 
-    void startup()
+    void init()
     {
         searchmutex = SDL_CreateMutex();
 
@@ -2033,7 +2033,7 @@ namespace searchdemo
             fatal("couldn't create search demo mutex");
     }
 
-    void shutdown()
+    void deinit()
     {
         if (searchdemothread)
         {
