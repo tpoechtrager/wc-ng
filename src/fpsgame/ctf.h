@@ -925,6 +925,7 @@ struct ctfclientmode : clientmode
 
     void checkitems(fpsent *d)
     {
+        if(d->state!=CS_ALIVE) return;
         vec o = d->feetpos();
         loopv(flags)
         {
