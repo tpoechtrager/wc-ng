@@ -680,79 +680,70 @@ fpsgame/game.h.gch: shared/cube.h.gch
 # DO NOT DELETE
 
 shared/crypto.o: shared/cube.h enet/include/enet/enet.h
-shared/crypto.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-shared/crypto.o: enet/include/enet/enet/protocol.h
-shared/crypto.o: enet/include/enet/enet/list.h
-shared/crypto.o: enet/include/enet/enet/callbacks.h shared/tools.h
-shared/crypto.o: shared/geom.h shared/ents.h shared/command.h
-shared/crypto.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-shared/crypto.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-shared/crypto.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-shared/crypto.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-shared/crypto.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-shared/crypto.o: shared/igame.h
+shared/crypto.o: enet/include/enet/unix.h enet/include/enet/types.h
+shared/crypto.o: enet/include/enet/protocol.h enet/include/enet/list.h
+shared/crypto.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+shared/crypto.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+shared/crypto.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+shared/crypto.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+shared/crypto.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+shared/crypto.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+shared/crypto.o: mod/plugin.h shared/igame.h
 shared/geom.o: shared/cube.h enet/include/enet/enet.h
-shared/geom.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-shared/geom.o: enet/include/enet/enet/protocol.h
-shared/geom.o: enet/include/enet/enet/list.h
-shared/geom.o: enet/include/enet/enet/callbacks.h shared/tools.h
-shared/geom.o: shared/geom.h shared/ents.h shared/command.h shared/iengine.h
-shared/geom.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
-shared/geom.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
-shared/geom.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
-shared/geom.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
-shared/geom.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
+shared/geom.o: enet/include/enet/unix.h enet/include/enet/types.h
+shared/geom.o: enet/include/enet/protocol.h enet/include/enet/list.h
+shared/geom.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+shared/geom.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+shared/geom.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+shared/geom.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+shared/geom.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+shared/geom.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+shared/geom.o: mod/plugin.h shared/igame.h
 shared/stream.o: shared/cube.h enet/include/enet/enet.h
-shared/stream.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-shared/stream.o: enet/include/enet/enet/protocol.h
-shared/stream.o: enet/include/enet/enet/list.h
-shared/stream.o: enet/include/enet/enet/callbacks.h shared/tools.h
-shared/stream.o: shared/geom.h shared/ents.h shared/command.h
-shared/stream.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-shared/stream.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-shared/stream.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-shared/stream.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-shared/stream.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-shared/stream.o: shared/igame.h
+shared/stream.o: enet/include/enet/unix.h enet/include/enet/types.h
+shared/stream.o: enet/include/enet/protocol.h enet/include/enet/list.h
+shared/stream.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+shared/stream.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+shared/stream.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+shared/stream.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+shared/stream.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+shared/stream.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+shared/stream.o: mod/plugin.h shared/igame.h
 shared/tools.o: shared/cube.h enet/include/enet/enet.h
-shared/tools.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-shared/tools.o: enet/include/enet/enet/protocol.h
-shared/tools.o: enet/include/enet/enet/list.h
-shared/tools.o: enet/include/enet/enet/callbacks.h shared/tools.h
-shared/tools.o: shared/geom.h shared/ents.h shared/command.h shared/iengine.h
-shared/tools.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
-shared/tools.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
-shared/tools.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
-shared/tools.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
-shared/tools.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
-shared/zip.o: shared/cube.h enet/include/enet/enet.h
-shared/zip.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-shared/zip.o: enet/include/enet/enet/protocol.h enet/include/enet/enet/list.h
-shared/zip.o: enet/include/enet/enet/callbacks.h shared/tools.h shared/geom.h
-shared/zip.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
-shared/zip.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h mod/ipbuf.h
-shared/zip.o: mod/wcversion.h mod/gamemod.h mod/http.h mod/geoip.h
-shared/zip.o: mod/ipignore.h mod/extinfo.h mod/demorecorder.h mod/chat.h
-shared/zip.o: mod/events.h mod/thread.h mod/proxy-detection.h mod/plugin.h
-shared/zip.o: shared/igame.h
+shared/tools.o: enet/include/enet/unix.h enet/include/enet/types.h
+shared/tools.o: enet/include/enet/protocol.h enet/include/enet/list.h
+shared/tools.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+shared/tools.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+shared/tools.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+shared/tools.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+shared/tools.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+shared/tools.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+shared/tools.o: mod/plugin.h shared/igame.h
+shared/zip.o: shared/cube.h enet/include/enet/enet.h enet/include/enet/unix.h
+shared/zip.o: enet/include/enet/types.h enet/include/enet/protocol.h
+shared/zip.o: enet/include/enet/list.h enet/include/enet/callbacks.h
+shared/zip.o: shared/tools.h shared/geom.h shared/ents.h shared/command.h
+shared/zip.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
+shared/zip.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
+shared/zip.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
+shared/zip.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
+shared/zip.o: mod/thread.h mod/proxy-detection.h mod/plugin.h shared/igame.h
 engine/3dgui.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/3dgui.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-engine/3dgui.o: enet/include/enet/enet/protocol.h
-engine/3dgui.o: enet/include/enet/enet/list.h
-engine/3dgui.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/3dgui.o: shared/geom.h shared/ents.h shared/command.h shared/iengine.h
-engine/3dgui.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
-engine/3dgui.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
-engine/3dgui.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
-engine/3dgui.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
-engine/3dgui.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
-engine/3dgui.o: engine/world.h engine/glexts.h engine/octa.h
-engine/3dgui.o: engine/lightmap.h engine/bih.h engine/texture.h
+engine/3dgui.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/3dgui.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/3dgui.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/3dgui.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+engine/3dgui.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+engine/3dgui.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+engine/3dgui.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+engine/3dgui.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+engine/3dgui.o: mod/plugin.h shared/igame.h engine/world.h engine/glexts.h
+engine/3dgui.o: engine/octa.h engine/lightmap.h engine/bih.h engine/texture.h
 engine/3dgui.o: engine/model.h engine/varray.h engine/textedit.h
 engine/bih.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/bih.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-engine/bih.o: enet/include/enet/enet/protocol.h enet/include/enet/enet/list.h
-engine/bih.o: enet/include/enet/enet/callbacks.h shared/tools.h shared/geom.h
+engine/bih.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/bih.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/bih.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
 engine/bih.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
 engine/bih.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h mod/ipbuf.h
 engine/bih.o: mod/wcversion.h mod/gamemod.h mod/http.h mod/geoip.h
@@ -762,83 +753,72 @@ engine/bih.o: shared/igame.h engine/world.h engine/glexts.h engine/octa.h
 engine/bih.o: engine/lightmap.h engine/bih.h engine/texture.h engine/model.h
 engine/bih.o: engine/varray.h
 engine/blend.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/blend.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-engine/blend.o: enet/include/enet/enet/protocol.h
-engine/blend.o: enet/include/enet/enet/list.h
-engine/blend.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/blend.o: shared/geom.h shared/ents.h shared/command.h shared/iengine.h
-engine/blend.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
-engine/blend.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
-engine/blend.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
-engine/blend.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
-engine/blend.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
-engine/blend.o: engine/world.h engine/glexts.h engine/octa.h
-engine/blend.o: engine/lightmap.h engine/bih.h engine/texture.h
+engine/blend.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/blend.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/blend.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/blend.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+engine/blend.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+engine/blend.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+engine/blend.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+engine/blend.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+engine/blend.o: mod/plugin.h shared/igame.h engine/world.h engine/glexts.h
+engine/blend.o: engine/octa.h engine/lightmap.h engine/bih.h engine/texture.h
 engine/blend.o: engine/model.h engine/varray.h
 engine/blob.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/blob.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-engine/blob.o: enet/include/enet/enet/protocol.h
-engine/blob.o: enet/include/enet/enet/list.h
-engine/blob.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/blob.o: shared/geom.h shared/ents.h shared/command.h shared/iengine.h
-engine/blob.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
-engine/blob.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
-engine/blob.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
-engine/blob.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
-engine/blob.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
-engine/blob.o: engine/world.h engine/glexts.h engine/octa.h engine/lightmap.h
-engine/blob.o: engine/bih.h engine/texture.h engine/model.h engine/varray.h
+engine/blob.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/blob.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/blob.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/blob.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+engine/blob.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+engine/blob.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+engine/blob.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+engine/blob.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+engine/blob.o: mod/plugin.h shared/igame.h engine/world.h engine/glexts.h
+engine/blob.o: engine/octa.h engine/lightmap.h engine/bih.h engine/texture.h
+engine/blob.o: engine/model.h engine/varray.h
 engine/client.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/client.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-engine/client.o: enet/include/enet/enet/protocol.h
-engine/client.o: enet/include/enet/enet/list.h
-engine/client.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/client.o: shared/geom.h shared/ents.h shared/command.h
-engine/client.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-engine/client.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-engine/client.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-engine/client.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-engine/client.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-engine/client.o: shared/igame.h engine/world.h engine/glexts.h engine/octa.h
-engine/client.o: engine/lightmap.h engine/bih.h engine/texture.h
-engine/client.o: engine/model.h engine/varray.h
+engine/client.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/client.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/client.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/client.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+engine/client.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+engine/client.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+engine/client.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+engine/client.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+engine/client.o: mod/plugin.h shared/igame.h engine/world.h engine/glexts.h
+engine/client.o: engine/octa.h engine/lightmap.h engine/bih.h
+engine/client.o: engine/texture.h engine/model.h engine/varray.h
 engine/command.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/command.o: enet/include/enet/enet/unix.h
-engine/command.o: enet/include/enet/enet/types.h
-engine/command.o: enet/include/enet/enet/protocol.h
-engine/command.o: enet/include/enet/enet/list.h
-engine/command.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/command.o: shared/geom.h shared/ents.h shared/command.h
-engine/command.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-engine/command.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-engine/command.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-engine/command.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-engine/command.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-engine/command.o: shared/igame.h engine/world.h engine/glexts.h engine/octa.h
+engine/command.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/command.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/command.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/command.o: shared/ents.h shared/command.h shared/iengine.h
+engine/command.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
+engine/command.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
+engine/command.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
+engine/command.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
+engine/command.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
+engine/command.o: engine/world.h engine/glexts.h engine/octa.h
 engine/command.o: engine/lightmap.h engine/bih.h engine/texture.h
 engine/command.o: engine/model.h engine/varray.h
 engine/console.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/console.o: enet/include/enet/enet/unix.h
-engine/console.o: enet/include/enet/enet/types.h
-engine/console.o: enet/include/enet/enet/protocol.h
-engine/console.o: enet/include/enet/enet/list.h
-engine/console.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/console.o: shared/geom.h shared/ents.h shared/command.h
-engine/console.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-engine/console.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-engine/console.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-engine/console.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-engine/console.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-engine/console.o: shared/igame.h engine/world.h engine/glexts.h engine/octa.h
+engine/console.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/console.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/console.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/console.o: shared/ents.h shared/command.h shared/iengine.h
+engine/console.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
+engine/console.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
+engine/console.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
+engine/console.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
+engine/console.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
+engine/console.o: engine/world.h engine/glexts.h engine/octa.h
 engine/console.o: engine/lightmap.h engine/bih.h engine/texture.h
 engine/console.o: engine/model.h engine/varray.h
 engine/console.o: engine/sdl2_keymap_extrakeys.h
 engine/cubeloader.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/cubeloader.o: enet/include/enet/enet/unix.h
-engine/cubeloader.o: enet/include/enet/enet/types.h
-engine/cubeloader.o: enet/include/enet/enet/protocol.h
-engine/cubeloader.o: enet/include/enet/enet/list.h
-engine/cubeloader.o: enet/include/enet/enet/callbacks.h shared/tools.h
+engine/cubeloader.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/cubeloader.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/cubeloader.o: enet/include/enet/callbacks.h shared/tools.h
 engine/cubeloader.o: shared/geom.h shared/ents.h shared/command.h
 engine/cubeloader.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
 engine/cubeloader.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
@@ -849,181 +829,157 @@ engine/cubeloader.o: shared/igame.h engine/world.h engine/glexts.h
 engine/cubeloader.o: engine/octa.h engine/lightmap.h engine/bih.h
 engine/cubeloader.o: engine/texture.h engine/model.h engine/varray.h
 engine/decal.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/decal.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-engine/decal.o: enet/include/enet/enet/protocol.h
-engine/decal.o: enet/include/enet/enet/list.h
-engine/decal.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/decal.o: shared/geom.h shared/ents.h shared/command.h shared/iengine.h
-engine/decal.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
-engine/decal.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
-engine/decal.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
-engine/decal.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
-engine/decal.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
-engine/decal.o: engine/world.h engine/glexts.h engine/octa.h
-engine/decal.o: engine/lightmap.h engine/bih.h engine/texture.h
+engine/decal.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/decal.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/decal.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/decal.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+engine/decal.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+engine/decal.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+engine/decal.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+engine/decal.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+engine/decal.o: mod/plugin.h shared/igame.h engine/world.h engine/glexts.h
+engine/decal.o: engine/octa.h engine/lightmap.h engine/bih.h engine/texture.h
 engine/decal.o: engine/model.h engine/varray.h
 engine/dynlight.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/dynlight.o: enet/include/enet/enet/unix.h
-engine/dynlight.o: enet/include/enet/enet/types.h
-engine/dynlight.o: enet/include/enet/enet/protocol.h
-engine/dynlight.o: enet/include/enet/enet/list.h
-engine/dynlight.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/dynlight.o: shared/geom.h shared/ents.h shared/command.h
-engine/dynlight.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-engine/dynlight.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-engine/dynlight.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-engine/dynlight.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-engine/dynlight.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-engine/dynlight.o: shared/igame.h engine/world.h engine/glexts.h
-engine/dynlight.o: engine/octa.h engine/lightmap.h engine/bih.h
-engine/dynlight.o: engine/texture.h engine/model.h engine/varray.h
+engine/dynlight.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/dynlight.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/dynlight.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/dynlight.o: shared/ents.h shared/command.h shared/iengine.h
+engine/dynlight.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
+engine/dynlight.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
+engine/dynlight.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
+engine/dynlight.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
+engine/dynlight.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
+engine/dynlight.o: engine/world.h engine/glexts.h engine/octa.h
+engine/dynlight.o: engine/lightmap.h engine/bih.h engine/texture.h
+engine/dynlight.o: engine/model.h engine/varray.h
 engine/glare.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/glare.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-engine/glare.o: enet/include/enet/enet/protocol.h
-engine/glare.o: enet/include/enet/enet/list.h
-engine/glare.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/glare.o: shared/geom.h shared/ents.h shared/command.h shared/iengine.h
-engine/glare.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
-engine/glare.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
-engine/glare.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
-engine/glare.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
-engine/glare.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
-engine/glare.o: engine/world.h engine/glexts.h engine/octa.h
-engine/glare.o: engine/lightmap.h engine/bih.h engine/texture.h
+engine/glare.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/glare.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/glare.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/glare.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+engine/glare.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+engine/glare.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+engine/glare.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+engine/glare.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+engine/glare.o: mod/plugin.h shared/igame.h engine/world.h engine/glexts.h
+engine/glare.o: engine/octa.h engine/lightmap.h engine/bih.h engine/texture.h
 engine/glare.o: engine/model.h engine/varray.h engine/rendertarget.h
 engine/grass.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/grass.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-engine/grass.o: enet/include/enet/enet/protocol.h
-engine/grass.o: enet/include/enet/enet/list.h
-engine/grass.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/grass.o: shared/geom.h shared/ents.h shared/command.h shared/iengine.h
-engine/grass.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
-engine/grass.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
-engine/grass.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
-engine/grass.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
-engine/grass.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
-engine/grass.o: engine/world.h engine/glexts.h engine/octa.h
-engine/grass.o: engine/lightmap.h engine/bih.h engine/texture.h
+engine/grass.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/grass.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/grass.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/grass.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+engine/grass.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+engine/grass.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+engine/grass.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+engine/grass.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+engine/grass.o: mod/plugin.h shared/igame.h engine/world.h engine/glexts.h
+engine/grass.o: engine/octa.h engine/lightmap.h engine/bih.h engine/texture.h
 engine/grass.o: engine/model.h engine/varray.h
 engine/lightmap.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/lightmap.o: enet/include/enet/enet/unix.h
-engine/lightmap.o: enet/include/enet/enet/types.h
-engine/lightmap.o: enet/include/enet/enet/protocol.h
-engine/lightmap.o: enet/include/enet/enet/list.h
-engine/lightmap.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/lightmap.o: shared/geom.h shared/ents.h shared/command.h
-engine/lightmap.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-engine/lightmap.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-engine/lightmap.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-engine/lightmap.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-engine/lightmap.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-engine/lightmap.o: shared/igame.h engine/world.h engine/glexts.h
-engine/lightmap.o: engine/octa.h engine/lightmap.h engine/bih.h
-engine/lightmap.o: engine/texture.h engine/model.h engine/varray.h
+engine/lightmap.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/lightmap.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/lightmap.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/lightmap.o: shared/ents.h shared/command.h shared/iengine.h
+engine/lightmap.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
+engine/lightmap.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
+engine/lightmap.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
+engine/lightmap.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
+engine/lightmap.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
+engine/lightmap.o: engine/world.h engine/glexts.h engine/octa.h
+engine/lightmap.o: engine/lightmap.h engine/bih.h engine/texture.h
+engine/lightmap.o: engine/model.h engine/varray.h
 engine/main.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/main.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-engine/main.o: enet/include/enet/enet/protocol.h
-engine/main.o: enet/include/enet/enet/list.h
-engine/main.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/main.o: shared/geom.h shared/ents.h shared/command.h shared/iengine.h
-engine/main.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
-engine/main.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
-engine/main.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
-engine/main.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
-engine/main.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
-engine/main.o: engine/world.h engine/glexts.h engine/octa.h engine/lightmap.h
-engine/main.o: engine/bih.h engine/texture.h engine/model.h engine/varray.h
+engine/main.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/main.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/main.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/main.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+engine/main.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+engine/main.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+engine/main.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+engine/main.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+engine/main.o: mod/plugin.h shared/igame.h engine/world.h engine/glexts.h
+engine/main.o: engine/octa.h engine/lightmap.h engine/bih.h engine/texture.h
+engine/main.o: engine/model.h engine/varray.h
 engine/material.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/material.o: enet/include/enet/enet/unix.h
-engine/material.o: enet/include/enet/enet/types.h
-engine/material.o: enet/include/enet/enet/protocol.h
-engine/material.o: enet/include/enet/enet/list.h
-engine/material.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/material.o: shared/geom.h shared/ents.h shared/command.h
-engine/material.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-engine/material.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-engine/material.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-engine/material.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-engine/material.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-engine/material.o: shared/igame.h engine/world.h engine/glexts.h
-engine/material.o: engine/octa.h engine/lightmap.h engine/bih.h
-engine/material.o: engine/texture.h engine/model.h engine/varray.h
+engine/material.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/material.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/material.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/material.o: shared/ents.h shared/command.h shared/iengine.h
+engine/material.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
+engine/material.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
+engine/material.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
+engine/material.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
+engine/material.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
+engine/material.o: engine/world.h engine/glexts.h engine/octa.h
+engine/material.o: engine/lightmap.h engine/bih.h engine/texture.h
+engine/material.o: engine/model.h engine/varray.h
 engine/menus.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/menus.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-engine/menus.o: enet/include/enet/enet/protocol.h
-engine/menus.o: enet/include/enet/enet/list.h
-engine/menus.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/menus.o: shared/geom.h shared/ents.h shared/command.h shared/iengine.h
-engine/menus.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
-engine/menus.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
-engine/menus.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
-engine/menus.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
-engine/menus.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
-engine/menus.o: engine/world.h engine/glexts.h engine/octa.h
-engine/menus.o: engine/lightmap.h engine/bih.h engine/texture.h
+engine/menus.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/menus.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/menus.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/menus.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+engine/menus.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+engine/menus.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+engine/menus.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+engine/menus.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+engine/menus.o: mod/plugin.h shared/igame.h engine/world.h engine/glexts.h
+engine/menus.o: engine/octa.h engine/lightmap.h engine/bih.h engine/texture.h
 engine/menus.o: engine/model.h engine/varray.h
 engine/movie.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/movie.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-engine/movie.o: enet/include/enet/enet/protocol.h
-engine/movie.o: enet/include/enet/enet/list.h
-engine/movie.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/movie.o: shared/geom.h shared/ents.h shared/command.h shared/iengine.h
-engine/movie.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
-engine/movie.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
-engine/movie.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
-engine/movie.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
-engine/movie.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
-engine/movie.o: engine/world.h engine/glexts.h engine/octa.h
-engine/movie.o: engine/lightmap.h engine/bih.h engine/texture.h
+engine/movie.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/movie.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/movie.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/movie.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+engine/movie.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+engine/movie.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+engine/movie.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+engine/movie.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+engine/movie.o: mod/plugin.h shared/igame.h engine/world.h engine/glexts.h
+engine/movie.o: engine/octa.h engine/lightmap.h engine/bih.h engine/texture.h
 engine/movie.o: engine/model.h engine/varray.h
 engine/normal.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/normal.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-engine/normal.o: enet/include/enet/enet/protocol.h
-engine/normal.o: enet/include/enet/enet/list.h
-engine/normal.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/normal.o: shared/geom.h shared/ents.h shared/command.h
-engine/normal.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-engine/normal.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-engine/normal.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-engine/normal.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-engine/normal.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-engine/normal.o: shared/igame.h engine/world.h engine/glexts.h engine/octa.h
-engine/normal.o: engine/lightmap.h engine/bih.h engine/texture.h
-engine/normal.o: engine/model.h engine/varray.h
+engine/normal.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/normal.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/normal.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/normal.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+engine/normal.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+engine/normal.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+engine/normal.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+engine/normal.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+engine/normal.o: mod/plugin.h shared/igame.h engine/world.h engine/glexts.h
+engine/normal.o: engine/octa.h engine/lightmap.h engine/bih.h
+engine/normal.o: engine/texture.h engine/model.h engine/varray.h
 engine/octa.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/octa.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-engine/octa.o: enet/include/enet/enet/protocol.h
-engine/octa.o: enet/include/enet/enet/list.h
-engine/octa.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/octa.o: shared/geom.h shared/ents.h shared/command.h shared/iengine.h
-engine/octa.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
-engine/octa.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
-engine/octa.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
-engine/octa.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
-engine/octa.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
-engine/octa.o: engine/world.h engine/glexts.h engine/octa.h engine/lightmap.h
-engine/octa.o: engine/bih.h engine/texture.h engine/model.h engine/varray.h
+engine/octa.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/octa.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/octa.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/octa.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+engine/octa.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+engine/octa.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+engine/octa.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+engine/octa.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+engine/octa.o: mod/plugin.h shared/igame.h engine/world.h engine/glexts.h
+engine/octa.o: engine/octa.h engine/lightmap.h engine/bih.h engine/texture.h
+engine/octa.o: engine/model.h engine/varray.h
 engine/octaedit.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/octaedit.o: enet/include/enet/enet/unix.h
-engine/octaedit.o: enet/include/enet/enet/types.h
-engine/octaedit.o: enet/include/enet/enet/protocol.h
-engine/octaedit.o: enet/include/enet/enet/list.h
-engine/octaedit.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/octaedit.o: shared/geom.h shared/ents.h shared/command.h
-engine/octaedit.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-engine/octaedit.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-engine/octaedit.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-engine/octaedit.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-engine/octaedit.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-engine/octaedit.o: shared/igame.h engine/world.h engine/glexts.h
-engine/octaedit.o: engine/octa.h engine/lightmap.h engine/bih.h
-engine/octaedit.o: engine/texture.h engine/model.h engine/varray.h
+engine/octaedit.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/octaedit.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/octaedit.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/octaedit.o: shared/ents.h shared/command.h shared/iengine.h
+engine/octaedit.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
+engine/octaedit.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
+engine/octaedit.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
+engine/octaedit.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
+engine/octaedit.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
+engine/octaedit.o: engine/world.h engine/glexts.h engine/octa.h
+engine/octaedit.o: engine/lightmap.h engine/bih.h engine/texture.h
+engine/octaedit.o: engine/model.h engine/varray.h
 engine/octarender.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/octarender.o: enet/include/enet/enet/unix.h
-engine/octarender.o: enet/include/enet/enet/types.h
-engine/octarender.o: enet/include/enet/enet/protocol.h
-engine/octarender.o: enet/include/enet/enet/list.h
-engine/octarender.o: enet/include/enet/enet/callbacks.h shared/tools.h
+engine/octarender.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/octarender.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/octarender.o: enet/include/enet/callbacks.h shared/tools.h
 engine/octarender.o: shared/geom.h shared/ents.h shared/command.h
 engine/octarender.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
 engine/octarender.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
@@ -1034,24 +990,22 @@ engine/octarender.o: shared/igame.h engine/world.h engine/glexts.h
 engine/octarender.o: engine/octa.h engine/lightmap.h engine/bih.h
 engine/octarender.o: engine/texture.h engine/model.h engine/varray.h
 engine/physics.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/physics.o: enet/include/enet/enet/unix.h
-engine/physics.o: enet/include/enet/enet/types.h
-engine/physics.o: enet/include/enet/enet/protocol.h
-engine/physics.o: enet/include/enet/enet/list.h
-engine/physics.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/physics.o: shared/geom.h shared/ents.h shared/command.h
-engine/physics.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-engine/physics.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-engine/physics.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-engine/physics.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-engine/physics.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-engine/physics.o: shared/igame.h engine/world.h engine/glexts.h engine/octa.h
+engine/physics.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/physics.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/physics.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/physics.o: shared/ents.h shared/command.h shared/iengine.h
+engine/physics.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
+engine/physics.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
+engine/physics.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
+engine/physics.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
+engine/physics.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
+engine/physics.o: engine/world.h engine/glexts.h engine/octa.h
 engine/physics.o: engine/lightmap.h engine/bih.h engine/texture.h
 engine/physics.o: engine/model.h engine/varray.h engine/mpr.h
 engine/pvs.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/pvs.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-engine/pvs.o: enet/include/enet/enet/protocol.h enet/include/enet/enet/list.h
-engine/pvs.o: enet/include/enet/enet/callbacks.h shared/tools.h shared/geom.h
+engine/pvs.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/pvs.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/pvs.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
 engine/pvs.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
 engine/pvs.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h mod/ipbuf.h
 engine/pvs.o: mod/wcversion.h mod/gamemod.h mod/http.h mod/geoip.h
@@ -1061,26 +1015,22 @@ engine/pvs.o: shared/igame.h engine/world.h engine/glexts.h engine/octa.h
 engine/pvs.o: engine/lightmap.h engine/bih.h engine/texture.h engine/model.h
 engine/pvs.o: engine/varray.h
 engine/rendergl.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/rendergl.o: enet/include/enet/enet/unix.h
-engine/rendergl.o: enet/include/enet/enet/types.h
-engine/rendergl.o: enet/include/enet/enet/protocol.h
-engine/rendergl.o: enet/include/enet/enet/list.h
-engine/rendergl.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/rendergl.o: shared/geom.h shared/ents.h shared/command.h
-engine/rendergl.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-engine/rendergl.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-engine/rendergl.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-engine/rendergl.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-engine/rendergl.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-engine/rendergl.o: shared/igame.h engine/world.h engine/glexts.h
-engine/rendergl.o: engine/octa.h engine/lightmap.h engine/bih.h
-engine/rendergl.o: engine/texture.h engine/model.h engine/varray.h
+engine/rendergl.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/rendergl.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/rendergl.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/rendergl.o: shared/ents.h shared/command.h shared/iengine.h
+engine/rendergl.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
+engine/rendergl.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
+engine/rendergl.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
+engine/rendergl.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
+engine/rendergl.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
+engine/rendergl.o: engine/world.h engine/glexts.h engine/octa.h
+engine/rendergl.o: engine/lightmap.h engine/bih.h engine/texture.h
+engine/rendergl.o: engine/model.h engine/varray.h
 engine/rendermodel.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/rendermodel.o: enet/include/enet/enet/unix.h
-engine/rendermodel.o: enet/include/enet/enet/types.h
-engine/rendermodel.o: enet/include/enet/enet/protocol.h
-engine/rendermodel.o: enet/include/enet/enet/list.h
-engine/rendermodel.o: enet/include/enet/enet/callbacks.h shared/tools.h
+engine/rendermodel.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/rendermodel.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/rendermodel.o: enet/include/enet/callbacks.h shared/tools.h
 engine/rendermodel.o: shared/geom.h shared/ents.h shared/command.h
 engine/rendermodel.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
 engine/rendermodel.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
@@ -1095,12 +1045,11 @@ engine/rendermodel.o: engine/vertmodel.h engine/skelmodel.h engine/md2.h
 engine/rendermodel.o: engine/md3.h engine/md5.h engine/obj.h engine/smd.h
 engine/rendermodel.o: engine/iqm.h
 engine/renderparticles.o: engine/engine.h shared/cube.h
-engine/renderparticles.o: enet/include/enet/enet.h
-engine/renderparticles.o: enet/include/enet/enet/unix.h
-engine/renderparticles.o: enet/include/enet/enet/types.h
-engine/renderparticles.o: enet/include/enet/enet/protocol.h
-engine/renderparticles.o: enet/include/enet/enet/list.h
-engine/renderparticles.o: enet/include/enet/enet/callbacks.h shared/tools.h
+engine/renderparticles.o: enet/include/enet/enet.h enet/include/enet/unix.h
+engine/renderparticles.o: enet/include/enet/types.h
+engine/renderparticles.o: enet/include/enet/protocol.h
+engine/renderparticles.o: enet/include/enet/list.h
+engine/renderparticles.o: enet/include/enet/callbacks.h shared/tools.h
 engine/renderparticles.o: shared/geom.h shared/ents.h shared/command.h
 engine/renderparticles.o: shared/iengine.h mod/compat.h mod/mod.h
 engine/renderparticles.o: mod/compiler.h mod/strtool.h mod/crypto.h
@@ -1115,11 +1064,9 @@ engine/renderparticles.o: engine/rendertarget.h engine/depthfx.h
 engine/renderparticles.o: engine/explosion.h engine/lensflare.h
 engine/renderparticles.o: engine/lightning.h
 engine/rendersky.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/rendersky.o: enet/include/enet/enet/unix.h
-engine/rendersky.o: enet/include/enet/enet/types.h
-engine/rendersky.o: enet/include/enet/enet/protocol.h
-engine/rendersky.o: enet/include/enet/enet/list.h
-engine/rendersky.o: enet/include/enet/enet/callbacks.h shared/tools.h
+engine/rendersky.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/rendersky.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/rendersky.o: enet/include/enet/callbacks.h shared/tools.h
 engine/rendersky.o: shared/geom.h shared/ents.h shared/command.h
 engine/rendersky.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
 engine/rendersky.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
@@ -1130,11 +1077,9 @@ engine/rendersky.o: shared/igame.h engine/world.h engine/glexts.h
 engine/rendersky.o: engine/octa.h engine/lightmap.h engine/bih.h
 engine/rendersky.o: engine/texture.h engine/model.h engine/varray.h
 engine/rendertext.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/rendertext.o: enet/include/enet/enet/unix.h
-engine/rendertext.o: enet/include/enet/enet/types.h
-engine/rendertext.o: enet/include/enet/enet/protocol.h
-engine/rendertext.o: enet/include/enet/enet/list.h
-engine/rendertext.o: enet/include/enet/enet/callbacks.h shared/tools.h
+engine/rendertext.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/rendertext.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/rendertext.o: enet/include/enet/callbacks.h shared/tools.h
 engine/rendertext.o: shared/geom.h shared/ents.h shared/command.h
 engine/rendertext.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
 engine/rendertext.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
@@ -1145,41 +1090,35 @@ engine/rendertext.o: shared/igame.h engine/world.h engine/glexts.h
 engine/rendertext.o: engine/octa.h engine/lightmap.h engine/bih.h
 engine/rendertext.o: engine/texture.h engine/model.h engine/varray.h
 engine/renderva.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/renderva.o: enet/include/enet/enet/unix.h
-engine/renderva.o: enet/include/enet/enet/types.h
-engine/renderva.o: enet/include/enet/enet/protocol.h
-engine/renderva.o: enet/include/enet/enet/list.h
-engine/renderva.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/renderva.o: shared/geom.h shared/ents.h shared/command.h
-engine/renderva.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-engine/renderva.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-engine/renderva.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-engine/renderva.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-engine/renderva.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-engine/renderva.o: shared/igame.h engine/world.h engine/glexts.h
-engine/renderva.o: engine/octa.h engine/lightmap.h engine/bih.h
-engine/renderva.o: engine/texture.h engine/model.h engine/varray.h
+engine/renderva.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/renderva.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/renderva.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/renderva.o: shared/ents.h shared/command.h shared/iengine.h
+engine/renderva.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
+engine/renderva.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
+engine/renderva.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
+engine/renderva.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
+engine/renderva.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
+engine/renderva.o: engine/world.h engine/glexts.h engine/octa.h
+engine/renderva.o: engine/lightmap.h engine/bih.h engine/texture.h
+engine/renderva.o: engine/model.h engine/varray.h
 engine/server.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/server.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-engine/server.o: enet/include/enet/enet/protocol.h
-engine/server.o: enet/include/enet/enet/list.h
-engine/server.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/server.o: shared/geom.h shared/ents.h shared/command.h
-engine/server.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-engine/server.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-engine/server.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-engine/server.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-engine/server.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-engine/server.o: shared/igame.h engine/world.h engine/glexts.h engine/octa.h
-engine/server.o: engine/lightmap.h engine/bih.h engine/texture.h
-engine/server.o: engine/model.h engine/varray.h
+engine/server.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/server.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/server.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/server.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+engine/server.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+engine/server.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+engine/server.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+engine/server.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+engine/server.o: mod/plugin.h shared/igame.h engine/world.h engine/glexts.h
+engine/server.o: engine/octa.h engine/lightmap.h engine/bih.h
+engine/server.o: engine/texture.h engine/model.h engine/varray.h
 engine/serverbrowser.o: engine/engine.h shared/cube.h
-engine/serverbrowser.o: enet/include/enet/enet.h
-engine/serverbrowser.o: enet/include/enet/enet/unix.h
-engine/serverbrowser.o: enet/include/enet/enet/types.h
-engine/serverbrowser.o: enet/include/enet/enet/protocol.h
-engine/serverbrowser.o: enet/include/enet/enet/list.h
-engine/serverbrowser.o: enet/include/enet/enet/callbacks.h shared/tools.h
+engine/serverbrowser.o: enet/include/enet/enet.h enet/include/enet/unix.h
+engine/serverbrowser.o: enet/include/enet/types.h
+engine/serverbrowser.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/serverbrowser.o: enet/include/enet/callbacks.h shared/tools.h
 engine/serverbrowser.o: shared/geom.h shared/ents.h shared/command.h
 engine/serverbrowser.o: shared/iengine.h mod/compat.h mod/mod.h
 engine/serverbrowser.o: mod/compiler.h mod/strtool.h mod/crypto.h mod/ipbuf.h
@@ -1191,25 +1130,21 @@ engine/serverbrowser.o: engine/world.h engine/glexts.h engine/octa.h
 engine/serverbrowser.o: engine/lightmap.h engine/bih.h engine/texture.h
 engine/serverbrowser.o: engine/model.h engine/varray.h
 engine/shader.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/shader.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-engine/shader.o: enet/include/enet/enet/protocol.h
-engine/shader.o: enet/include/enet/enet/list.h
-engine/shader.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/shader.o: shared/geom.h shared/ents.h shared/command.h
-engine/shader.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-engine/shader.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-engine/shader.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-engine/shader.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-engine/shader.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-engine/shader.o: shared/igame.h engine/world.h engine/glexts.h engine/octa.h
-engine/shader.o: engine/lightmap.h engine/bih.h engine/texture.h
-engine/shader.o: engine/model.h engine/varray.h
+engine/shader.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/shader.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/shader.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/shader.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+engine/shader.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+engine/shader.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+engine/shader.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+engine/shader.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+engine/shader.o: mod/plugin.h shared/igame.h engine/world.h engine/glexts.h
+engine/shader.o: engine/octa.h engine/lightmap.h engine/bih.h
+engine/shader.o: engine/texture.h engine/model.h engine/varray.h
 engine/shadowmap.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/shadowmap.o: enet/include/enet/enet/unix.h
-engine/shadowmap.o: enet/include/enet/enet/types.h
-engine/shadowmap.o: enet/include/enet/enet/protocol.h
-engine/shadowmap.o: enet/include/enet/enet/list.h
-engine/shadowmap.o: enet/include/enet/enet/callbacks.h shared/tools.h
+engine/shadowmap.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/shadowmap.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/shadowmap.o: enet/include/enet/callbacks.h shared/tools.h
 engine/shadowmap.o: shared/geom.h shared/ents.h shared/command.h
 engine/shadowmap.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
 engine/shadowmap.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
@@ -1221,81 +1156,71 @@ engine/shadowmap.o: engine/octa.h engine/lightmap.h engine/bih.h
 engine/shadowmap.o: engine/texture.h engine/model.h engine/varray.h
 engine/shadowmap.o: engine/rendertarget.h
 engine/sound.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/sound.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-engine/sound.o: enet/include/enet/enet/protocol.h
-engine/sound.o: enet/include/enet/enet/list.h
-engine/sound.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/sound.o: shared/geom.h shared/ents.h shared/command.h shared/iengine.h
-engine/sound.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
-engine/sound.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
-engine/sound.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
-engine/sound.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
-engine/sound.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
-engine/sound.o: engine/world.h engine/glexts.h engine/octa.h
-engine/sound.o: engine/lightmap.h engine/bih.h engine/texture.h
+engine/sound.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/sound.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/sound.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/sound.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+engine/sound.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+engine/sound.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+engine/sound.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+engine/sound.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+engine/sound.o: mod/plugin.h shared/igame.h engine/world.h engine/glexts.h
+engine/sound.o: engine/octa.h engine/lightmap.h engine/bih.h engine/texture.h
 engine/sound.o: engine/model.h engine/varray.h
 engine/texture.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/texture.o: enet/include/enet/enet/unix.h
-engine/texture.o: enet/include/enet/enet/types.h
-engine/texture.o: enet/include/enet/enet/protocol.h
-engine/texture.o: enet/include/enet/enet/list.h
-engine/texture.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/texture.o: shared/geom.h shared/ents.h shared/command.h
-engine/texture.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-engine/texture.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-engine/texture.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-engine/texture.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-engine/texture.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-engine/texture.o: shared/igame.h engine/world.h engine/glexts.h engine/octa.h
+engine/texture.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/texture.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/texture.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/texture.o: shared/ents.h shared/command.h shared/iengine.h
+engine/texture.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
+engine/texture.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
+engine/texture.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
+engine/texture.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
+engine/texture.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
+engine/texture.o: engine/world.h engine/glexts.h engine/octa.h
 engine/texture.o: engine/lightmap.h engine/bih.h engine/texture.h
 engine/texture.o: engine/model.h engine/varray.h engine/scale.h
 engine/water.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/water.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-engine/water.o: enet/include/enet/enet/protocol.h
-engine/water.o: enet/include/enet/enet/list.h
-engine/water.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/water.o: shared/geom.h shared/ents.h shared/command.h shared/iengine.h
-engine/water.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
-engine/water.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
-engine/water.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
-engine/water.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
-engine/water.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
-engine/water.o: engine/world.h engine/glexts.h engine/octa.h
-engine/water.o: engine/lightmap.h engine/bih.h engine/texture.h
+engine/water.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/water.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/water.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/water.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+engine/water.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+engine/water.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+engine/water.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+engine/water.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+engine/water.o: mod/plugin.h shared/igame.h engine/world.h engine/glexts.h
+engine/water.o: engine/octa.h engine/lightmap.h engine/bih.h engine/texture.h
 engine/water.o: engine/model.h engine/varray.h
 engine/world.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/world.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-engine/world.o: enet/include/enet/enet/protocol.h
-engine/world.o: enet/include/enet/enet/list.h
-engine/world.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/world.o: shared/geom.h shared/ents.h shared/command.h shared/iengine.h
-engine/world.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
-engine/world.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
-engine/world.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
-engine/world.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
-engine/world.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
-engine/world.o: engine/world.h engine/glexts.h engine/octa.h
-engine/world.o: engine/lightmap.h engine/bih.h engine/texture.h
+engine/world.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/world.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/world.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/world.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+engine/world.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+engine/world.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+engine/world.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+engine/world.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+engine/world.o: mod/plugin.h shared/igame.h engine/world.h engine/glexts.h
+engine/world.o: engine/octa.h engine/lightmap.h engine/bih.h engine/texture.h
 engine/world.o: engine/model.h engine/varray.h
 engine/worldio.o: engine/engine.h shared/cube.h enet/include/enet/enet.h
-engine/worldio.o: enet/include/enet/enet/unix.h
-engine/worldio.o: enet/include/enet/enet/types.h
-engine/worldio.o: enet/include/enet/enet/protocol.h
-engine/worldio.o: enet/include/enet/enet/list.h
-engine/worldio.o: enet/include/enet/enet/callbacks.h shared/tools.h
-engine/worldio.o: shared/geom.h shared/ents.h shared/command.h
-engine/worldio.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-engine/worldio.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-engine/worldio.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-engine/worldio.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-engine/worldio.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-engine/worldio.o: shared/igame.h engine/world.h engine/glexts.h engine/octa.h
+engine/worldio.o: enet/include/enet/unix.h enet/include/enet/types.h
+engine/worldio.o: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/worldio.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+engine/worldio.o: shared/ents.h shared/command.h shared/iengine.h
+engine/worldio.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
+engine/worldio.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
+engine/worldio.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
+engine/worldio.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
+engine/worldio.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
+engine/worldio.o: engine/world.h engine/glexts.h engine/octa.h
 engine/worldio.o: engine/lightmap.h engine/bih.h engine/texture.h
 engine/worldio.o: engine/model.h engine/varray.h
 fpsgame/ai.o: fpsgame/game.h shared/cube.h enet/include/enet/enet.h
-fpsgame/ai.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-fpsgame/ai.o: enet/include/enet/enet/protocol.h enet/include/enet/enet/list.h
-fpsgame/ai.o: enet/include/enet/enet/callbacks.h shared/tools.h shared/geom.h
+fpsgame/ai.o: enet/include/enet/unix.h enet/include/enet/types.h
+fpsgame/ai.o: enet/include/enet/protocol.h enet/include/enet/list.h
+fpsgame/ai.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
 fpsgame/ai.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
 fpsgame/ai.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h mod/ipbuf.h
 fpsgame/ai.o: mod/wcversion.h mod/gamemod.h mod/http.h mod/geoip.h
@@ -1303,25 +1228,21 @@ fpsgame/ai.o: mod/ipignore.h mod/extinfo.h mod/demorecorder.h mod/chat.h
 fpsgame/ai.o: mod/events.h mod/thread.h mod/proxy-detection.h mod/plugin.h
 fpsgame/ai.o: shared/igame.h fpsgame/ai.h
 fpsgame/client.o: fpsgame/game.h shared/cube.h enet/include/enet/enet.h
-fpsgame/client.o: enet/include/enet/enet/unix.h
-fpsgame/client.o: enet/include/enet/enet/types.h
-fpsgame/client.o: enet/include/enet/enet/protocol.h
-fpsgame/client.o: enet/include/enet/enet/list.h
-fpsgame/client.o: enet/include/enet/enet/callbacks.h shared/tools.h
-fpsgame/client.o: shared/geom.h shared/ents.h shared/command.h
-fpsgame/client.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-fpsgame/client.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-fpsgame/client.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-fpsgame/client.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-fpsgame/client.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-fpsgame/client.o: shared/igame.h fpsgame/ai.h fpsgame/capture.h fpsgame/ctf.h
+fpsgame/client.o: enet/include/enet/unix.h enet/include/enet/types.h
+fpsgame/client.o: enet/include/enet/protocol.h enet/include/enet/list.h
+fpsgame/client.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+fpsgame/client.o: shared/ents.h shared/command.h shared/iengine.h
+fpsgame/client.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
+fpsgame/client.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
+fpsgame/client.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
+fpsgame/client.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
+fpsgame/client.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
+fpsgame/client.o: fpsgame/ai.h fpsgame/capture.h fpsgame/ctf.h
 fpsgame/client.o: fpsgame/collect.h mod/cubescript.h
 fpsgame/entities.o: fpsgame/game.h shared/cube.h enet/include/enet/enet.h
-fpsgame/entities.o: enet/include/enet/enet/unix.h
-fpsgame/entities.o: enet/include/enet/enet/types.h
-fpsgame/entities.o: enet/include/enet/enet/protocol.h
-fpsgame/entities.o: enet/include/enet/enet/list.h
-fpsgame/entities.o: enet/include/enet/enet/callbacks.h shared/tools.h
+fpsgame/entities.o: enet/include/enet/unix.h enet/include/enet/types.h
+fpsgame/entities.o: enet/include/enet/protocol.h enet/include/enet/list.h
+fpsgame/entities.o: enet/include/enet/callbacks.h shared/tools.h
 fpsgame/entities.o: shared/geom.h shared/ents.h shared/command.h
 fpsgame/entities.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
 fpsgame/entities.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
@@ -1330,61 +1251,52 @@ fpsgame/entities.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
 fpsgame/entities.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
 fpsgame/entities.o: shared/igame.h fpsgame/ai.h
 fpsgame/fps.o: fpsgame/game.h shared/cube.h enet/include/enet/enet.h
-fpsgame/fps.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-fpsgame/fps.o: enet/include/enet/enet/protocol.h
-fpsgame/fps.o: enet/include/enet/enet/list.h
-fpsgame/fps.o: enet/include/enet/enet/callbacks.h shared/tools.h
-fpsgame/fps.o: shared/geom.h shared/ents.h shared/command.h shared/iengine.h
-fpsgame/fps.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
-fpsgame/fps.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
-fpsgame/fps.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
-fpsgame/fps.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
-fpsgame/fps.o: mod/proxy-detection.h mod/plugin.h shared/igame.h fpsgame/ai.h
+fpsgame/fps.o: enet/include/enet/unix.h enet/include/enet/types.h
+fpsgame/fps.o: enet/include/enet/protocol.h enet/include/enet/list.h
+fpsgame/fps.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+fpsgame/fps.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+fpsgame/fps.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+fpsgame/fps.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+fpsgame/fps.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+fpsgame/fps.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+fpsgame/fps.o: mod/plugin.h shared/igame.h fpsgame/ai.h
 fpsgame/monster.o: fpsgame/game.h shared/cube.h enet/include/enet/enet.h
-fpsgame/monster.o: enet/include/enet/enet/unix.h
-fpsgame/monster.o: enet/include/enet/enet/types.h
-fpsgame/monster.o: enet/include/enet/enet/protocol.h
-fpsgame/monster.o: enet/include/enet/enet/list.h
-fpsgame/monster.o: enet/include/enet/enet/callbacks.h shared/tools.h
-fpsgame/monster.o: shared/geom.h shared/ents.h shared/command.h
-fpsgame/monster.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-fpsgame/monster.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-fpsgame/monster.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-fpsgame/monster.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-fpsgame/monster.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-fpsgame/monster.o: shared/igame.h fpsgame/ai.h
+fpsgame/monster.o: enet/include/enet/unix.h enet/include/enet/types.h
+fpsgame/monster.o: enet/include/enet/protocol.h enet/include/enet/list.h
+fpsgame/monster.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+fpsgame/monster.o: shared/ents.h shared/command.h shared/iengine.h
+fpsgame/monster.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
+fpsgame/monster.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
+fpsgame/monster.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
+fpsgame/monster.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
+fpsgame/monster.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
+fpsgame/monster.o: fpsgame/ai.h
 fpsgame/movable.o: fpsgame/game.h shared/cube.h enet/include/enet/enet.h
-fpsgame/movable.o: enet/include/enet/enet/unix.h
-fpsgame/movable.o: enet/include/enet/enet/types.h
-fpsgame/movable.o: enet/include/enet/enet/protocol.h
-fpsgame/movable.o: enet/include/enet/enet/list.h
-fpsgame/movable.o: enet/include/enet/enet/callbacks.h shared/tools.h
-fpsgame/movable.o: shared/geom.h shared/ents.h shared/command.h
-fpsgame/movable.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-fpsgame/movable.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-fpsgame/movable.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-fpsgame/movable.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-fpsgame/movable.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-fpsgame/movable.o: shared/igame.h fpsgame/ai.h
+fpsgame/movable.o: enet/include/enet/unix.h enet/include/enet/types.h
+fpsgame/movable.o: enet/include/enet/protocol.h enet/include/enet/list.h
+fpsgame/movable.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+fpsgame/movable.o: shared/ents.h shared/command.h shared/iengine.h
+fpsgame/movable.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
+fpsgame/movable.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
+fpsgame/movable.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
+fpsgame/movable.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
+fpsgame/movable.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
+fpsgame/movable.o: fpsgame/ai.h
 fpsgame/render.o: fpsgame/game.h shared/cube.h enet/include/enet/enet.h
-fpsgame/render.o: enet/include/enet/enet/unix.h
-fpsgame/render.o: enet/include/enet/enet/types.h
-fpsgame/render.o: enet/include/enet/enet/protocol.h
-fpsgame/render.o: enet/include/enet/enet/list.h
-fpsgame/render.o: enet/include/enet/enet/callbacks.h shared/tools.h
-fpsgame/render.o: shared/geom.h shared/ents.h shared/command.h
-fpsgame/render.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-fpsgame/render.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-fpsgame/render.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-fpsgame/render.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-fpsgame/render.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-fpsgame/render.o: shared/igame.h fpsgame/ai.h
+fpsgame/render.o: enet/include/enet/unix.h enet/include/enet/types.h
+fpsgame/render.o: enet/include/enet/protocol.h enet/include/enet/list.h
+fpsgame/render.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+fpsgame/render.o: shared/ents.h shared/command.h shared/iengine.h
+fpsgame/render.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
+fpsgame/render.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
+fpsgame/render.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
+fpsgame/render.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
+fpsgame/render.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
+fpsgame/render.o: fpsgame/ai.h
 fpsgame/scoreboard.o: fpsgame/game.h shared/cube.h enet/include/enet/enet.h
-fpsgame/scoreboard.o: enet/include/enet/enet/unix.h
-fpsgame/scoreboard.o: enet/include/enet/enet/types.h
-fpsgame/scoreboard.o: enet/include/enet/enet/protocol.h
-fpsgame/scoreboard.o: enet/include/enet/enet/list.h
-fpsgame/scoreboard.o: enet/include/enet/enet/callbacks.h shared/tools.h
+fpsgame/scoreboard.o: enet/include/enet/unix.h enet/include/enet/types.h
+fpsgame/scoreboard.o: enet/include/enet/protocol.h enet/include/enet/list.h
+fpsgame/scoreboard.o: enet/include/enet/callbacks.h shared/tools.h
 fpsgame/scoreboard.o: shared/geom.h shared/ents.h shared/command.h
 fpsgame/scoreboard.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
 fpsgame/scoreboard.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
@@ -1393,25 +1305,21 @@ fpsgame/scoreboard.o: mod/extinfo.h mod/demorecorder.h mod/chat.h
 fpsgame/scoreboard.o: mod/events.h mod/thread.h mod/proxy-detection.h
 fpsgame/scoreboard.o: mod/plugin.h shared/igame.h fpsgame/ai.h
 fpsgame/server.o: fpsgame/game.h shared/cube.h enet/include/enet/enet.h
-fpsgame/server.o: enet/include/enet/enet/unix.h
-fpsgame/server.o: enet/include/enet/enet/types.h
-fpsgame/server.o: enet/include/enet/enet/protocol.h
-fpsgame/server.o: enet/include/enet/enet/list.h
-fpsgame/server.o: enet/include/enet/enet/callbacks.h shared/tools.h
-fpsgame/server.o: shared/geom.h shared/ents.h shared/command.h
-fpsgame/server.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-fpsgame/server.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-fpsgame/server.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-fpsgame/server.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-fpsgame/server.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-fpsgame/server.o: shared/igame.h fpsgame/ai.h fpsgame/capture.h fpsgame/ctf.h
+fpsgame/server.o: enet/include/enet/unix.h enet/include/enet/types.h
+fpsgame/server.o: enet/include/enet/protocol.h enet/include/enet/list.h
+fpsgame/server.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+fpsgame/server.o: shared/ents.h shared/command.h shared/iengine.h
+fpsgame/server.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
+fpsgame/server.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
+fpsgame/server.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
+fpsgame/server.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
+fpsgame/server.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
+fpsgame/server.o: fpsgame/ai.h fpsgame/capture.h fpsgame/ctf.h
 fpsgame/server.o: fpsgame/collect.h fpsgame/aiman.h
 fpsgame/waypoint.o: fpsgame/game.h shared/cube.h enet/include/enet/enet.h
-fpsgame/waypoint.o: enet/include/enet/enet/unix.h
-fpsgame/waypoint.o: enet/include/enet/enet/types.h
-fpsgame/waypoint.o: enet/include/enet/enet/protocol.h
-fpsgame/waypoint.o: enet/include/enet/enet/list.h
-fpsgame/waypoint.o: enet/include/enet/enet/callbacks.h shared/tools.h
+fpsgame/waypoint.o: enet/include/enet/unix.h enet/include/enet/types.h
+fpsgame/waypoint.o: enet/include/enet/protocol.h enet/include/enet/list.h
+fpsgame/waypoint.o: enet/include/enet/callbacks.h shared/tools.h
 fpsgame/waypoint.o: shared/geom.h shared/ents.h shared/command.h
 fpsgame/waypoint.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
 fpsgame/waypoint.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
@@ -1420,34 +1328,29 @@ fpsgame/waypoint.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
 fpsgame/waypoint.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
 fpsgame/waypoint.o: shared/igame.h fpsgame/ai.h
 fpsgame/weapon.o: fpsgame/game.h shared/cube.h enet/include/enet/enet.h
-fpsgame/weapon.o: enet/include/enet/enet/unix.h
-fpsgame/weapon.o: enet/include/enet/enet/types.h
-fpsgame/weapon.o: enet/include/enet/enet/protocol.h
-fpsgame/weapon.o: enet/include/enet/enet/list.h
-fpsgame/weapon.o: enet/include/enet/enet/callbacks.h shared/tools.h
-fpsgame/weapon.o: shared/geom.h shared/ents.h shared/command.h
-fpsgame/weapon.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-fpsgame/weapon.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-fpsgame/weapon.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-fpsgame/weapon.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-fpsgame/weapon.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-fpsgame/weapon.o: shared/igame.h fpsgame/ai.h
-mod/plugin.o: shared/cube.h enet/include/enet/enet.h
-mod/plugin.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-mod/plugin.o: enet/include/enet/enet/protocol.h enet/include/enet/enet/list.h
-mod/plugin.o: enet/include/enet/enet/callbacks.h shared/tools.h shared/geom.h
-mod/plugin.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
-mod/plugin.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h mod/ipbuf.h
-mod/plugin.o: mod/wcversion.h mod/gamemod.h mod/http.h mod/geoip.h
-mod/plugin.o: mod/ipignore.h mod/extinfo.h mod/demorecorder.h mod/chat.h
-mod/plugin.o: mod/events.h mod/thread.h mod/proxy-detection.h mod/plugin.h
-mod/plugin.o: shared/igame.h
+fpsgame/weapon.o: enet/include/enet/unix.h enet/include/enet/types.h
+fpsgame/weapon.o: enet/include/enet/protocol.h enet/include/enet/list.h
+fpsgame/weapon.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+fpsgame/weapon.o: shared/ents.h shared/command.h shared/iengine.h
+fpsgame/weapon.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
+fpsgame/weapon.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
+fpsgame/weapon.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
+fpsgame/weapon.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
+fpsgame/weapon.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
+fpsgame/weapon.o: fpsgame/ai.h
+mod/plugin.o: shared/cube.h enet/include/enet/enet.h enet/include/enet/unix.h
+mod/plugin.o: enet/include/enet/types.h enet/include/enet/protocol.h
+mod/plugin.o: enet/include/enet/list.h enet/include/enet/callbacks.h
+mod/plugin.o: shared/tools.h shared/geom.h shared/ents.h shared/command.h
+mod/plugin.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
+mod/plugin.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
+mod/plugin.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
+mod/plugin.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
+mod/plugin.o: mod/thread.h mod/proxy-detection.h mod/plugin.h shared/igame.h
 mod/demorecorder.o: fpsgame/game.h shared/cube.h enet/include/enet/enet.h
-mod/demorecorder.o: enet/include/enet/enet/unix.h
-mod/demorecorder.o: enet/include/enet/enet/types.h
-mod/demorecorder.o: enet/include/enet/enet/protocol.h
-mod/demorecorder.o: enet/include/enet/enet/list.h
-mod/demorecorder.o: enet/include/enet/enet/callbacks.h shared/tools.h
+mod/demorecorder.o: enet/include/enet/unix.h enet/include/enet/types.h
+mod/demorecorder.o: enet/include/enet/protocol.h enet/include/enet/list.h
+mod/demorecorder.o: enet/include/enet/callbacks.h shared/tools.h
 mod/demorecorder.o: shared/geom.h shared/ents.h shared/command.h
 mod/demorecorder.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
 mod/demorecorder.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
@@ -1456,51 +1359,48 @@ mod/demorecorder.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
 mod/demorecorder.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
 mod/demorecorder.o: shared/igame.h fpsgame/ai.h
 mod/chat.o: fpsgame/game.h shared/cube.h enet/include/enet/enet.h
-mod/chat.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-mod/chat.o: enet/include/enet/enet/protocol.h enet/include/enet/enet/list.h
-mod/chat.o: enet/include/enet/enet/callbacks.h shared/tools.h shared/geom.h
+mod/chat.o: enet/include/enet/unix.h enet/include/enet/types.h
+mod/chat.o: enet/include/enet/protocol.h enet/include/enet/list.h
+mod/chat.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
 mod/chat.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
 mod/chat.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h mod/ipbuf.h
 mod/chat.o: mod/wcversion.h mod/gamemod.h mod/http.h mod/geoip.h
 mod/chat.o: mod/ipignore.h mod/extinfo.h mod/demorecorder.h mod/chat.h
 mod/chat.o: mod/events.h mod/thread.h mod/proxy-detection.h mod/plugin.h
 mod/chat.o: shared/igame.h fpsgame/ai.h mod/chat-ca-certs.h
-mod/events.o: shared/cube.h enet/include/enet/enet.h
-mod/events.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-mod/events.o: enet/include/enet/enet/protocol.h enet/include/enet/enet/list.h
-mod/events.o: enet/include/enet/enet/callbacks.h shared/tools.h shared/geom.h
-mod/events.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
-mod/events.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h mod/ipbuf.h
-mod/events.o: mod/wcversion.h mod/gamemod.h mod/http.h mod/geoip.h
-mod/events.o: mod/ipignore.h mod/extinfo.h mod/demorecorder.h mod/chat.h
-mod/events.o: mod/events.h mod/thread.h mod/proxy-detection.h mod/plugin.h
-mod/events.o: shared/igame.h
+mod/events.o: shared/cube.h enet/include/enet/enet.h enet/include/enet/unix.h
+mod/events.o: enet/include/enet/types.h enet/include/enet/protocol.h
+mod/events.o: enet/include/enet/list.h enet/include/enet/callbacks.h
+mod/events.o: shared/tools.h shared/geom.h shared/ents.h shared/command.h
+mod/events.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
+mod/events.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
+mod/events.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
+mod/events.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
+mod/events.o: mod/thread.h mod/proxy-detection.h mod/plugin.h shared/igame.h
 mod/extinfo.o: fpsgame/game.h shared/cube.h enet/include/enet/enet.h
-mod/extinfo.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-mod/extinfo.o: enet/include/enet/enet/protocol.h
-mod/extinfo.o: enet/include/enet/enet/list.h
-mod/extinfo.o: enet/include/enet/enet/callbacks.h shared/tools.h
-mod/extinfo.o: shared/geom.h shared/ents.h shared/command.h shared/iengine.h
-mod/extinfo.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
-mod/extinfo.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
-mod/extinfo.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
-mod/extinfo.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
-mod/extinfo.o: mod/proxy-detection.h mod/plugin.h shared/igame.h fpsgame/ai.h
+mod/extinfo.o: enet/include/enet/unix.h enet/include/enet/types.h
+mod/extinfo.o: enet/include/enet/protocol.h enet/include/enet/list.h
+mod/extinfo.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+mod/extinfo.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+mod/extinfo.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+mod/extinfo.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+mod/extinfo.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+mod/extinfo.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+mod/extinfo.o: mod/plugin.h shared/igame.h fpsgame/ai.h
 mod/gamemod.o: fpsgame/game.h shared/cube.h enet/include/enet/enet.h
-mod/gamemod.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-mod/gamemod.o: enet/include/enet/enet/protocol.h
-mod/gamemod.o: enet/include/enet/enet/list.h
-mod/gamemod.o: enet/include/enet/enet/callbacks.h shared/tools.h
-mod/gamemod.o: shared/geom.h shared/ents.h shared/command.h shared/iengine.h
-mod/gamemod.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
-mod/gamemod.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
-mod/gamemod.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
-mod/gamemod.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
-mod/gamemod.o: mod/proxy-detection.h mod/plugin.h shared/igame.h fpsgame/ai.h
+mod/gamemod.o: enet/include/enet/unix.h enet/include/enet/types.h
+mod/gamemod.o: enet/include/enet/protocol.h enet/include/enet/list.h
+mod/gamemod.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+mod/gamemod.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+mod/gamemod.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+mod/gamemod.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+mod/gamemod.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+mod/gamemod.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+mod/gamemod.o: mod/plugin.h shared/igame.h fpsgame/ai.h
 mod/geoip.o: fpsgame/game.h shared/cube.h enet/include/enet/enet.h
-mod/geoip.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-mod/geoip.o: enet/include/enet/enet/protocol.h enet/include/enet/enet/list.h
-mod/geoip.o: enet/include/enet/enet/callbacks.h shared/tools.h shared/geom.h
+mod/geoip.o: enet/include/enet/unix.h enet/include/enet/types.h
+mod/geoip.o: enet/include/enet/protocol.h enet/include/enet/list.h
+mod/geoip.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
 mod/geoip.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
 mod/geoip.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h mod/ipbuf.h
 mod/geoip.o: mod/wcversion.h mod/gamemod.h mod/http.h mod/geoip.h
@@ -1508,58 +1408,50 @@ mod/geoip.o: mod/ipignore.h mod/extinfo.h mod/demorecorder.h mod/chat.h
 mod/geoip.o: mod/events.h mod/thread.h mod/proxy-detection.h mod/plugin.h
 mod/geoip.o: shared/igame.h fpsgame/ai.h
 mod/ipignore.o: fpsgame/game.h shared/cube.h enet/include/enet/enet.h
-mod/ipignore.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-mod/ipignore.o: enet/include/enet/enet/protocol.h
-mod/ipignore.o: enet/include/enet/enet/list.h
-mod/ipignore.o: enet/include/enet/enet/callbacks.h shared/tools.h
-mod/ipignore.o: shared/geom.h shared/ents.h shared/command.h shared/iengine.h
-mod/ipignore.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
-mod/ipignore.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
-mod/ipignore.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
-mod/ipignore.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
-mod/ipignore.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
-mod/ipignore.o: fpsgame/ai.h
-mod/mod.o: shared/cube.h enet/include/enet/enet.h
-mod/mod.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-mod/mod.o: enet/include/enet/enet/protocol.h enet/include/enet/enet/list.h
-mod/mod.o: enet/include/enet/enet/callbacks.h shared/tools.h shared/geom.h
-mod/mod.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
-mod/mod.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h mod/ipbuf.h
-mod/mod.o: mod/wcversion.h mod/gamemod.h mod/http.h mod/geoip.h
-mod/mod.o: mod/ipignore.h mod/extinfo.h mod/demorecorder.h mod/chat.h
-mod/mod.o: mod/events.h mod/thread.h mod/proxy-detection.h mod/plugin.h
-mod/mod.o: shared/igame.h last_sauer_svn_rev.h
+mod/ipignore.o: enet/include/enet/unix.h enet/include/enet/types.h
+mod/ipignore.o: enet/include/enet/protocol.h enet/include/enet/list.h
+mod/ipignore.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+mod/ipignore.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+mod/ipignore.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+mod/ipignore.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+mod/ipignore.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+mod/ipignore.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+mod/ipignore.o: mod/plugin.h shared/igame.h fpsgame/ai.h
+mod/mod.o: shared/cube.h enet/include/enet/enet.h enet/include/enet/unix.h
+mod/mod.o: enet/include/enet/types.h enet/include/enet/protocol.h
+mod/mod.o: enet/include/enet/list.h enet/include/enet/callbacks.h
+mod/mod.o: shared/tools.h shared/geom.h shared/ents.h shared/command.h
+mod/mod.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
+mod/mod.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
+mod/mod.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
+mod/mod.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
+mod/mod.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
+mod/mod.o: last_sauer_svn_rev.h
 mod/cubescript.o: fpsgame/game.h shared/cube.h enet/include/enet/enet.h
-mod/cubescript.o: enet/include/enet/enet/unix.h
-mod/cubescript.o: enet/include/enet/enet/types.h
-mod/cubescript.o: enet/include/enet/enet/protocol.h
-mod/cubescript.o: enet/include/enet/enet/list.h
-mod/cubescript.o: enet/include/enet/enet/callbacks.h shared/tools.h
-mod/cubescript.o: shared/geom.h shared/ents.h shared/command.h
-mod/cubescript.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-mod/cubescript.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-mod/cubescript.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-mod/cubescript.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-mod/cubescript.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-mod/cubescript.o: shared/igame.h fpsgame/ai.h
+mod/cubescript.o: enet/include/enet/unix.h enet/include/enet/types.h
+mod/cubescript.o: enet/include/enet/protocol.h enet/include/enet/list.h
+mod/cubescript.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+mod/cubescript.o: shared/ents.h shared/command.h shared/iengine.h
+mod/cubescript.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
+mod/cubescript.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
+mod/cubescript.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
+mod/cubescript.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
+mod/cubescript.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
+mod/cubescript.o: fpsgame/ai.h
 mod/hwdisplay.o: fpsgame/game.h shared/cube.h enet/include/enet/enet.h
-mod/hwdisplay.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-mod/hwdisplay.o: enet/include/enet/enet/protocol.h
-mod/hwdisplay.o: enet/include/enet/enet/list.h
-mod/hwdisplay.o: enet/include/enet/enet/callbacks.h shared/tools.h
-mod/hwdisplay.o: shared/geom.h shared/ents.h shared/command.h
-mod/hwdisplay.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-mod/hwdisplay.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-mod/hwdisplay.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-mod/hwdisplay.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-mod/hwdisplay.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
-mod/hwdisplay.o: shared/igame.h fpsgame/ai.h
+mod/hwdisplay.o: enet/include/enet/unix.h enet/include/enet/types.h
+mod/hwdisplay.o: enet/include/enet/protocol.h enet/include/enet/list.h
+mod/hwdisplay.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+mod/hwdisplay.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+mod/hwdisplay.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+mod/hwdisplay.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+mod/hwdisplay.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+mod/hwdisplay.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+mod/hwdisplay.o: mod/plugin.h shared/igame.h fpsgame/ai.h
 mod/playerdisplay.o: fpsgame/game.h shared/cube.h enet/include/enet/enet.h
-mod/playerdisplay.o: enet/include/enet/enet/unix.h
-mod/playerdisplay.o: enet/include/enet/enet/types.h
-mod/playerdisplay.o: enet/include/enet/enet/protocol.h
-mod/playerdisplay.o: enet/include/enet/enet/list.h
-mod/playerdisplay.o: enet/include/enet/enet/callbacks.h shared/tools.h
+mod/playerdisplay.o: enet/include/enet/unix.h enet/include/enet/types.h
+mod/playerdisplay.o: enet/include/enet/protocol.h enet/include/enet/list.h
+mod/playerdisplay.o: enet/include/enet/callbacks.h shared/tools.h
 mod/playerdisplay.o: shared/geom.h shared/ents.h shared/command.h
 mod/playerdisplay.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
 mod/playerdisplay.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
@@ -1567,69 +1459,62 @@ mod/playerdisplay.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
 mod/playerdisplay.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
 mod/playerdisplay.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
 mod/playerdisplay.o: shared/igame.h fpsgame/ai.h
-mod/http.o: shared/cube.h enet/include/enet/enet.h
-mod/http.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-mod/http.o: enet/include/enet/enet/protocol.h enet/include/enet/enet/list.h
-mod/http.o: enet/include/enet/enet/callbacks.h shared/tools.h shared/geom.h
-mod/http.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
-mod/http.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h mod/ipbuf.h
-mod/http.o: mod/wcversion.h mod/gamemod.h mod/http.h mod/geoip.h
-mod/http.o: mod/ipignore.h mod/extinfo.h mod/demorecorder.h mod/chat.h
-mod/http.o: mod/events.h mod/thread.h mod/proxy-detection.h mod/plugin.h
-mod/http.o: shared/igame.h
+mod/http.o: shared/cube.h enet/include/enet/enet.h enet/include/enet/unix.h
+mod/http.o: enet/include/enet/types.h enet/include/enet/protocol.h
+mod/http.o: enet/include/enet/list.h enet/include/enet/callbacks.h
+mod/http.o: shared/tools.h shared/geom.h shared/ents.h shared/command.h
+mod/http.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
+mod/http.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
+mod/http.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
+mod/http.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
+mod/http.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
 mod/strtool.o: shared/cube.h enet/include/enet/enet.h
-mod/strtool.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-mod/strtool.o: enet/include/enet/enet/protocol.h
-mod/strtool.o: enet/include/enet/enet/list.h
-mod/strtool.o: enet/include/enet/enet/callbacks.h shared/tools.h
-mod/strtool.o: shared/geom.h shared/ents.h shared/command.h shared/iengine.h
-mod/strtool.o: mod/compat.h mod/mod.h mod/compiler.h mod/strtool.h
-mod/strtool.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h mod/gamemod.h
-mod/strtool.o: mod/http.h mod/geoip.h mod/ipignore.h mod/extinfo.h
-mod/strtool.o: mod/demorecorder.h mod/chat.h mod/events.h mod/thread.h
-mod/strtool.o: mod/proxy-detection.h mod/plugin.h shared/igame.h
-mod/crypto.o: shared/cube.h enet/include/enet/enet.h
-mod/crypto.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-mod/crypto.o: enet/include/enet/enet/protocol.h enet/include/enet/enet/list.h
-mod/crypto.o: enet/include/enet/enet/callbacks.h shared/tools.h shared/geom.h
-mod/crypto.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
-mod/crypto.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h mod/ipbuf.h
-mod/crypto.o: mod/wcversion.h mod/gamemod.h mod/http.h mod/geoip.h
-mod/crypto.o: mod/ipignore.h mod/extinfo.h mod/demorecorder.h mod/chat.h
-mod/crypto.o: mod/events.h mod/thread.h mod/proxy-detection.h mod/plugin.h
-mod/crypto.o: shared/igame.h
+mod/strtool.o: enet/include/enet/unix.h enet/include/enet/types.h
+mod/strtool.o: enet/include/enet/protocol.h enet/include/enet/list.h
+mod/strtool.o: enet/include/enet/callbacks.h shared/tools.h shared/geom.h
+mod/strtool.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
+mod/strtool.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h
+mod/strtool.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h mod/http.h
+mod/strtool.o: mod/geoip.h mod/ipignore.h mod/extinfo.h mod/demorecorder.h
+mod/strtool.o: mod/chat.h mod/events.h mod/thread.h mod/proxy-detection.h
+mod/strtool.o: mod/plugin.h shared/igame.h
+mod/crypto.o: shared/cube.h enet/include/enet/enet.h enet/include/enet/unix.h
+mod/crypto.o: enet/include/enet/types.h enet/include/enet/protocol.h
+mod/crypto.o: enet/include/enet/list.h enet/include/enet/callbacks.h
+mod/crypto.o: shared/tools.h shared/geom.h shared/ents.h shared/command.h
+mod/crypto.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
+mod/crypto.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
+mod/crypto.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
+mod/crypto.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
+mod/crypto.o: mod/thread.h mod/proxy-detection.h mod/plugin.h shared/igame.h
 mod/extinfo-playerpreview.o: fpsgame/game.h shared/cube.h
 mod/extinfo-playerpreview.o: enet/include/enet/enet.h
-mod/extinfo-playerpreview.o: enet/include/enet/enet/unix.h
-mod/extinfo-playerpreview.o: enet/include/enet/enet/types.h
-mod/extinfo-playerpreview.o: enet/include/enet/enet/protocol.h
-mod/extinfo-playerpreview.o: enet/include/enet/enet/list.h
-mod/extinfo-playerpreview.o: enet/include/enet/enet/callbacks.h
-mod/extinfo-playerpreview.o: shared/tools.h shared/geom.h shared/ents.h
-mod/extinfo-playerpreview.o: shared/command.h shared/iengine.h mod/compat.h
-mod/extinfo-playerpreview.o: mod/mod.h mod/compiler.h mod/strtool.h
-mod/extinfo-playerpreview.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h
-mod/extinfo-playerpreview.o: mod/gamemod.h mod/http.h mod/geoip.h
-mod/extinfo-playerpreview.o: mod/ipignore.h mod/extinfo.h mod/demorecorder.h
-mod/extinfo-playerpreview.o: mod/chat.h mod/events.h mod/thread.h
-mod/extinfo-playerpreview.o: mod/proxy-detection.h mod/plugin.h
-mod/extinfo-playerpreview.o: shared/igame.h fpsgame/ai.h
-mod/ipbuf.o: shared/cube.h enet/include/enet/enet.h
-mod/ipbuf.o: enet/include/enet/enet/unix.h enet/include/enet/enet/types.h
-mod/ipbuf.o: enet/include/enet/enet/protocol.h enet/include/enet/enet/list.h
-mod/ipbuf.o: enet/include/enet/enet/callbacks.h shared/tools.h shared/geom.h
-mod/ipbuf.o: shared/ents.h shared/command.h shared/iengine.h mod/compat.h
-mod/ipbuf.o: mod/mod.h mod/compiler.h mod/strtool.h mod/crypto.h mod/ipbuf.h
-mod/ipbuf.o: mod/wcversion.h mod/gamemod.h mod/http.h mod/geoip.h
-mod/ipbuf.o: mod/ipignore.h mod/extinfo.h mod/demorecorder.h mod/chat.h
-mod/ipbuf.o: mod/events.h mod/thread.h mod/proxy-detection.h mod/plugin.h
-mod/ipbuf.o: shared/igame.h
+mod/extinfo-playerpreview.o: enet/include/enet/unix.h
+mod/extinfo-playerpreview.o: enet/include/enet/types.h
+mod/extinfo-playerpreview.o: enet/include/enet/protocol.h
+mod/extinfo-playerpreview.o: enet/include/enet/list.h
+mod/extinfo-playerpreview.o: enet/include/enet/callbacks.h shared/tools.h
+mod/extinfo-playerpreview.o: shared/geom.h shared/ents.h shared/command.h
+mod/extinfo-playerpreview.o: shared/iengine.h mod/compat.h mod/mod.h
+mod/extinfo-playerpreview.o: mod/compiler.h mod/strtool.h mod/crypto.h
+mod/extinfo-playerpreview.o: mod/ipbuf.h mod/wcversion.h mod/gamemod.h
+mod/extinfo-playerpreview.o: mod/http.h mod/geoip.h mod/ipignore.h
+mod/extinfo-playerpreview.o: mod/extinfo.h mod/demorecorder.h mod/chat.h
+mod/extinfo-playerpreview.o: mod/events.h mod/thread.h mod/proxy-detection.h
+mod/extinfo-playerpreview.o: mod/plugin.h shared/igame.h fpsgame/ai.h
+mod/ipbuf.o: shared/cube.h enet/include/enet/enet.h enet/include/enet/unix.h
+mod/ipbuf.o: enet/include/enet/types.h enet/include/enet/protocol.h
+mod/ipbuf.o: enet/include/enet/list.h enet/include/enet/callbacks.h
+mod/ipbuf.o: shared/tools.h shared/geom.h shared/ents.h shared/command.h
+mod/ipbuf.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
+mod/ipbuf.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
+mod/ipbuf.o: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
+mod/ipbuf.o: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
+mod/ipbuf.o: mod/thread.h mod/proxy-detection.h mod/plugin.h shared/igame.h
 mod/proxy-detection.o: fpsgame/game.h shared/cube.h enet/include/enet/enet.h
-mod/proxy-detection.o: enet/include/enet/enet/unix.h
-mod/proxy-detection.o: enet/include/enet/enet/types.h
-mod/proxy-detection.o: enet/include/enet/enet/protocol.h
-mod/proxy-detection.o: enet/include/enet/enet/list.h
-mod/proxy-detection.o: enet/include/enet/enet/callbacks.h shared/tools.h
+mod/proxy-detection.o: enet/include/enet/unix.h enet/include/enet/types.h
+mod/proxy-detection.o: enet/include/enet/protocol.h enet/include/enet/list.h
+mod/proxy-detection.o: enet/include/enet/callbacks.h shared/tools.h
 mod/proxy-detection.o: shared/geom.h shared/ents.h shared/command.h
 mod/proxy-detection.o: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
 mod/proxy-detection.o: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
@@ -1638,11 +1523,10 @@ mod/proxy-detection.o: mod/extinfo.h mod/demorecorder.h mod/chat.h
 mod/proxy-detection.o: mod/events.h mod/thread.h mod/proxy-detection.h
 mod/proxy-detection.o: mod/plugin.h shared/igame.h fpsgame/ai.h
 plugins/g15lcd/g15lcd.o: shared/cube.h enet/include/enet/enet.h
-plugins/g15lcd/g15lcd.o: enet/include/enet/enet/unix.h
-plugins/g15lcd/g15lcd.o: enet/include/enet/enet/types.h
-plugins/g15lcd/g15lcd.o: enet/include/enet/enet/protocol.h
-plugins/g15lcd/g15lcd.o: enet/include/enet/enet/list.h
-plugins/g15lcd/g15lcd.o: enet/include/enet/enet/callbacks.h shared/tools.h
+plugins/g15lcd/g15lcd.o: enet/include/enet/unix.h enet/include/enet/types.h
+plugins/g15lcd/g15lcd.o: enet/include/enet/protocol.h
+plugins/g15lcd/g15lcd.o: enet/include/enet/list.h
+plugins/g15lcd/g15lcd.o: enet/include/enet/callbacks.h shared/tools.h
 plugins/g15lcd/g15lcd.o: shared/geom.h shared/ents.h shared/command.h
 plugins/g15lcd/g15lcd.o: shared/iengine.h mod/compat.h mod/mod.h
 plugins/g15lcd/g15lcd.o: mod/compiler.h mod/strtool.h mod/crypto.h
@@ -1652,12 +1536,11 @@ plugins/g15lcd/g15lcd.o: mod/demorecorder.h mod/chat.h mod/events.h
 plugins/g15lcd/g15lcd.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
 plugins/g15lcd/g15lcd.o: shared/igame.h plugins/g15lcd/g15sdkwrapper.h
 plugins/hwtemp/hwtemp.o: plugins/hwtemp/hwtemp.h shared/cube.h
-plugins/hwtemp/hwtemp.o: enet/include/enet/enet.h
-plugins/hwtemp/hwtemp.o: enet/include/enet/enet/unix.h
-plugins/hwtemp/hwtemp.o: enet/include/enet/enet/types.h
-plugins/hwtemp/hwtemp.o: enet/include/enet/enet/protocol.h
-plugins/hwtemp/hwtemp.o: enet/include/enet/enet/list.h
-plugins/hwtemp/hwtemp.o: enet/include/enet/enet/callbacks.h shared/tools.h
+plugins/hwtemp/hwtemp.o: enet/include/enet/enet.h enet/include/enet/unix.h
+plugins/hwtemp/hwtemp.o: enet/include/enet/types.h
+plugins/hwtemp/hwtemp.o: enet/include/enet/protocol.h
+plugins/hwtemp/hwtemp.o: enet/include/enet/list.h
+plugins/hwtemp/hwtemp.o: enet/include/enet/callbacks.h shared/tools.h
 plugins/hwtemp/hwtemp.o: shared/geom.h shared/ents.h shared/command.h
 plugins/hwtemp/hwtemp.o: shared/iengine.h mod/compat.h mod/mod.h
 plugins/hwtemp/hwtemp.o: mod/compiler.h mod/strtool.h mod/crypto.h
@@ -1667,24 +1550,20 @@ plugins/hwtemp/hwtemp.o: mod/demorecorder.h mod/chat.h mod/events.h
 plugins/hwtemp/hwtemp.o: mod/thread.h mod/proxy-detection.h mod/plugin.h
 plugins/hwtemp/hwtemp.o: shared/igame.h
 
-shared/cube.h.gch: enet/include/enet/enet.h enet/include/enet/enet/unix.h
-shared/cube.h.gch: enet/include/enet/enet/types.h
-shared/cube.h.gch: enet/include/enet/enet/protocol.h
-shared/cube.h.gch: enet/include/enet/enet/list.h
-shared/cube.h.gch: enet/include/enet/enet/callbacks.h shared/tools.h
-shared/cube.h.gch: shared/geom.h shared/ents.h shared/command.h
-shared/cube.h.gch: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
-shared/cube.h.gch: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
-shared/cube.h.gch: mod/gamemod.h mod/http.h mod/geoip.h mod/ipignore.h
-shared/cube.h.gch: mod/extinfo.h mod/demorecorder.h mod/chat.h mod/events.h
-shared/cube.h.gch: mod/thread.h mod/proxy-detection.h mod/plugin.h
-shared/cube.h.gch: shared/igame.h
+shared/cube.h.gch: enet/include/enet/enet.h enet/include/enet/unix.h
+shared/cube.h.gch: enet/include/enet/types.h enet/include/enet/protocol.h
+shared/cube.h.gch: enet/include/enet/list.h enet/include/enet/callbacks.h
+shared/cube.h.gch: shared/tools.h shared/geom.h shared/ents.h
+shared/cube.h.gch: shared/command.h shared/iengine.h mod/compat.h mod/mod.h
+shared/cube.h.gch: mod/compiler.h mod/strtool.h mod/crypto.h mod/ipbuf.h
+shared/cube.h.gch: mod/wcversion.h mod/gamemod.h mod/http.h mod/geoip.h
+shared/cube.h.gch: mod/ipignore.h mod/extinfo.h mod/demorecorder.h mod/chat.h
+shared/cube.h.gch: mod/events.h mod/thread.h mod/proxy-detection.h
+shared/cube.h.gch: mod/plugin.h shared/igame.h
 engine/engine.h.gch: shared/cube.h enet/include/enet/enet.h
-engine/engine.h.gch: enet/include/enet/enet/unix.h
-engine/engine.h.gch: enet/include/enet/enet/types.h
-engine/engine.h.gch: enet/include/enet/enet/protocol.h
-engine/engine.h.gch: enet/include/enet/enet/list.h
-engine/engine.h.gch: enet/include/enet/enet/callbacks.h shared/tools.h
+engine/engine.h.gch: enet/include/enet/unix.h enet/include/enet/types.h
+engine/engine.h.gch: enet/include/enet/protocol.h enet/include/enet/list.h
+engine/engine.h.gch: enet/include/enet/callbacks.h shared/tools.h
 engine/engine.h.gch: shared/geom.h shared/ents.h shared/command.h
 engine/engine.h.gch: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
 engine/engine.h.gch: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
@@ -1695,11 +1574,9 @@ engine/engine.h.gch: shared/igame.h engine/world.h engine/glexts.h
 engine/engine.h.gch: engine/octa.h engine/lightmap.h engine/bih.h
 engine/engine.h.gch: engine/texture.h engine/model.h engine/varray.h
 fpsgame/game.h.gch: shared/cube.h enet/include/enet/enet.h
-fpsgame/game.h.gch: enet/include/enet/enet/unix.h
-fpsgame/game.h.gch: enet/include/enet/enet/types.h
-fpsgame/game.h.gch: enet/include/enet/enet/protocol.h
-fpsgame/game.h.gch: enet/include/enet/enet/list.h
-fpsgame/game.h.gch: enet/include/enet/enet/callbacks.h shared/tools.h
+fpsgame/game.h.gch: enet/include/enet/unix.h enet/include/enet/types.h
+fpsgame/game.h.gch: enet/include/enet/protocol.h enet/include/enet/list.h
+fpsgame/game.h.gch: enet/include/enet/callbacks.h shared/tools.h
 fpsgame/game.h.gch: shared/geom.h shared/ents.h shared/command.h
 fpsgame/game.h.gch: shared/iengine.h mod/compat.h mod/mod.h mod/compiler.h
 fpsgame/game.h.gch: mod/strtool.h mod/crypto.h mod/ipbuf.h mod/wcversion.h
@@ -1709,64 +1586,61 @@ fpsgame/game.h.gch: mod/thread.h mod/proxy-detection.h mod/plugin.h
 fpsgame/game.h.gch: shared/igame.h fpsgame/ai.h
 
 mod/strtool-standalone.o: shared/cube.h enet/include/enet/enet.h
-mod/strtool-standalone.o: enet/include/enet/enet/unix.h
-mod/strtool-standalone.o: enet/include/enet/enet/types.h
-mod/strtool-standalone.o: enet/include/enet/enet/protocol.h
-mod/strtool-standalone.o: enet/include/enet/enet/list.h
-mod/strtool-standalone.o: enet/include/enet/enet/callbacks.h shared/tools.h
+mod/strtool-standalone.o: enet/include/enet/unix.h enet/include/enet/types.h
+mod/strtool-standalone.o: enet/include/enet/protocol.h
+mod/strtool-standalone.o: enet/include/enet/list.h
+mod/strtool-standalone.o: enet/include/enet/callbacks.h shared/tools.h
 mod/strtool-standalone.o: shared/geom.h shared/ents.h shared/command.h
 mod/strtool-standalone.o: shared/iengine.h mod/compat.h mod/mod.h
 mod/strtool-standalone.o: mod/compiler.h mod/strtool.h mod/crypto.h
 mod/strtool-standalone.o: mod/ipbuf.h mod/wcversion.h shared/igame.h
 shared/crypto-standalone.o: shared/cube.h enet/include/enet/enet.h
-shared/crypto-standalone.o: enet/include/enet/enet/unix.h
-shared/crypto-standalone.o: enet/include/enet/enet/types.h
-shared/crypto-standalone.o: enet/include/enet/enet/protocol.h
-shared/crypto-standalone.o: enet/include/enet/enet/list.h
-shared/crypto-standalone.o: enet/include/enet/enet/callbacks.h shared/tools.h
+shared/crypto-standalone.o: enet/include/enet/unix.h
+shared/crypto-standalone.o: enet/include/enet/types.h
+shared/crypto-standalone.o: enet/include/enet/protocol.h
+shared/crypto-standalone.o: enet/include/enet/list.h
+shared/crypto-standalone.o: enet/include/enet/callbacks.h shared/tools.h
 shared/crypto-standalone.o: shared/geom.h shared/ents.h shared/command.h
 shared/crypto-standalone.o: shared/iengine.h mod/compat.h mod/mod.h
 shared/crypto-standalone.o: mod/compiler.h mod/strtool.h mod/crypto.h
 shared/crypto-standalone.o: mod/ipbuf.h mod/wcversion.h shared/igame.h
 shared/stream-standalone.o: shared/cube.h enet/include/enet/enet.h
-shared/stream-standalone.o: enet/include/enet/enet/unix.h
-shared/stream-standalone.o: enet/include/enet/enet/types.h
-shared/stream-standalone.o: enet/include/enet/enet/protocol.h
-shared/stream-standalone.o: enet/include/enet/enet/list.h
-shared/stream-standalone.o: enet/include/enet/enet/callbacks.h shared/tools.h
+shared/stream-standalone.o: enet/include/enet/unix.h
+shared/stream-standalone.o: enet/include/enet/types.h
+shared/stream-standalone.o: enet/include/enet/protocol.h
+shared/stream-standalone.o: enet/include/enet/list.h
+shared/stream-standalone.o: enet/include/enet/callbacks.h shared/tools.h
 shared/stream-standalone.o: shared/geom.h shared/ents.h shared/command.h
 shared/stream-standalone.o: shared/iengine.h mod/compat.h mod/mod.h
 shared/stream-standalone.o: mod/compiler.h mod/strtool.h mod/crypto.h
 shared/stream-standalone.o: mod/ipbuf.h mod/wcversion.h shared/igame.h
 shared/tools-standalone.o: shared/cube.h enet/include/enet/enet.h
-shared/tools-standalone.o: enet/include/enet/enet/unix.h
-shared/tools-standalone.o: enet/include/enet/enet/types.h
-shared/tools-standalone.o: enet/include/enet/enet/protocol.h
-shared/tools-standalone.o: enet/include/enet/enet/list.h
-shared/tools-standalone.o: enet/include/enet/enet/callbacks.h shared/tools.h
+shared/tools-standalone.o: enet/include/enet/unix.h enet/include/enet/types.h
+shared/tools-standalone.o: enet/include/enet/protocol.h
+shared/tools-standalone.o: enet/include/enet/list.h
+shared/tools-standalone.o: enet/include/enet/callbacks.h shared/tools.h
 shared/tools-standalone.o: shared/geom.h shared/ents.h shared/command.h
 shared/tools-standalone.o: shared/iengine.h mod/compat.h mod/mod.h
 shared/tools-standalone.o: mod/compiler.h mod/strtool.h mod/crypto.h
 shared/tools-standalone.o: mod/ipbuf.h mod/wcversion.h shared/igame.h
 engine/command-standalone.o: engine/engine.h shared/cube.h
 engine/command-standalone.o: enet/include/enet/enet.h
-engine/command-standalone.o: enet/include/enet/enet/unix.h
-engine/command-standalone.o: enet/include/enet/enet/types.h
-engine/command-standalone.o: enet/include/enet/enet/protocol.h
-engine/command-standalone.o: enet/include/enet/enet/list.h
-engine/command-standalone.o: enet/include/enet/enet/callbacks.h
-engine/command-standalone.o: shared/tools.h shared/geom.h shared/ents.h
-engine/command-standalone.o: shared/command.h shared/iengine.h mod/compat.h
-engine/command-standalone.o: mod/mod.h mod/compiler.h mod/strtool.h
-engine/command-standalone.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h
-engine/command-standalone.o: shared/igame.h engine/world.h
+engine/command-standalone.o: enet/include/enet/unix.h
+engine/command-standalone.o: enet/include/enet/types.h
+engine/command-standalone.o: enet/include/enet/protocol.h
+engine/command-standalone.o: enet/include/enet/list.h
+engine/command-standalone.o: enet/include/enet/callbacks.h shared/tools.h
+engine/command-standalone.o: shared/geom.h shared/ents.h shared/command.h
+engine/command-standalone.o: shared/iengine.h mod/compat.h mod/mod.h
+engine/command-standalone.o: mod/compiler.h mod/strtool.h mod/crypto.h
+engine/command-standalone.o: mod/ipbuf.h mod/wcversion.h shared/igame.h
+engine/command-standalone.o: engine/world.h
 engine/server-standalone.o: engine/engine.h shared/cube.h
-engine/server-standalone.o: enet/include/enet/enet.h
-engine/server-standalone.o: enet/include/enet/enet/unix.h
-engine/server-standalone.o: enet/include/enet/enet/types.h
-engine/server-standalone.o: enet/include/enet/enet/protocol.h
-engine/server-standalone.o: enet/include/enet/enet/list.h
-engine/server-standalone.o: enet/include/enet/enet/callbacks.h shared/tools.h
+engine/server-standalone.o: enet/include/enet/enet.h enet/include/enet/unix.h
+engine/server-standalone.o: enet/include/enet/types.h
+engine/server-standalone.o: enet/include/enet/protocol.h
+engine/server-standalone.o: enet/include/enet/list.h
+engine/server-standalone.o: enet/include/enet/callbacks.h shared/tools.h
 engine/server-standalone.o: shared/geom.h shared/ents.h shared/command.h
 engine/server-standalone.o: shared/iengine.h mod/compat.h mod/mod.h
 engine/server-standalone.o: mod/compiler.h mod/strtool.h mod/crypto.h
@@ -1774,49 +1648,49 @@ engine/server-standalone.o: mod/ipbuf.h mod/wcversion.h shared/igame.h
 engine/server-standalone.o: engine/world.h
 engine/worldio-standalone.o: engine/engine.h shared/cube.h
 engine/worldio-standalone.o: enet/include/enet/enet.h
-engine/worldio-standalone.o: enet/include/enet/enet/unix.h
-engine/worldio-standalone.o: enet/include/enet/enet/types.h
-engine/worldio-standalone.o: enet/include/enet/enet/protocol.h
-engine/worldio-standalone.o: enet/include/enet/enet/list.h
-engine/worldio-standalone.o: enet/include/enet/enet/callbacks.h
-engine/worldio-standalone.o: shared/tools.h shared/geom.h shared/ents.h
-engine/worldio-standalone.o: shared/command.h shared/iengine.h mod/compat.h
-engine/worldio-standalone.o: mod/mod.h mod/compiler.h mod/strtool.h
-engine/worldio-standalone.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h
-engine/worldio-standalone.o: shared/igame.h engine/world.h
+engine/worldio-standalone.o: enet/include/enet/unix.h
+engine/worldio-standalone.o: enet/include/enet/types.h
+engine/worldio-standalone.o: enet/include/enet/protocol.h
+engine/worldio-standalone.o: enet/include/enet/list.h
+engine/worldio-standalone.o: enet/include/enet/callbacks.h shared/tools.h
+engine/worldio-standalone.o: shared/geom.h shared/ents.h shared/command.h
+engine/worldio-standalone.o: shared/iengine.h mod/compat.h mod/mod.h
+engine/worldio-standalone.o: mod/compiler.h mod/strtool.h mod/crypto.h
+engine/worldio-standalone.o: mod/ipbuf.h mod/wcversion.h shared/igame.h
+engine/worldio-standalone.o: engine/world.h
 fpsgame/entities-standalone.o: fpsgame/game.h shared/cube.h
 fpsgame/entities-standalone.o: enet/include/enet/enet.h
-fpsgame/entities-standalone.o: enet/include/enet/enet/unix.h
-fpsgame/entities-standalone.o: enet/include/enet/enet/types.h
-fpsgame/entities-standalone.o: enet/include/enet/enet/protocol.h
-fpsgame/entities-standalone.o: enet/include/enet/enet/list.h
-fpsgame/entities-standalone.o: enet/include/enet/enet/callbacks.h
-fpsgame/entities-standalone.o: shared/tools.h shared/geom.h shared/ents.h
-fpsgame/entities-standalone.o: shared/command.h shared/iengine.h mod/compat.h
-fpsgame/entities-standalone.o: mod/mod.h mod/compiler.h mod/strtool.h
-fpsgame/entities-standalone.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h
-fpsgame/entities-standalone.o: shared/igame.h fpsgame/ai.h
+fpsgame/entities-standalone.o: enet/include/enet/unix.h
+fpsgame/entities-standalone.o: enet/include/enet/types.h
+fpsgame/entities-standalone.o: enet/include/enet/protocol.h
+fpsgame/entities-standalone.o: enet/include/enet/list.h
+fpsgame/entities-standalone.o: enet/include/enet/callbacks.h shared/tools.h
+fpsgame/entities-standalone.o: shared/geom.h shared/ents.h shared/command.h
+fpsgame/entities-standalone.o: shared/iengine.h mod/compat.h mod/mod.h
+fpsgame/entities-standalone.o: mod/compiler.h mod/strtool.h mod/crypto.h
+fpsgame/entities-standalone.o: mod/ipbuf.h mod/wcversion.h shared/igame.h
+fpsgame/entities-standalone.o: fpsgame/ai.h
 fpsgame/server-standalone.o: fpsgame/game.h shared/cube.h
 fpsgame/server-standalone.o: enet/include/enet/enet.h
-fpsgame/server-standalone.o: enet/include/enet/enet/unix.h
-fpsgame/server-standalone.o: enet/include/enet/enet/types.h
-fpsgame/server-standalone.o: enet/include/enet/enet/protocol.h
-fpsgame/server-standalone.o: enet/include/enet/enet/list.h
-fpsgame/server-standalone.o: enet/include/enet/enet/callbacks.h
-fpsgame/server-standalone.o: shared/tools.h shared/geom.h shared/ents.h
-fpsgame/server-standalone.o: shared/command.h shared/iengine.h mod/compat.h
-fpsgame/server-standalone.o: mod/mod.h mod/compiler.h mod/strtool.h
-fpsgame/server-standalone.o: mod/crypto.h mod/ipbuf.h mod/wcversion.h
-fpsgame/server-standalone.o: shared/igame.h fpsgame/ai.h fpsgame/capture.h
-fpsgame/server-standalone.o: fpsgame/ctf.h fpsgame/collect.h
-fpsgame/server-standalone.o: fpsgame/extinfo.h fpsgame/aiman.h
+fpsgame/server-standalone.o: enet/include/enet/unix.h
+fpsgame/server-standalone.o: enet/include/enet/types.h
+fpsgame/server-standalone.o: enet/include/enet/protocol.h
+fpsgame/server-standalone.o: enet/include/enet/list.h
+fpsgame/server-standalone.o: enet/include/enet/callbacks.h shared/tools.h
+fpsgame/server-standalone.o: shared/geom.h shared/ents.h shared/command.h
+fpsgame/server-standalone.o: shared/iengine.h mod/compat.h mod/mod.h
+fpsgame/server-standalone.o: mod/compiler.h mod/strtool.h mod/crypto.h
+fpsgame/server-standalone.o: mod/ipbuf.h mod/wcversion.h shared/igame.h
+fpsgame/server-standalone.o: fpsgame/ai.h fpsgame/capture.h fpsgame/ctf.h
+fpsgame/server-standalone.o: fpsgame/collect.h fpsgame/extinfo.h
+fpsgame/server-standalone.o: fpsgame/aiman.h
 
 engine/master-standalone.o: shared/cube.h enet/include/enet/enet.h
-engine/master-standalone.o: enet/include/enet/enet/unix.h
-engine/master-standalone.o: enet/include/enet/enet/types.h
-engine/master-standalone.o: enet/include/enet/enet/protocol.h
-engine/master-standalone.o: enet/include/enet/enet/list.h
-engine/master-standalone.o: enet/include/enet/enet/callbacks.h shared/tools.h
+engine/master-standalone.o: enet/include/enet/unix.h
+engine/master-standalone.o: enet/include/enet/types.h
+engine/master-standalone.o: enet/include/enet/protocol.h
+engine/master-standalone.o: enet/include/enet/list.h
+engine/master-standalone.o: enet/include/enet/callbacks.h shared/tools.h
 engine/master-standalone.o: shared/geom.h shared/ents.h shared/command.h
 engine/master-standalone.o: shared/iengine.h mod/compat.h mod/mod.h
 engine/master-standalone.o: mod/compiler.h mod/strtool.h mod/crypto.h

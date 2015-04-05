@@ -774,6 +774,15 @@ namespace game
         return teamcolor(name, team && isteam(team, player1->team), alt);
     }
 
+    //NEW
+    MODVARP(chatcolors, 0, 0, 1);
+    const char *chatcolorname(fpsent *d)
+    {
+        if(!chatcolors || !m_teammode || d->state == CS_SPECTATOR) return colorname(d);
+        return colorname(d, NULL, isteam(d->team, player1->team) ? "\fs\f1" : "\fs\f3", "\fr");
+    }
+    //NEW END
+
     void suicide(physent *d)
     {
         if(d==player1 || (d->type==ENT_PLAYER && ((fpsent *)d)->ai))
