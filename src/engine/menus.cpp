@@ -385,6 +385,23 @@ void guicolumn(int *col)
     if(cgui) cgui->column(*col);
 }
 
+//NEW
+void guibackground(int *color, int *parentw, int *parenth)
+{
+    if(cgui) cgui->background(*color, *parentw, *parenth);
+}
+
+void guipushlist()
+{
+    if(cgui) cgui->pushlist();
+}
+
+void guipoplist()
+{
+    if(cgui) cgui->poplist();
+}
+//NEW END
+
 template<class T> static void updateval(char *var, T val, char *onchange)
 {
     ident *id = writeident(var);
@@ -420,13 +437,13 @@ static float getfval(char *var)
     }
 }
 
-static const char *getsval(char *var)
+static const char *getsval(char *var, bool iscolor = false) //NEW iscolor bool iscolor = false
 {
     ident *id = readident(var);
     if(!id) return "";
     switch(id->type)
     {
-        case ID_VAR: return intstr(*id->storage.i);
+        case ID_VAR: return id->flags&IDF_HEX ? hexstr(*id->storage.i, iscolor) : intstr(*id->storage.i);  //NEW id->flags&IDF_HEX ? hexstr(*id->storage.i, iscolor) :
         case ID_FVAR: return floatstr(*id->storage.f);
         case ID_SVAR: return *id->storage.s;
         case ID_ALIAS: return id->getstr();
@@ -509,13 +526,21 @@ void guibitfield(char *name, char *var, int *mask, char *onchange)
 }
 
 //-ve length indicates a wrapped text field of any (approx 260 chars) length, |length| is the field width
-void guifield(char *var, int *maxlength, char *onchange)
+void guifield(char *var, int *maxlength, char *onchange, int *iscolor) //NEW iscolor
 {
     if(!cgui) return;
-    const char *initval = getsval(var);
-	char *result = cgui->field(var, GUI_BUTTON_COLOR, *maxlength ? *maxlength : 12, 0, initval);
+    const char *initval = getsval(var, *iscolor!=0); //NEW *iscolor
+	char *result = cgui->field(var, *iscolor ? getval(var) : GUI_BUTTON_COLOR, *maxlength ? *maxlength : 12, 0, initval); //NEW *iscolor ? getval(var) : 
     if(result) updateval(var, result, onchange);
 }
+
+//NEW
+void guicolorfield(char *var, char *onchange)
+{
+    int maxlength = 8, iscolor = 1;
+    guifield(var, &maxlength, onchange, &iscolor);
+}
+//NEW END
 
 //-ve maxlength indicates a wrapped text field of any (approx 260 chars) length, |maxlength| is the field width
 void guieditor(char *name, int *maxlength, int *height, int *mode)
@@ -671,6 +696,9 @@ COMMAND(guibar,"");
 COMMAND(guistrut,"fi");
 COMMAND(guispring, "i");
 COMMAND(guicolumn, "i");
+COMMAND(guibackground, "iii"); //NEW
+COMMAND(guipushlist, "");      //NEW
+COMMAND(guipoplist, "");       //NEW
 COMMAND(guiimage,"ssfis");
 COMMAND(guislider,"sbbs");
 COMMAND(guilistslider, "sss");
@@ -679,7 +707,8 @@ COMMAND(guiradio,"ssfs");
 COMMAND(guibitfield, "ssis");
 COMMAND(guicheckbox, "ssffs");
 COMMAND(guitab, "s");
-COMMAND(guifield, "sis");
+COMMAND(guifield, "sisi");    //NEW sis -> sisi
+COMMAND(guicolorfield, "ss"); //NEW
 COMMAND(guikeyfield, "sis");
 COMMAND(guieditor, "siii");
 COMMAND(guicolor, "i");

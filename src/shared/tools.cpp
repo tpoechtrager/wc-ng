@@ -296,21 +296,24 @@ void ipmask::parse(const char *name)
 int ipmask::print(char *buf) const
 {
     char *start = buf;
-    union { uchar b[sizeof(enet_uint32)]; enet_uint32 i; } ipconv, maskconv;
+    union { uchar b[sizeof(enet_uint32)]; enet_uint32 i; } ipconv/*, maskconv*/; //NEW commented maskconv
     ipconv.i = ip;
-    maskconv.i = mask;
+    //maskconv.i = mask; //NEW commented
     int lastdigit = -1;
-    loopi(4) if(maskconv.b[i])
+    loopi(4) /*if(maskconv.b[i])*/ //NEW commented if
     {
         if(lastdigit >= 0) *buf++ = '.';
         loopj(i - lastdigit - 1) { *buf++ = '*'; *buf++ = '.'; }
         buf += sprintf(buf, "%d", ipconv.b[i]);
         lastdigit = i;
     }
+#if 0 //NEW replaced
     enet_uint32 bits = ~ENET_NET_TO_HOST_32(mask);
     int range = 32;
     for(; (bits&0xFF) == 0xFF; bits >>= 8) range -= 8;
     for(; bits&1; bits >>= 1) --range;
     if(!bits && range%8) buf += sprintf(buf, "/%d", range);
+#endif
+    buf += sprintf(buf, "/%d", getbitcount()); //NEW
     return int(buf-start);
 }

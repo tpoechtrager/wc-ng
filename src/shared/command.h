@@ -197,6 +197,7 @@ extern void poparg(ident &id);                                      //NEW
 
 extern tagval *commandret;
 extern const char *intstr(int v);
+extern const char *hexstr(int v, bool iscolor = false); //NEW
 extern void intret(int v);
 extern const char *floatstr(float v);
 extern void floatret(float v);
@@ -218,6 +219,7 @@ static inline float parsefloat(const char *s)
 }
 
 static inline void intformat(char *buf, int v) { formatstring(buf)("%d", v); }
+static inline void hexformat(char *buf, int v, bool iscolor = false) { formatstring(buf)(iscolor ? "0x%06X" : "0x%08X", v); } //NEW
 static inline void floatformat(char *buf, float v) { formatstring(buf)(v==int(v) ? "%.1f" : "%.7g", v); }
 
 static inline const char *getstr(const identval &v, int type) 

@@ -71,8 +71,8 @@ namespace demorecorder
         demoinfo_t* getdemoinfoobj(ucharbuf &p, demoinfo_t *demoinfo);
     }
 
-    void startup();
-    void shutdown();
+    void init();
+    void deinit();
 
     const char *genproperdemofilename(char *buf, size_t len);
     void setupdemorecord(const char *name = NULL, bool force = false);
@@ -250,8 +250,8 @@ namespace searchdemo
 
     static inline bool parsedemosuccess(llong val) { return val >= 0; }
 
-    void startup();
-    void shutdown();
+    void init();
+    void deinit();
     void slice();
 } // namespace demorecorder
 } // namespace mod

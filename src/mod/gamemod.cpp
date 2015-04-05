@@ -576,7 +576,7 @@ namespace gamemod
     }
     COMMAND(getgamestatefmt, "is");
 
-    int guiprivcolor(int priv)
+    int guiplayerprivcolor(int priv)
     {
         switch(priv)
         {
@@ -586,6 +586,41 @@ namespace gamemod
         }
         return COLOR_NORMAL;
     }
+
+    MODHVARP(proxycolor, 0, 0x000000, 0xFFFFFF);
+
+#ifdef ENABLE_IPS
+    MODHVARP(ipignorecolor, 0, 0xC4C420, 0xFFFFFF);
+#else
+    constexpr int ipignorecolor = -1;
+#endif
+
+    int guiplayerbgcolor(uint32_t ip, const ENetAddress &serveraddr, void *client)
+    {
+        bool blacklistedserver = proxydetection::isblacklistedserver(serveraddr);
+        bool proxy = !blacklistedserver && proxydetection::isproxy(ip);
+        bool ignored = client ? ipignore::isignored(client) : ipignore::isignored(ip);
+        int type = 0;
+        if (proxy) type = 1;
+        if (ignored) type = proxy ? 3 : 2;
+        switch (type)
+        {
+            case 0: return -1;
+            case 1: return proxycolor;
+            case 2: return ipignorecolor;
+            case 3: return proxycolor^ipignorecolor; // well...
+            default: UNREACHABLE();
+        }
+    }
+
+    int guiplayerbgcolor(void *client, const ENetAddress &serveraddr)
+    {
+        fpsent *d = (fpsent*)client;
+        return d->extinfo ? guiplayerbgcolor(d->extinfo->ip.ui32, serveraddr, client) : -1;
+    }
+
+    ICOMMAND(guiplayerbgcolor, "s", (char *ip), intret(guiplayerbgcolor(ipmask(ip).ip, {})));
+    ICOMMAND(guiplayerprivcolor, "i", (int *priv), intret(guiplayerprivcolor(*priv)));
 
     int getgamemodenum(const char *gamemode)
     {

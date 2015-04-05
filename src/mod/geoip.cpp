@@ -195,7 +195,7 @@ namespace geoip
             updatedatabase(true);
     }
 
-    void startup()
+    void init()
     {
         if (fileexists(findfile(GEOIP_UPDATE_TMP, "r"), "r"))
             completeupdate();
@@ -244,7 +244,7 @@ namespace geoip
         addtimerfunction(0, true, &delayupdatecheck, NULL); // make sure geoipdblastmodified is set first
     }
 
-    void shutdown()
+    void deinit()
     {
         closedatabase();
     }
@@ -468,6 +468,7 @@ namespace geoip
         httpreq->request = DB_MIRRORS[mirror];
         httpreq->headers = headers;
 
+        httpreq->expecteddatalen = 800*1024;
         httpreq->callbackdata = info;
         httpreq->callback = (http::callback_t)downloadcallback;
         httpreq->contentcallback = (http::contentcallback_t)contentcallback;

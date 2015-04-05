@@ -30,11 +30,9 @@ namespace game
     MODVARP(showspectatorping, 0, 0, 1);
 #ifdef ENABLE_IPS
     MODVARP(showip, 0, 0, 1);
-    MODHVARP(ipignorecolor, 0, 0xC4C420, 0xFFFFFF);
     MODVARP(showspectatorip, 0, 0, 1);
 #else
     int showip = 0;
-    int ipignorecolor = 0;
     int showspectatorip = 0;
 #endif //ENABLE_IPS
     //NEW END
@@ -163,6 +161,14 @@ namespace game
     }
 
     //NEW
+    static inline const ENetAddress &getserveraddress()
+    {
+        if(curpeer) return curpeer->address;
+        if(demohasservertitle) return demoserver;
+        static const ENetAddress nulladdr{};
+        return nulladdr;
+    }
+
     template<typename T>
     static inline bool displayextinfo(T cond = T(1))
     {
@@ -214,7 +220,7 @@ namespace game
         // workaround for a bogus gcc warning
         // gcc thinks "file" is an empty string constant, while it clearly isn't
         // warning: offset outside bounds of constant string
-        if(!s) __builtin_unreachable();
+        if(!s) UNREACHABLE();
 #endif
 
         if(fileexists(findfile(file, "rb"), "rb")) filename = newstring(file+fnoffset);
@@ -423,16 +429,16 @@ namespace game
             g.text("", 0, " ");
             loopscoregroup(o,
             {
-                bool isignored = mod::ipignore::isignored(o->clientnum, NULL); //NEW
-                if((o==player1 && highlightscore && (multiplayer(false) || demoplayback || players.length() > 1)) || isignored) //NEW || isignored
+                int bgcolor = gamemod::guiplayerbgcolor(o, getserveraddress()); //NEW
+                if((o==player1 && highlightscore && (multiplayer(false) || demoplayback || players.length() > 1)) || bgcolor > -1) //NEW || bgcolor > -1
                 {
                     g.pushlist();
-                    g.background(isignored ? ipignorecolor : 0x808080, numgroups>1 ? 3 : 5); //NEW isignored ? ipignorecolor :
+                    g.background(bgcolor > -1 ? bgcolor : 0x808080, numgroups>1 ? 3 : 5); //NEW bgcolor > -1 ? bgcolor :
                 }
                 const playermodelinfo &mdl = getplayermodelinfo(o);
                 const char *icon = sg.team && m_teammode ? (isteam(player1->team, sg.team) ? mdl.blueicon : mdl.redicon) : mdl.ffaicon;
                 g.text("", 0, icon);
-                if((o==player1 && highlightscore && (multiplayer(false) || demoplayback || players.length() > 1)) || isignored) g.poplist(); //NEW || isignored
+                if((o==player1 && highlightscore && (multiplayer(false) || demoplayback || players.length() > 1)) || bgcolor > -1) g.poplist(); //NEW || bgcolor > -1
             });
             g.poplist();
 
@@ -473,7 +479,7 @@ namespace game
                 int status = o->state!=CS_DEAD ? scoreboardtextcolor : 0x606060;
                 if(o->privilege)
                 {
-                    status = gamemod::guiprivcolor(o->privilege);                     //NEW replaced "o->privilege>=PRIV_ADMIN ? 0xFF8000 : 0x40FF80" with "gamemod::guiprivcolor(o->privilege)"
+                    status = gamemod::guiplayerprivcolor(o->privilege);                     //NEW replaced "o->privilege>=PRIV_ADMIN ? 0xFF8000 : 0x40FF80" with "gamemod::guiplayerprivcolor(o->privilege)"
                     if(o->state==CS_DEAD) status = (status>>1)&0x7F7F7F;
                 }
                 g.textf("%s ", status, NULL, colorname(o));
@@ -654,15 +660,15 @@ namespace game
                 {
                     fpsent *o = spectators[i];
                     int status = scoreboardtextcolor;
-                    bool isignored = mod::ipignore::isignored(o->clientnum, NULL);       //NEW
-                    if(o->privilege) status = gamemod::guiprivcolor(o->privilege);       //NEW replaced "o->privilege>=PRIV_ADMIN ? 0xFF8000 : 0x40FF80" with "gamemod::guiprivcolor(o->privilege)"
-                    if((o==player1 && highlightscore) || isignored)                      //NEW || isignored
+                    int bgcolor = gamemod::guiplayerbgcolor(o, getserveraddress());       //NEW
+                    if(o->privilege) status = gamemod::guiplayerprivcolor(o->privilege);  //NEW replaced "o->privilege>=PRIV_ADMIN ? 0xFF8000 : 0x40FF80" with "gamemod::guiplayerprivcolor(o->privilege)"
+                    if((o==player1 && highlightscore) || bgcolor > -1)                    //NEW || bgcolor > -1
                     {
                         g.pushlist();
-                        g.background(isignored ? ipignorecolor : 0x808080, 3);           //NEW mod::isignored() ? ipignorecolor :
+                        g.background(bgcolor > -1 ? bgcolor : 0x808080, 3);               //NEW bgcolor > -1 ? bgcolor :
                     }
                     g.text(colorname(o), status, "spectator");
-                    if((o==player1 && highlightscore) || isignored) g.poplist();         //NEW || isignored
+                    if((o==player1 && highlightscore) || bgcolor > -1) g.poplist();       //NEW || bgcolor > -1
                 }
                 g.poplist();
 
@@ -718,15 +724,16 @@ namespace game
                     }
                     fpsent *o = spectators[i];
                     int status = scoreboardtextcolor;
-                    bool isignored = mod::ipignore::isignored(o->clientnum, NULL); //NEW
-                    if(o->privilege) status = gamemod::guiprivcolor(o->privilege); //NEW replaced "o->privilege>=PRIV_ADMIN ? 0xFF8000 : 0x40FF80" with "gamemod::guiprivcolor(o->privilege)"
-                    if((o==player1 && highlightscore) || isignored)                //NEW || isignored
+                    int bgcolor = gamemod::guiplayerbgcolor(o, getserveraddress());      //NEW
+                    if(bgcolor > -1) status = bgcolor;                                   //NEW
+                    if(o->privilege) status = gamemod::guiplayerprivcolor(o->privilege); //NEW replaced "o->privilege>=PRIV_ADMIN ? 0xFF8000 : 0x40FF80" with "gamemod::guiplayerprivcolor(o->privilege)"
+                    if((o==player1 && highlightscore) || bgcolor > -1)                   //NEW || bgcolor > -1
                     {
                         g.pushlist();
-                        g.background(isignored ? ipignorecolor : 0x808080);        //NEW mod::isignored() ? ipignorecolor :
+                        g.background(bgcolor > -1 ? bgcolor : 0x808080);                           //NEW bgcolor > -1 ? bgcolor :
                     }
                     g.text(colorname(o), status, countryflag(o->extinfo ? o->countrycode : NULL)); //NEW countryflag() instead "spectator"
-                    if((o==player1 && highlightscore) || isignored) g.poplist();   //NEW || isignored
+                    if((o==player1 && highlightscore) || bgcolor > -1) g.poplist();                //NEW || bgcolor > -1
                     if(i+1<spectators.length() && (i+1)%3) g.space(1);
                     else g.poplist();
                 }

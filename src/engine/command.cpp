@@ -2412,6 +2412,15 @@ const char *intstr(int v)
     return retbuf[retidx];
 }
 
+//NEW
+const char *hexstr(int v, bool iscolor)
+{
+    retidx = (retidx + 1)%4;
+    hexformat(retbuf[retidx], v, iscolor);
+    return retbuf[retidx];
+}
+//NEW END
+
 void intret(int v)
 {
     commandret->setint(v);

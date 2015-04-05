@@ -1,5 +1,15 @@
 document:
 - gunflare variables
+- detectproxyusers
+- proxycolor
+- isproxy <ip>
+- guicolorfield <var>
+- guiplayerbgcolor <ip>,
+- guiplayerprivcolor <priv>
+- guipushlist
+- guipoplist
+- updateproxydetectionlist
+- listproxydetectionips
 
 menu:
 - add gunflare gui

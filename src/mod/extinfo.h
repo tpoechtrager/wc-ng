@@ -249,8 +249,8 @@ namespace extinfo
 
     typedef void (*callback)(int type, void *p, ENetAddress &addr);
 
-    void startup();
-    void shutdown();
+    void init();
+    void deinit();
     void slice();
     void connect();
     void rebindpingport();

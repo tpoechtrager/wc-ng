@@ -506,6 +506,8 @@ public:
     char getlast() const { return size != left() ? p[-1] : '\0'; }
     char getfirst() const { return size != left() ? *buf : '\0'; }
 
+    void setstrlen(strtool_size_t len) { p = min(buf + len, buf + size); }
+
     void disown()
     {
 #ifdef STRTOOL_USE_REF_COUNTER
