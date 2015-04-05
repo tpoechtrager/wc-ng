@@ -114,7 +114,6 @@ void parsebin(const void *iplist, size_t datalen, ipbuf<>::addfun_t addfun)
     if (!isaligned<uint32_t>(iplist)) return;
 
     const char *p = (const char*)iplist;
-    const char *end = p+datalen;
 
     const struct header
     {
@@ -125,14 +124,14 @@ void parsebin(const void *iplist, size_t datalen, ipbuf<>::addfun_t addfun)
     if (datalen < sizeof(header)) return;
     p += sizeof(header);
 
+    ullong len = (ullong)hdr->numips*sizeof(ipmask)+(ullong)hdr->bsnumips*sizeof(ipmask);
+    if (len > datalen-sizeof(header)) return;
+
     const ipmask *ip = (const ipmask*)p;
     const ipmask *ipe = ip+hdr->numips;
-
-    if ((const char*)ipe > end) return;
     while (ip < ipe && addfun(*ip++, -1, ipbuf<>::addflags_t::NONE) != ipbuf<>::addrc_t::ERR_IPBUF_FULL);
 
     ipe = ip+hdr->bsnumips;
-    if ((const char*)ipe > end) return;
     while (ip < ipe && addfun(*ip++, -1, ipbuf<>::addflags_t::BLACKLISTED_SERVER) != ipbuf<>::addrc_t::ERR_IPBUF_FULL);
 }
 

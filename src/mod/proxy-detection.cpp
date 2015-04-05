@@ -57,7 +57,7 @@ ipbuf::addrc_t addiprange(const ipmask &ip, int bits, ipbuf::addflags_t flags)
     bool ok;
     if (ipbuffull()) return ipbuf::addrc_t::ERR_IPBUF_FULL;
     if (flags&ipbuf::addflags_t::BLACKLISTED_SERVER) ok = blacklistedservers.addip(ip, 0, bits);
-    ok = ips.addip(ip, 0, bits);
+    else ok = ips.addip(ip, 0, bits);
     return ok ? ipbuf::addrc_t::OK : ipbuf::addrc_t::ERR;
 }
 
