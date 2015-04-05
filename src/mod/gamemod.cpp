@@ -589,9 +589,9 @@ namespace gamemod
 
     MODHVARP(proxybgcolor, 0, 0x000000, 0xFFFFFF);
 #ifdef ENABLE_IPS
-    MODHVARP(ipignorecolor, 0, 0xC4C420, 0xFFFFFF);
+    MODHVARP(ipignorebgcolor, 0, 0xC4C420, 0xFFFFFF);
 #else
-    constexpr int ipignorecolor = -1;
+    constexpr int ipignorebgcolor = -1;
 #endif
 
     int guiplayerbgcolor(uint32_t ip, const ENetAddress &serveraddr, void *client)
@@ -606,8 +606,8 @@ namespace gamemod
         {
             case 0: return -1;
             case 1: return proxybgcolor;
-            case 2: return ipignorecolor;
-            case 3: return proxybgcolor^ipignorecolor; // well...
+            case 2: return ipignorebgcolor;
+            case 3: return proxybgcolor^ipignorebgcolor; // well...
             default: UNREACHABLE();
         }
     }
