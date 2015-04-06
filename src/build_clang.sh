@@ -11,7 +11,7 @@ export LC_ALL="C"
 PLATFORM=$(uname -s)
 case $PLATFORM in
      Linux|Darwin|*BSD)
-         ;;
+        ;;
      *)
         echo "this script is unix only for now" >&2
         exit 1
@@ -19,8 +19,15 @@ case $PLATFORM in
 esac
 
 # prefer clang when CXX/CC are not set
-[ -z "$CXX" ] && which clang++ &>/dev/null && export CXX="clang++"
-[ -z "$CC" ] && which clang &>/dev/null && export CC="clang"
+if [[ $0 == *clang* ]]; then
+    [[ $CC != *clang* ]] && export CC=clang
+    [[ $CC != *clang++* ]] && export CXX=clang++
+elif [[ $0 == *gcc* ]]; then
+    [[ $CC != *gcc* ]] && export CC=gcc
+    [[ $(basename $CXX) != g++* ]] && export CXX=g++
+elif [[ $0 == *sysc* ]]; then
+    true # don't do anything
+fi
 
 # optimize for host architecture
 export CFLAGS+=" -march=native"
