@@ -40,6 +40,10 @@ namespace gamemod
     static const char *COLOR_SPEC = "\f7";
     static const char *COLOR_UNKNOWN = "\f7";
 
+    static const char *specteam = "spectators";
+    static const char *noteams = "no teams";
+    static const int maxteams = 10;
+
     static const int stdshowspectators = 1;
     static const int stdfontscale = 25;
     static const int stdrightoffset = 0;
@@ -61,7 +65,7 @@ namespace gamemod
     MODVARP(playerdisplaywidthoffset, -50, stdwidthoffset, 300);
     MODVARP(playerdisplaylineoffset, -30, stdlineoffset, 50);
     MODVARP(playerdisplayplayerlimit, 1, stdplayerlimit, 64);
-    MODVARP(playerdisplaymaxteams, 1, stdmaxteams, 16);
+    MODVARP(playerdisplaymaxteams, 1, stdmaxteams, maxteams);
     MODVARP(playerdisplaymaxnamelen, 4, stdmaxnamelen, MAXNAMELEN);
     MODVARP(playerdisplayalpha, 20, stdalpha, 0xFF);
 
@@ -79,10 +83,6 @@ namespace gamemod
         playerdisplayalpha = stdalpha;
     }
     COMMAND(playerdisplayreset, "");
-
-    static const char *specteam = "spectators";
-    static const char *noteams = "no teams";
-    static const int maxteams = 10;
 
     struct playerteam
     {
