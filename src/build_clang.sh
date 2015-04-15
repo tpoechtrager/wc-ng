@@ -24,7 +24,7 @@ if [[ $0 == *clang* ]]; then
     [[ $CC != *clang++* ]] && export CXX=clang++
 elif [[ $0 == *gcc* ]]; then
     [[ $CC != *gcc* ]] && export CC=gcc
-    [[ $(basename $CXX) != g++* ]] && export CXX=g++
+    [ -n "$CXX" ] && [[ $(basename $CXX) != g++* ]] && export CXX=g++
 elif [[ $0 == *sysc* ]]; then
     true # don't do anything
 fi
