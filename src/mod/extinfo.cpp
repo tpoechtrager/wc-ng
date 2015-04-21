@@ -455,7 +455,6 @@ namespace extinfo
 
             if (!addr)
             {
-                if (!game::showextinfo) return;
                 address = curpeer->address;
                 address.port++;
             }
@@ -533,7 +532,7 @@ namespace extinfo
 
         void extprocess()
         {
-            if (curpeer && game::fullyconnected)
+            if (curpeer && game::fullyconnected && game::showextinfo)
             {
                 bool a, b, c;
                 a = !lastextpong || totalmillis - lastextpong >= extinfopingrate;
@@ -563,6 +562,8 @@ namespace extinfo
 
         void connect()
         {
+            if (!game::showextinfo) return;
+
             serveruptime = -1;
             serveruptimerecv = -1;
             servermodname = NULL;

@@ -28,20 +28,22 @@ typedef unsigned long long int ullong;
 
 #ifdef __GNUC__
 #define UNUSED __attribute__((unused))
-#define NORETURN __attribute__((noreturn))            //NEW
-#define WEAK __attribute__((weak))                    //NEW
-#define NOINLINE __attribute__((noinline))            //NEW
-#define INLINE inline __attribute__((always_inline))  //NEW
-#define HOT __attribute__((hot))                      //NEW
-#define UNREACHABLE() __builtin_unreachable()         //NEW
+#define NORETURN __attribute__((noreturn))                      //NEW
+#define WEAK __attribute__((weak))                              //NEW
+#define NOINLINE __attribute__((noinline))                      //NEW
+#define INLINE inline __attribute__((always_inline))            //NEW
+#define HOT __attribute__((hot))                                //NEW
+#define UNREACHABLE() __builtin_unreachable()                   //NEW
+#define _UNREACHABLE(cond) if((cond)) __builtin_unreachable()   //NEW
 #else
 #define UNUSED
-#define NORETURN                                      //NEW
-#define WEAK                                          //NEW
-#define NOINLINE                                      //NEW
-#define INLINE                                        //NEW
-#define HOT                                           //NEW
-#define UNREACHABLE() abort()                         //NEW
+#define NORETURN                                                //NEW
+#define WEAK                                                    //NEW
+#define NOINLINE                                                //NEW
+#define INLINE                                                  //NEW
+#define HOT                                                     //NEW
+#define UNREACHABLE() abort()                                   //NEW
+#define UNREACHABLE(cond) if((cond)) abort()                    //NEW
 #endif
 
 #ifndef USE_STD_NEW //NEW

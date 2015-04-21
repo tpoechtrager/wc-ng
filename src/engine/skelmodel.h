@@ -60,6 +60,7 @@ struct skelmodel : animmodel
         int addweight(int sorted, float weight, int bone)
         {
             if(weight <= 1e-3f) return sorted;
+            _UNREACHABLE(sorted > (int)sizeofarray(weights)); //NEW silence bogus gcc warning
             loopk(sorted) if(weight > weights[k])
             {
                 for(int l = min(sorted-1, 2); l >= k; l--)
