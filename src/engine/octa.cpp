@@ -307,6 +307,7 @@ int getmippedtexture(const cube &p, int orient)
                 continue;
         }
         int tex = c[n].texture[orient];
+        _UNREACHABLE(numtexs > (int)sizeofarray(texs)); //NEW silence bogus gcc warning
         if(tex > DEFAULT_SKY) loopi(numtexs) if(texs[i] == tex) return tex;
         texs[numtexs++] = tex;
     }

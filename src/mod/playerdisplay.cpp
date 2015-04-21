@@ -193,6 +193,8 @@ namespace gamemod
 
             if (!team)
             {
+                _UNREACHABLE(numteams > maxteams); // silence bogus gcc warnings
+
                 if (!m_teammode && numteams)
                 {
                     if (teamname == specteam)
