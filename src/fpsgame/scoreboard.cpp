@@ -221,7 +221,7 @@ namespace game
         // workaround for a bogus gcc warning
         // gcc thinks "file" is an empty string constant, while it clearly isn't
         // warning: offset outside bounds of constant string
-        _UNREACHABLE(!s);
+        __UNREACHABLE(!s);
 #endif
 
         if(fileexists(findfile(file, "rb"), "rb")) filename = newstring(file+fnoffset);
