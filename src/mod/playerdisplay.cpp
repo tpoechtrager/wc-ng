@@ -193,7 +193,10 @@ namespace gamemod
 
             if (!team)
             {
-                _UNREACHABLE(numteams > maxteams); // silence bogus gcc warnings
+                // gcc-5 complains about i being >= sizeofarray(teams) while gcc can't even know
+                // the value of numteams due to accesteam() not being inlined, indeed, replacing the
+                // call with NULL also triggers the warning where numteams would be *always* 0...
+                _UNREACHABLE(numteams > maxteams);
 
                 if (!m_teammode && numteams)
                 {

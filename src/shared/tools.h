@@ -34,7 +34,8 @@ typedef unsigned long long int ullong;
 #define INLINE inline __attribute__((always_inline))            //NEW
 #define HOT __attribute__((hot))                                //NEW
 #define UNREACHABLE() __builtin_unreachable()                   //NEW
-#define _UNREACHABLE(cond) if((cond)) __builtin_unreachable()   //NEW
+#define _UNREACHABLE(cond) if((cond)) __builtin_trap()          //NEW
+#define __UNREACHABLE(cond) if((cond)) __builtin_unreachable()  //NEW
 #else
 #define UNUSED
 #define NORETURN                                                //NEW
@@ -43,7 +44,8 @@ typedef unsigned long long int ullong;
 #define INLINE                                                  //NEW
 #define HOT                                                     //NEW
 #define UNREACHABLE() abort()                                   //NEW
-#define UNREACHABLE(cond) if((cond)) abort()                    //NEW
+#define _UNREACHABLE(cond) if((cond)) abort()                   //NEW
+#define __UNREACHABLE(cond) if((cond)) abort()                  //NEW
 #endif
 
 #ifndef USE_STD_NEW //NEW
