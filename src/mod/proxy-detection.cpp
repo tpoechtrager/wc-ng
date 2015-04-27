@@ -51,7 +51,9 @@ static inline bool ipbuffull()
     return ips.getsize()+blacklistedservers.getsize() >= MAXIPRANGES;
 }
 
+#if defined(__lto__) && (!defined(__GNUC__) || __OPTIMIZE__ >= 2)
 INLINE // force this function inline with -flto
+#endif
 ipbuf::addrc_t addiprange(const ipmask &ip, int bits, ipbuf::addflags_t flags)
 {
     bool ok;
