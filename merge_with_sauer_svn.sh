@@ -32,7 +32,7 @@ set -e
 echo "merging..."
 sh -c "svn diff -r$oldrev:$newrev $svnrepo >merge.patch"
 SUCCESS=0
-patch -m -p0 < merge.patch && rm merge.patch && {
+patch --merge -p0 < merge.patch && rm merge.patch && {
     SUCCESS=1
 }
 
@@ -41,7 +41,7 @@ sed -i "s/SAUERSVNREV $oldrev/SAUERSVNREV $newrev/g" src/last_sauer_svn_rev.h
 
 if [ $SUCCESS -eq 1 ]; then
     echo "committing changes..."
-    git commit -a -m "sync with sauer svn"
+    git commit -a -m "sync with sauer svn (r$newrev)"
 
     if [ $HAVE_CHANGES -eq 1 ]; then
         echo "restoring local changes"
