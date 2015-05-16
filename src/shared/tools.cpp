@@ -236,7 +236,6 @@ void filtertext(char *dst, const char *src, bool whitespace, bool forcespace, si
         *dst++ = c;
         if(!--len) break;
     }
-    if(!len) dst--; //NEW
     *dst = '\0';
 }
 
