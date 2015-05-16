@@ -243,8 +243,8 @@ namespace extinfo
 
                                 getstring(cp.name, p, sizeof(cp.name));
                                 getstring(cp.team, p, sizeof(cp.team));
-                                filtertext(cp.name, cp.name, false, false, sizeof(cp.name));
-                                filtertext(cp.team, cp.team, false, false, sizeof(cp.team));
+                                filtertext(cp.name, cp.name, false, false, MAXNAMELEN);
+                                filtertext(cp.team, cp.team, false, false, MAXTEAMLEN);
 
                                 cp.frags = getint(p);
                                 cp.flags = getint(p);
