@@ -124,6 +124,7 @@ ifeq (,$(findstring mingw,$(PLATFORM)))
       STATIC_LIB_DIR= lib/$(PLATFORM)/$(LIBDIR)
     endif
 
+    CHATSERV_INCLUDES+= -Ilib/include/SDL1
     CLIENT_INCLUDES+= -Ilib/include -Ilib/include/SDL1 -Ilib/include/GeoIP
     CLIENT_LIBS+= $(STATIC_LIB_DIR)/libcurl.a $(STATIC_LIB_DIR)/libGeoIP.a
     CLIENT_LIBS+= $(STATIC_LIB_DIR)/libssl.a $(STATIC_LIB_DIR)/libcrypto.a
