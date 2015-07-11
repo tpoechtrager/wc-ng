@@ -87,8 +87,8 @@ fi
 ./build/build.sh $@
 
 # install
-if [ -n "$WCSDL1INSTALLDIR" ]; then
-    WCINSTALLDIR=$WCSDL1INSTALLDIR
+if [ -n "$WCTESTINSTALLDIR" ]; then
+    WCINSTALLDIR=$WCTESTINSTALLDIR
 fi
 
 if [ -n "$WCINSTALLDIR" ]; then
