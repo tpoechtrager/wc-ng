@@ -108,7 +108,7 @@ ifeq (,$(findstring mingw,$(PLATFORM)))
   endif
 
   ifeq (1,$(USESTATICLIBS))
-    CHATSERV_INCLUDES+= -Iinclude
+    CHATSERV_INCLUDES+= -Ilib/include
     CHATSERV_LIBS+= $(STATIC_LIB_DIR)/libSDL.a
   endif
 
@@ -124,7 +124,7 @@ ifeq (,$(findstring mingw,$(PLATFORM)))
       STATIC_LIB_DIR= lib/$(PLATFORM)/$(LIBDIR)
     endif
 
-    CLIENT_INCLUDES+= -Iinclude -Iinclude/GeoIP
+    CLIENT_INCLUDES+= -Ilib/include -Ilib/include/SDL1 -Ilib/include/GeoIP
     CLIENT_LIBS+= $(STATIC_LIB_DIR)/libcurl.a $(STATIC_LIB_DIR)/libGeoIP.a
     CLIENT_LIBS+= $(STATIC_LIB_DIR)/libssl.a $(STATIC_LIB_DIR)/libcrypto.a
   else
@@ -199,8 +199,8 @@ ifneq (,$(findstring mingw,$(PLATFORM)))
   override CFLAGS:= $(PLATFORMFLAG) $(CFLAGS)
   override LDFLAGS:= $(PLATFORMFLAG) $(LDFLAGS)
 
-  CLIENT_INCLUDES= $(INCLUDES) -Iinclude -Iinclude/GeoIP
-  SERVER_INCLUDES= -DSTANDALONE $(INCLUDES) -Iinclude
+  CLIENT_INCLUDES= $(INCLUDES) -Ilib/include -Ilib/include/SDL1 -Ilib/include/GeoIP
+  SERVER_INCLUDES= -DSTANDALONE $(INCLUDES) -Ilib/include -Ilib/include/SDL1
 
   SDL_DEP_LIBS= -lgdi32 -ldxguid -lole32 -lwinmm
   SDL_DEP_LIBS+= -limm32 -lversion -loleaut32
@@ -334,7 +334,7 @@ ifeq (darwin,$(PLATFORM))
   CLIENT_LIBS+= $(STATIC_LIB_DIR)/libz.a
   CLIENT_LIBS+= $(STATIC_LIB_DIR)/libGeoIP.a
 
-  PLUGIN_INCLUDES= $(CLIENT_INCLUDES) -fPIC -DPLUGIN -Iinclude/GeoIP -Iinclude/osx-cpu-temp
+  PLUGIN_INCLUDES= $(CLIENT_INCLUDES) -fPIC -DPLUGIN -Ilib/include/GeoIP -Ilib/include/osx-cpu-temp
   CLIENT_OBJS+= xcode/macutils.o xcode/main.o xcode/Launcher.o
 
   HWTEMP_LIBS= $(STATIC_LIB_DIR)/smc.a
@@ -447,7 +447,7 @@ else
     ifeq ($(PLATFORM),freebsd)
       CLIENT_LIBS+= -lvgl -liconv -lpulse -lpulse-simple
     endif
-    override SDL_CONFIG= -Iinclude
+    override SDL_CONFIG= -Ilib/include
   else
     ifeq ($(PLATFORM),$(PLATFORMNATIVE))
       override SDL_CONFIG= `sdl-config --cflags`
