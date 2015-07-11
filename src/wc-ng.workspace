@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CodeLite_Workspace Name="wc-ng" Database="">
-  <Project Name="wc-ng" Path="./wc-ng.project" Active="Yes"/>
+  <Project Name="wc-ng" Path="wc-ng.project" Active="Yes"/>
   <BuildMatrix>
     <WorkspaceConfiguration Name="Debug" Selected="yes">
       <Project Name="wc-ng" ConfigName="Debug"/>
