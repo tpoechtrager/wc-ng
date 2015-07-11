@@ -11,7 +11,7 @@ Nightly Builds: [http://wc-ng.sauerworld.org/builds/nightly/b/list](http://wc-ng
         * Installation on Windows is quite easy, all you have to do is to run the installer.  
         * You don't need to backup anything, as the installer won't replace your original  
           client. You can run both, the original and our client at the same time.  
-        * The installer attempts to find the installation path automaticly, if it fails  
+        * The installer attempts to find the installation path automatically, if it fails  
           (e.g. your sauer comes from svn, then point it to your sauerbraten installation path).  
         * Once installing is done, you'll have new shortcuts on your desktop and startmenu.  
         * Start the client by clicking on the "Sauerbraten_wc" shortcut.
