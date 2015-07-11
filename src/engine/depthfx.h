@@ -30,8 +30,12 @@ static struct depthfxtexture : rendertarget
 {
     const GLenum *colorformats() const
     {
-        static const GLenum colorfmts[] = { GL_FLOAT_RG16_NV, GL_RGB16F_ARB, GL_RGBA, GL_RGBA8, GL_RGB, GL_RGB8, GL_FALSE };
-        return &colorfmts[hasTF && hasFBO && fpdepthfx ? (hasNVFB && texrect() && !filter() ? 0 : 1) : 2];
+        static const GLenum colorfmts[] = { GL_RG16F, GL_RGB16F_ARB, GL_RGBA, GL_RGBA8, GL_RGB, GL_RGB8, GL_FALSE };
+        static const GLenum colorfmtsnv[] = { GL_FLOAT_RG16_NV, GL_RGB16F_ARB, GL_RGBA, GL_RGBA8, GL_RGB, GL_RGB8, GL_FALSE };
+        if(!hasTF || !hasFBO || !fpdepthfx) return &colorfmts[2];
+        if(hasTRG) return colorfmts;
+        if(hasNVFB && texrect() && !filter()) return colorfmtsnv;
+        return &colorfmts[1];
     }
 
     float eyedepth(const vec &p) const
@@ -71,7 +75,7 @@ static struct depthfxtexture : rendertarget
     bool screenview() const { return depthfxrect!=0; }
     bool texrect() const { return depthfxrect && hasTR; }
     bool filter() const { return depthfxfilter!=0; }
-    bool highprecision() const { return colorfmt==GL_FLOAT_RG16_NV || colorfmt==GL_RGB16F_ARB; }
+    bool highprecision() const { return colorfmt==GL_RG16F || colorfmt==GL_FLOAT_RG16_NV || colorfmt==GL_RGB16F_ARB; }
     bool emulatehighprecision() const { return depthfxemuprecision && !depthfxfilter; }
 
     bool shouldrender()
@@ -141,16 +145,19 @@ bool depthfxing = false;
 
 bool binddepthfxtex()
 {
-    if(renderpath!=R_FIXEDFUNCTION && !reflecting && !refracting && depthfx && depthfxtex.rendertex && numdepthfxranges>0)        
+    if(!reflecting && !refracting && depthfx && depthfxtex.rendertex && numdepthfxranges>0)        
     {
-        glActiveTexture_(GL_TEXTURE2_ARB);
+        glActiveTexture_(GL_TEXTURE2);
         glBindTexture(depthfxtex.target, depthfxtex.rendertex);
-        glActiveTexture_(GL_TEXTURE0_ARB);
+        glActiveTexture_(GL_TEXTURE0);
 
-        if(depthfxtex.target==GL_TEXTURE_RECTANGLE_ARB)
-            setenvparamf("depthfxview", SHPARAM_VERTEX, 6, 0.5f*depthfxtex.vieww, 0.5f*depthfxtex.viewh);
-        else
-            setenvparamf("depthfxview", SHPARAM_VERTEX, 6, 0.5f*float(depthfxtex.vieww)/depthfxtex.texw, 0.5f*float(depthfxtex.viewh)/depthfxtex.texh);
+        float w = 0.5f*depthfxtex.vieww, h = 0.5f*depthfxtex.viewh;
+        if(depthfxtex.target!=GL_TEXTURE_RECTANGLE_ARB)
+        {
+            w /= depthfxtex.texw;
+            h /= depthfxtex.texh;
+        }
+        GLOBALPARAMF(depthfxview, w, h);
         return true;
     }
     return false;
@@ -158,7 +165,7 @@ bool binddepthfxtex()
 
 void binddepthfxparams(float blend, float minblend = 0, bool allow = true, void *owner = NULL)
 {
-    if(renderpath!=R_FIXEDFUNCTION && !reflecting && !refracting && depthfx && depthfxtex.rendertex && numdepthfxranges>0)
+    if(!reflecting && !refracting && depthfx && depthfxtex.rendertex && numdepthfxranges>0)
     {
         float scale = 0, offset = -1, texscale = 0;
         if(!depthfxtex.highprecision())
@@ -182,7 +189,7 @@ void binddepthfxparams(float blend, float minblend = 0, bool allow = true, void 
                 scale = 1.0f/blend;
                 offset = 0;
             }
-            setlocalparamfv("depthfxselect", SHPARAM_PIXEL, 6, select);
+            LOCALPARAMF(depthfxselect, select[0], select[1], select[2], select[3]);
         }
         else if(allow)
         {
@@ -190,14 +197,13 @@ void binddepthfxparams(float blend, float minblend = 0, bool allow = true, void 
             offset = 0;
             texscale = float(depthfxfpscale)/blend;
         }
-        setlocalparamf("depthfxparams", SHPARAM_VERTEX, 5, scale, offset, texscale, minblend);
-        setlocalparamf("depthfxparams", SHPARAM_PIXEL, 5, scale, offset, texscale, minblend);
+        LOCALPARAMF(depthfxparams, scale, offset, texscale, minblend);
     }
 }
 
 void drawdepthfxtex()
 {
-    if(!depthfx || renderpath==R_FIXEDFUNCTION) return;
+    if(!depthfx) return;
 
     // Apple/ATI bug - fixed-function fog state can force software fallback even when fragment program is enabled
     glDisable(GL_FOG);

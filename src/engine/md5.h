@@ -15,7 +15,7 @@ struct md5weight
 
 struct md5vert
 {
-    float u, v;
+    vec2 tc;
     ushort start, count;
 };
 
@@ -70,8 +70,7 @@ struct md5 : skelmodel, skelloader<md5>
                 }
                 vert &vv = verts[i];
                 vv.pos = pos;
-                vv.u = v.u;
-                vv.v = v.v;
+                vv.tc = v.tc;
 
                 blendcombo c;
                 int sorted = 0;
@@ -134,7 +133,7 @@ struct md5 : skelmodel, skelloader<md5>
                     numweights = max(numweights, 0);
                     if(numweights) weightinfo = new md5weight[numweights];
                 }
-                else if(sscanf(buf, " vert %d ( %f %f ) %hu %hu", &index, &v.u, &v.v, &v.start, &v.count)==5)
+                else if(sscanf(buf, " vert %d ( %f %f ) %hu %hu", &index, &v.tc.x, &v.tc.y, &v.start, &v.count)==5)
                 {
                     if(index>=0 && index<numverts) vertinfo[index] = v;
                 }
@@ -405,24 +404,23 @@ struct md5 : skelmodel, skelloader<md5>
         mdl.index = 0;
         mdl.pitchscale = mdl.pitchoffset = mdl.pitchmin = mdl.pitchmax = 0;
         adjustments.setsize(0);
-        const char *fname = loadname + strlen(loadname);
-        do --fname; while(fname >= loadname && *fname!='/' && *fname!='\\');
+        const char *fname = name + strlen(name);
+        do --fname; while(fname >= name && *fname!='/' && *fname!='\\');
         fname++;
-        defformatstring(meshname)("packages/models/%s/%s.md5mesh", loadname, fname);
+        defformatstring(meshname)("packages/models/%s/%s.md5mesh", name, fname);
         mdl.meshes = sharemeshes(path(meshname), NULL, 2.0);
         if(!mdl.meshes) return false;
         mdl.initanimparts();
         mdl.initskins();
-        defformatstring(animname)("packages/models/%s/%s.md5anim", loadname, fname);
+        defformatstring(animname)("packages/models/%s/%s.md5anim", name, fname);
         ((md5meshgroup *)mdl.meshes)->loadanim(path(animname));
         return true;
     }
 
     bool load()
     {
-        if(loaded) return true;
-        formatstring(dir)("packages/models/%s", loadname);
-        defformatstring(cfgname)("packages/models/%s/md5.cfg", loadname);
+        formatstring(dir)("packages/models/%s", name);
+        defformatstring(cfgname)("packages/models/%s/md5.cfg", name);
 
         loading = this;
         identflags &= ~IDF_PERSIST;
@@ -442,15 +440,8 @@ struct md5 : skelmodel, skelloader<md5>
             }
             loading = NULL;
         }
-        scale /= 4;
-        parts[0]->translate = translate;
-        loopv(parts) 
-        {
-            skelpart *p = (skelpart *)parts[i];
-            p->endanimparts();
-            p->meshes->shared++;
-        }
-        return loaded = true;
+        loaded();
+        return true;
     }
 };
 

@@ -235,7 +235,7 @@ COMMAND(mdlextendbb, "fff");
 void mdlname()
 {
     checkmdl;
-    result(loadingmodel->name());
+    result(loadingmodel->name);
 }
 
 COMMAND(mdlname, "");
@@ -353,12 +353,12 @@ ICOMMAND(nummapmodels, "", (), { intret(mapmodels.length()); });
 
 // model registry
 
-hashtable<const char *, model *> mdllookup;
+hashnameset<model *> models;
 vector<const char *> preloadmodels;
 
 void preloadmodel(const char *name)
 {
-    if(!name || !name[0] || mdllookup.access(name)) return;
+    if(!name || !name[0] || models.access(name)) return;
     preloadmodels.add(newstring(name));
 }
 
@@ -413,7 +413,7 @@ model *loadmodel(const char *name, int i, bool msg)
         if(mmi.m) return mmi.m;
         name = mmi.name;
     }
-    model **mm = mdllookup.access(name);
+    model **mm = models.access(name);
     model *m;
     if(mm) m = *mm;
     else
@@ -434,7 +434,7 @@ model *loadmodel(const char *name, int i, bool msg)
         }
         loadingmodel = NULL;
         if(!m) return NULL;
-        mdllookup.access(m->name(), m);
+        models.access(m->name, m);
         m->preloadshaders();
     }
     if(mapmodels.inrange(i) && !mapmodels[i].m) mapmodels[i].m = m;
@@ -444,25 +444,25 @@ model *loadmodel(const char *name, int i, bool msg)
 void preloadmodelshaders()
 {
     if(initing) return;
-    enumerate(mdllookup, model *, m, m->preloadshaders());
+    enumerate(models, model *, m, m->preloadshaders());
 }
 
 void clear_mdls()
 {
-    enumerate(mdllookup, model *, m, delete m);
+    enumerate(models, model *, m, delete m);
 }
 
 void cleanupmodels()
 {
-    enumerate(mdllookup, model *, m, m->cleanup());
+    enumerate(models, model *, m, m->cleanup());
 }
 
 void clearmodel(char *name)
 {
-    model **m = mdllookup.access(name);
+    model **m = models.access(name);
     if(!m) { conoutf("model %s is not loaded", name); return; }
     loopv(mapmodels) if(mapmodels[i].m==*m) mapmodels[i].m = NULL;
-    mdllookup.remove(name);
+    models.remove(name);
     (*m)->cleanup();
     delete *m;
     conoutf("cleared model %s", name);
@@ -495,8 +495,7 @@ void render3dbox(vec &o, float tofloor, float toceil, float xradius, float yradi
     c.sub(vec(xradius, yradius, tofloor));
     float xsz = xradius*2, ysz = yradius*2;
     float h = tofloor+toceil;
-    lineshader->set();
-    glDisable(GL_TEXTURE_2D);
+    notextureshader->set();
     glColor3f(1, 1, 1);
     render2dbox(c, xsz, 0, h);
     render2dbox(c, 0, ysz, h);
@@ -504,13 +503,11 @@ void render3dbox(vec &o, float tofloor, float toceil, float xradius, float yradi
     render2dbox(c, -xsz, 0, h);
     render2dbox(c, 0, -ysz, h);
     xtraverts += 16;
-    glEnable(GL_TEXTURE_2D);
 }
 
 void renderellipse(vec &o, float xradius, float yradius, float yaw)
 {
-    lineshader->set();
-    glDisable(GL_TEXTURE_2D);
+    notextureshader->set();
     glColor3f(0.5f, 0.5f, 0.5f);
     glBegin(GL_LINE_LOOP);
     loopi(15)
@@ -522,7 +519,6 @@ void renderellipse(vec &o, float xradius, float yradius, float yaw)
         glVertex3fv(p.v);
     }
     glEnd();
-    glEnable(GL_TEXTURE_2D);
 }
 
 struct batchedmodel
@@ -580,7 +576,7 @@ void renderbatchedmodel(model *m, batchedmodel &b)
     if(shadowmapping)
     {
         anim |= ANIM_NOSKIN; 
-        if(renderpath!=R_FIXEDFUNCTION) setenvparamf("shadowintensity", SHPARAM_VERTEX, 1, b.transparent);
+        GLOBALPARAMF(shadowintensity, b.transparent);
     }
     else 
     {
@@ -755,8 +751,6 @@ void rendermodelquery(model *m, dynent *d, const vec &center, float radius)
     glDepthMask(GL_TRUE);
 }   
 
-extern int oqfrags;
-
 void rendermodel(entitylight *light, const char *mdl, int anim, const vec &o, float yaw, float pitch, int flags, dynent *d, modelattach *a, int basetime, int basetime2, float trans)
 {
     if(shadowmapping && !(flags&(MDL_SHADOW|MDL_DYNSHADOW))) return;
@@ -765,7 +759,7 @@ void rendermodel(entitylight *light, const char *mdl, int anim, const vec &o, fl
     vec center(0, 0, 0), bbradius(0, 0, 0);
     float radius = 0;
     bool shadow = !shadowmap && !glaring && (flags&(MDL_SHADOW|MDL_DYNSHADOW)) && showblobs,
-         doOQ = flags&MDL_CULL_QUERY && hasOQ && oqfrags && oqdynent;
+         doOQ = flags&MDL_CULL_QUERY && oqfrags && oqdynent;
     if(flags&(MDL_CULL_VFC|MDL_CULL_DIST|MDL_CULL_OCCLUDED|MDL_CULL_QUERY|MDL_SHADOW|MDL_DYNSHADOW))
     {
         m->boundbox(center, bbradius);
@@ -935,7 +929,7 @@ void rendermodel(entitylight *light, const char *mdl, int anim, const vec &o, fl
     if(shadowmapping)
     {
         anim |= ANIM_NOSKIN;
-        if(renderpath!=R_FIXEDFUNCTION) setenvparamf("shadowintensity", SHPARAM_VERTEX, 1, trans);
+        GLOBALPARAMF(shadowintensity, trans);
     }
     else 
     {
@@ -1028,7 +1022,7 @@ void loadskin(const char *dir, const char *altdir, Texture *&skin, Texture *&mas
     defformatstring(maltdir)("packages/models/%s", altdir);
     masks = notexture;
     tryload(skin, NULL, NULL, "skin");
-    tryload(masks, "<stub>", NULL, "masks");
+    tryload(masks, NULL, NULL, "masks");
 }
 
 // convenient function that covers the usual anims for players/monsters/npcs

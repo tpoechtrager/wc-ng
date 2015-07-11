@@ -3,8 +3,8 @@
 struct decalvert
 {
     vec pos;
-    float u, v;
     bvec4 color;
+    vec2 tc;
 };
 
 struct decalinfo
@@ -99,11 +99,7 @@ struct decalrenderer
     void fadedecal(decalinfo &d, uchar alpha)
     {
         bvec rgb;
-        if(flags&DF_OVERBRIGHT)
-        {
-            if(renderpath!=R_FIXEDFUNCTION || hasTE) rgb = bvec(128, 128, 128);
-            else rgb = bvec(alpha, alpha, alpha);
-        }
+        if(flags&DF_OVERBRIGHT) rgb = bvec(128, 128, 128);
         else
         {
             rgb = d.color;
@@ -233,22 +229,13 @@ struct decalrenderer
         {
             glGetFloatv(GL_FOG_COLOR, oldfogc);
             static float zerofog[4] = { 0, 0, 0, 1 }, grayfog[4] = { 0.5f, 0.5f, 0.5f, 1 };
-            glFogfv(GL_FOG_COLOR, flags&DF_OVERBRIGHT && (renderpath!=R_FIXEDFUNCTION || hasTE) ? grayfog : zerofog);
+            glFogfv(GL_FOG_COLOR, flags&DF_OVERBRIGHT ? grayfog : zerofog);
         }
         
         if(flags&DF_OVERBRIGHT) 
         {
-            if(renderpath!=R_FIXEDFUNCTION)
-            {
-                glBlendFunc(GL_DST_COLOR, GL_SRC_COLOR); 
-                SETSHADER(overbrightdecal);
-            }
-            else if(hasTE)
-            {
-                glBlendFunc(GL_DST_COLOR, GL_SRC_COLOR);
-                setuptmu(0, "T , C @ Ca");
-            }
-            else glBlendFunc(GL_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
+            glBlendFunc(GL_DST_COLOR, GL_SRC_COLOR); 
+            SETSHADER(overbrightdecal);
         }
         else 
         {
@@ -256,19 +243,15 @@ struct decalrenderer
             else if(flags&DF_ADD) glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_COLOR);
             else glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-            if(flags&DF_SATURATE)
-            {
-                if(renderpath!=R_FIXEDFUNCTION) SETSHADER(saturatedecal);
-                else if(hasTE) setuptmu(0, "C * T x 2");
-            }
+            if(flags&DF_SATURATE) SETSHADER(saturatedecal);
             else foggedshader->set();
         }
 
         glBindTexture(GL_TEXTURE_2D, tex->id);
 
-        glVertexPointer(3, GL_FLOAT, sizeof(decalvert), &verts->pos);
-        glTexCoordPointer(2, GL_FLOAT, sizeof(decalvert), &verts->u);
-        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(decalvert), &verts->color);
+        glVertexPointer(3, GL_FLOAT, sizeof(decalvert), verts->pos.v);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(decalvert), verts->tc.v);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(decalvert), verts->color.v);
 
         int count = endvert < startvert ? maxverts - startvert : endvert - startvert;
         glDrawArrays(GL_TRIANGLES, startvert, count);
@@ -280,7 +263,6 @@ struct decalrenderer
         xtravertsva += count;
 
         if(flags&(DF_ADD|DF_INVMOD|DF_OVERBRIGHT)) glFogfv(GL_FOG_COLOR, oldfogc);
-        if(flags&(DF_OVERBRIGHT|DF_SATURATE) && renderpath==R_FIXEDFUNCTION && hasTE) resettmu(0);
 
         extern int intel_vertexarray_bug;
         if(intel_vertexarray_bug) glFlush();
@@ -403,7 +385,7 @@ struct decalrenderer
         {
             vertinfo *verts = cu.ext->verts() + cu.ext->surfaces[orient].verts;
             ivec vo = ivec(o).mask(~0xFFF).shl(3);
-            loopj(numverts) pos[j] = verts[j].getxyz().add(vo).tovec().mul(1/8.0f);
+            loopj(numverts) pos[j] = vec(verts[j].getxyz().add(vo)).mul(1/8.0f);
             planes[0].cross(pos[0], pos[1], pos[2]).normalize();
             if(numverts >= 4 && !(cu.merged&(1<<orient)) && !flataxisface(cu, orient) && faceconvexity(verts, numverts, size))
             {
@@ -417,11 +399,11 @@ struct decalrenderer
             ivec v[4];
             genfaceverts(cu, orient, v);
             int vis = 3, convex = faceconvexity(v, vis), order = convex < 0 ? 1 : 0;
-            vec vo = o.tovec();
-            pos[numverts++] = v[order].tovec().mul(size/8.0f).add(vo);
-            if(vis&1) pos[numverts++] = v[order+1].tovec().mul(size/8.0f).add(vo);
-            pos[numverts++] = v[order+2].tovec().mul(size/8.0f).add(vo);
-            if(vis&2) pos[numverts++] = v[(order+3)&3].tovec().mul(size/8.0f).add(vo);
+            vec vo(o);
+            pos[numverts++] = vec(v[order]).mul(size/8.0f).add(vo);
+            if(vis&1) pos[numverts++] = vec(v[order+1]).mul(size/8.0f).add(vo);
+            pos[numverts++] = vec(v[order+2]).mul(size/8.0f).add(vo);
+            if(vis&2) pos[numverts++] = vec(v[(order+3)&3]).mul(size/8.0f).add(vo);
             planes[0].cross(pos[0], pos[1], pos[2]).normalize();
             if(convex) { planes[1].cross(pos[0], pos[2], pos[3]).normalize(); numplanes++; }
         } 
@@ -471,8 +453,8 @@ struct decalrenderer
             float tsz = flags&DF_RND4 ? 0.5f : 1.0f, scale = tsz*0.5f/decalradius,
                   tu = decalu + tsz*0.5f - ptc*scale, tv = decalv + tsz*0.5f - pbc*scale;
             pt.mul(scale); pb.mul(scale);
-            decalvert dv1 = { v2[0], pt.dot(v2[0]) + tu, pb.dot(v2[0]) + tv, decalcolor },
-                      dv2 = { v2[1], pt.dot(v2[1]) + tu, pb.dot(v2[1]) + tv, decalcolor };
+            decalvert dv1 = { v2[0], decalcolor, vec2(pt.dot(v2[0]) + tu, pb.dot(v2[0]) + tv) },
+                      dv2 = { v2[1], decalcolor, vec2(pt.dot(v2[1]) + tu, pb.dot(v2[1]) + tv) };
             int totalverts = 3*(numv-2);
             if(totalverts > maxverts-3) return;
             while(availverts < totalverts)
@@ -485,8 +467,7 @@ struct decalrenderer
                 verts[endvert++] = dv1;
                 verts[endvert++] = dv2;
                 dv2.pos = v2[k+2];
-                dv2.u = pt.dot(v2[k+2]) + tu;
-                dv2.v = pb.dot(v2[k+2]) + tv;
+                dv2.tc = vec2(pt.dot(v2[k+2]) + tu, pb.dot(v2[k+2]) + tv);
                 verts[endvert++] = dv2;
                 if(endvert>=maxverts) endvert = 0;
             }
@@ -578,7 +559,7 @@ decalrenderer decals[] =
 {
     decalrenderer("<grey>packages/particles/scorch.png", DF_ROTATE, 500),
     decalrenderer("<grey>packages/particles/blood.png", DF_RND4|DF_ROTATE|DF_INVMOD),
-    decalrenderer("<grey><decal>packages/particles/bullet.png", DF_OVERBRIGHT)
+    decalrenderer("<grey>packages/particles/bullet.png", DF_OVERBRIGHT)
 };
 
 void initdecals()
