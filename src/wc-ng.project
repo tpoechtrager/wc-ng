@@ -612,7 +612,7 @@ plugins/hwtemp/include
 shared
 xcode
 lib/include
-lib/include/SDL1
+lib/include/SDL2
 lib/include/curl
 lib/include/GeoIP
 lib/include/GL
@@ -658,7 +658,7 @@ lib/include/sensors</SearchPaths>
         <ClangPP/>
         <SearchPaths>include
 lib/include
-lib/include/SDL1
+lib/include/SDL2
 lib/include/openssl
 lib/include/GeoIP
 lib/include/curl
