@@ -3,7 +3,7 @@
 For static builds you'll need to clone the wc-ng-libs repository:
 
     cd src
-    git clone -depth 1 https://github.com/tpoechtrager/wc-ng-libs.git lib
+    git clone --depth 1 https://github.com/tpoechtrager/wc-ng-libs.git lib
 
 ### Supported Compilers ###
 

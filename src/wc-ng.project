@@ -29,6 +29,230 @@
   <Description/>
   <Dependencies/>
   <VirtualDirectory Name="src">
+    <VirtualDirectory Name="lib">
+      <VirtualDirectory Name="include">
+        <VirtualDirectory Name="openssl">
+          <File Name="lib/include/openssl/md5.h"/>
+          <File Name="lib/include/openssl/bn.h"/>
+          <File Name="lib/include/openssl/bio.h"/>
+          <File Name="lib/include/openssl/blowfish.h"/>
+          <File Name="lib/include/openssl/ssl23.h"/>
+          <File Name="lib/include/openssl/cms.h"/>
+          <File Name="lib/include/openssl/comp.h"/>
+          <File Name="lib/include/openssl/md4.h"/>
+          <File Name="lib/include/openssl/ui.h"/>
+          <File Name="lib/include/openssl/stack.h"/>
+          <File Name="lib/include/openssl/x509.h"/>
+          <File Name="lib/include/openssl/cmac.h"/>
+          <File Name="lib/include/openssl/x509v3.h"/>
+          <File Name="lib/include/openssl/ssl3.h"/>
+          <File Name="lib/include/openssl/buffer.h"/>
+          <File Name="lib/include/openssl/opensslv.h"/>
+          <File Name="lib/include/openssl/ts.h"/>
+          <File Name="lib/include/openssl/conf_api.h"/>
+          <File Name="lib/include/openssl/objects.h"/>
+          <File Name="lib/include/openssl/aes.h"/>
+          <File Name="lib/include/openssl/whrlpool.h"/>
+          <File Name="lib/include/openssl/pkcs7.h"/>
+          <File Name="lib/include/openssl/lhash.h"/>
+          <File Name="lib/include/openssl/ocsp.h"/>
+          <File Name="lib/include/openssl/srp.h"/>
+          <File Name="lib/include/openssl/dsa.h"/>
+          <File Name="lib/include/openssl/dso.h"/>
+          <File Name="lib/include/openssl/pem.h"/>
+          <File Name="lib/include/openssl/asn1t.h"/>
+          <File Name="lib/include/openssl/err.h"/>
+          <File Name="lib/include/openssl/opensslconf.h"/>
+          <File Name="lib/include/openssl/seed.h"/>
+          <File Name="lib/include/openssl/cast.h"/>
+          <File Name="lib/include/openssl/asn1_mac.h"/>
+          <File Name="lib/include/openssl/obj_mac.h"/>
+          <File Name="lib/include/openssl/ec.h"/>
+          <File Name="lib/include/openssl/conf.h"/>
+          <File Name="lib/include/openssl/modes.h"/>
+          <File Name="lib/include/openssl/ssl2.h"/>
+          <File Name="lib/include/openssl/safestack.h"/>
+          <File Name="lib/include/openssl/asn1.h"/>
+          <File Name="lib/include/openssl/camellia.h"/>
+          <File Name="lib/include/openssl/crypto.h"/>
+          <File Name="lib/include/openssl/des.h"/>
+          <File Name="lib/include/openssl/ripemd.h"/>
+          <File Name="lib/include/openssl/x509_vfy.h"/>
+          <File Name="lib/include/openssl/sha.h"/>
+          <File Name="lib/include/openssl/hmac.h"/>
+          <File Name="lib/include/openssl/rand.h"/>
+          <File Name="lib/include/openssl/ssl.h"/>
+          <File Name="lib/include/openssl/dh.h"/>
+          <File Name="lib/include/openssl/kssl.h"/>
+          <File Name="lib/include/openssl/des_old.h"/>
+          <File Name="lib/include/openssl/tls1.h"/>
+          <File Name="lib/include/openssl/ossl_typ.h"/>
+          <File Name="lib/include/openssl/dtls1.h"/>
+          <File Name="lib/include/openssl/ui_compat.h"/>
+          <File Name="lib/include/openssl/pkcs12.h"/>
+          <File Name="lib/include/openssl/pem2.h"/>
+          <File Name="lib/include/openssl/rc2.h"/>
+          <File Name="lib/include/openssl/srtp.h"/>
+          <File Name="lib/include/openssl/engine.h"/>
+          <File Name="lib/include/openssl/krb5_asn.h"/>
+          <File Name="lib/include/openssl/ebcdic.h"/>
+          <File Name="lib/include/openssl/symhacks.h"/>
+          <File Name="lib/include/openssl/ecdh.h"/>
+          <File Name="lib/include/openssl/e_os2.h"/>
+          <File Name="lib/include/openssl/txt_db.h"/>
+          <File Name="lib/include/openssl/rsa.h"/>
+          <File Name="lib/include/openssl/evp.h"/>
+          <File Name="lib/include/openssl/pqueue.h"/>
+          <File Name="lib/include/openssl/ecdsa.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="curl">
+          <File Name="lib/include/curl/typecheck-gcc.h"/>
+          <File Name="lib/include/curl/multi.h"/>
+          <File Name="lib/include/curl/mprintf.h"/>
+          <File Name="lib/include/curl/curlver.h"/>
+          <File Name="lib/include/curl/curlrules.h"/>
+          <File Name="lib/include/curl/stdcheaders.h"/>
+          <File Name="lib/include/curl/curlbuild.h"/>
+          <File Name="lib/include/curl/easy.h"/>
+          <File Name="lib/include/curl/curl.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="sensors">
+          <File Name="lib/include/sensors/general.h"/>
+          <File Name="lib/include/sensors/data.h"/>
+          <File Name="lib/include/sensors/error.h"/>
+          <File Name="lib/include/sensors/init.h"/>
+          <File Name="lib/include/sensors/conf-parse.h"/>
+          <File Name="lib/include/sensors/conf.h"/>
+          <File Name="lib/include/sensors/access.h"/>
+          <File Name="lib/include/sensors/scanner.h"/>
+          <File Name="lib/include/sensors/sensors.h"/>
+          <File Name="lib/include/sensors/sysfs.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="SDL2">
+          <File Name="lib/include/SDL2/SDL_shape.h"/>
+          <File Name="lib/include/SDL2/SDL_thread.h"/>
+          <File Name="lib/include/SDL2/SDL_platform.h"/>
+          <File Name="lib/include/SDL2/SDL_test_harness.h"/>
+          <File Name="lib/include/SDL2/SDL_test_common.h"/>
+          <File Name="lib/include/SDL2/SDL_rect.h"/>
+          <File Name="lib/include/SDL2/SDL_mouse.h"/>
+          <File Name="lib/include/SDL2/SDL_joystick.h"/>
+          <File Name="lib/include/SDL2/SDL_syswm.h"/>
+          <File Name="lib/include/SDL2/SDL_test_random.h"/>
+          <File Name="lib/include/SDL2/SDL.h"/>
+          <File Name="lib/include/SDL2/SDL_audio.h"/>
+          <File Name="lib/include/SDL2/SDL_types.h"/>
+          <File Name="lib/include/SDL2/SDL_test_crc32.h"/>
+          <File Name="lib/include/SDL2/SDL_power.h"/>
+          <File Name="lib/include/SDL2/SDL_loadso.h"/>
+          <File Name="lib/include/SDL2/SDL_touch.h"/>
+          <File Name="lib/include/SDL2/SDL_test_log.h"/>
+          <File Name="lib/include/SDL2/SDL_render.h"/>
+          <File Name="lib/include/SDL2/SDL_rwops.h"/>
+          <File Name="lib/include/SDL2/SDL_events.h"/>
+          <File Name="lib/include/SDL2/SDL_test_fuzzer.h"/>
+          <File Name="lib/include/SDL2/SDL_error.h"/>
+          <File Name="lib/include/SDL2/SDL_cpuinfo.h"/>
+          <File Name="lib/include/SDL2/SDL_assert.h"/>
+          <File Name="lib/include/SDL2/SDL_gamecontroller.h"/>
+          <File Name="lib/include/SDL2/SDL_timer.h"/>
+          <File Name="lib/include/SDL2/SDL_clipboard.h"/>
+          <File Name="lib/include/SDL2/SDL_revision.h"/>
+          <File Name="lib/include/SDL2/SDL_test_md5.h"/>
+          <File Name="lib/include/SDL2/SDL_messagebox.h"/>
+          <File Name="lib/include/SDL2/SDL_version.h"/>
+          <File Name="lib/include/SDL2/SDL_test_compare.h"/>
+          <File Name="lib/include/SDL2/close_code.h"/>
+          <File Name="lib/include/SDL2/SDL_opengles2.h"/>
+          <File Name="lib/include/SDL2/SDL_atomic.h"/>
+          <File Name="lib/include/SDL2/SDL_filesystem.h"/>
+          <File Name="lib/include/SDL2/SDL_opengles.h"/>
+          <File Name="lib/include/SDL2/SDL_config.h"/>
+          <File Name="lib/include/SDL2/SDL_surface.h"/>
+          <File Name="lib/include/SDL2/SDL_main.h"/>
+          <File Name="lib/include/SDL2/SDL_name.h"/>
+          <File Name="lib/include/SDL2/SDL_bits.h"/>
+          <File Name="lib/include/SDL2/SDL_mutex.h"/>
+          <File Name="lib/include/SDL2/SDL_system.h"/>
+          <File Name="lib/include/SDL2/SDL_pixels.h"/>
+          <File Name="lib/include/SDL2/SDL_test.h"/>
+          <File Name="lib/include/SDL2/SDL_hints.h"/>
+          <File Name="lib/include/SDL2/SDL_stdinc.h"/>
+          <File Name="lib/include/SDL2/SDL_haptic.h"/>
+          <File Name="lib/include/SDL2/SDL_endian.h"/>
+          <File Name="lib/include/SDL2/SDL_test_font.h"/>
+          <File Name="lib/include/SDL2/SDL_opengl.h"/>
+          <File Name="lib/include/SDL2/SDL_test_assert.h"/>
+          <File Name="lib/include/SDL2/SDL_blendmode.h"/>
+          <File Name="lib/include/SDL2/SDL_keyboard.h"/>
+          <File Name="lib/include/SDL2/SDL_test_images.h"/>
+          <File Name="lib/include/SDL2/SDL_gesture.h"/>
+          <File Name="lib/include/SDL2/SDL_video.h"/>
+          <File Name="lib/include/SDL2/SDL_quit.h"/>
+          <File Name="lib/include/SDL2/SDL_mixer.h"/>
+          <File Name="lib/include/SDL2/SDL_keycode.h"/>
+          <File Name="lib/include/SDL2/SDL_log.h"/>
+          <File Name="lib/include/SDL2/begin_code.h"/>
+          <File Name="lib/include/SDL2/SDL_image.h"/>
+          <File Name="lib/include/SDL2/SDL_scancode.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="osx-cpu-temp">
+          <File Name="lib/include/osx-cpu-temp/smc.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="SDL1">
+          <File Name="lib/include/SDL1/SDL_thread.h"/>
+          <File Name="lib/include/SDL1/SDL_platform.h"/>
+          <File Name="lib/include/SDL1/SDL_config_win32.h"/>
+          <File Name="lib/include/SDL1/SDL_mouse.h"/>
+          <File Name="lib/include/SDL1/SDL_getenv.h"/>
+          <File Name="lib/include/SDL1/SDL_joystick.h"/>
+          <File Name="lib/include/SDL1/SDL_syswm.h"/>
+          <File Name="lib/include/SDL1/SDL_byteorder.h"/>
+          <File Name="lib/include/SDL1/SDL.h"/>
+          <File Name="lib/include/SDL1/SDL_audio.h"/>
+          <File Name="lib/include/SDL1/SDL_types.h"/>
+          <File Name="lib/include/SDL1/SDL_loadso.h"/>
+          <File Name="lib/include/SDL1/SDL_rwops.h"/>
+          <File Name="lib/include/SDL1/SDL_events.h"/>
+          <File Name="lib/include/SDL1/SDL_error.h"/>
+          <File Name="lib/include/SDL1/SDL_cpuinfo.h"/>
+          <File Name="lib/include/SDL1/SDL_timer.h"/>
+          <File Name="lib/include/SDL1/SDL_cdrom.h"/>
+          <File Name="lib/include/SDL1/SDL_config_freebsd.h"/>
+          <File Name="lib/include/SDL1/SDL_version.h"/>
+          <File Name="lib/include/SDL1/close_code.h"/>
+          <File Name="lib/include/SDL1/SDL_config.h"/>
+          <File Name="lib/include/SDL1/SDL_main.h"/>
+          <File Name="lib/include/SDL1/SDL_name.h"/>
+          <File Name="lib/include/SDL1/SDL_mutex.h"/>
+          <File Name="lib/include/SDL1/SDL_stdinc.h"/>
+          <File Name="lib/include/SDL1/SDL_endian.h"/>
+          <File Name="lib/include/SDL1/SDL_config_linux.h"/>
+          <File Name="lib/include/SDL1/SDL_opengl.h"/>
+          <File Name="lib/include/SDL1/SDL_copying.h"/>
+          <File Name="lib/include/SDL1/SDL_keyboard.h"/>
+          <File Name="lib/include/SDL1/SDL_keysym.h"/>
+          <File Name="lib/include/SDL1/SDL_video.h"/>
+          <File Name="lib/include/SDL1/SDL_quit.h"/>
+          <File Name="lib/include/SDL1/SDL_mixer.h"/>
+          <File Name="lib/include/SDL1/SDL_active.h"/>
+          <File Name="lib/include/SDL1/begin_code.h"/>
+          <File Name="lib/include/SDL1/SDL_image.h"/>
+          <File Name="lib/include/SDL1/SDL_config_macosx.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="GeoIP">
+          <File Name="lib/include/GeoIP/GeoIPCity.h"/>
+          <File Name="lib/include/GeoIP/GeoIP.h"/>
+        </VirtualDirectory>
+        <VirtualDirectory Name="GL">
+          <File Name="lib/include/GL/glext.h"/>
+        </VirtualDirectory>
+        <File Name="lib/include/zlib.h"/>
+        <File Name="lib/include/inttypes.h"/>
+        <File Name="lib/include/zconf.h"/>
+        <File Name="lib/include/dlfcn.h"/>
+      </VirtualDirectory>
+    </VirtualDirectory>
     <VirtualDirectory Name="mod">
       <File Name="mod/wcversion.h.in"/>
       <File Name="mod/thread.h"/>
@@ -292,157 +516,8 @@
         </VirtualDirectory>
       </VirtualDirectory>
     </VirtualDirectory>
-    <VirtualDirectory Name="include">
-      <VirtualDirectory Name="openssl">
-        <File Name="include/openssl/x509v3.h"/>
-        <File Name="include/openssl/x509_vfy.h"/>
-        <File Name="include/openssl/x509.h"/>
-        <File Name="include/openssl/whrlpool.h"/>
-        <File Name="include/openssl/ui_compat.h"/>
-        <File Name="include/openssl/ui.h"/>
-        <File Name="include/openssl/txt_db.h"/>
-        <File Name="include/openssl/ts.h"/>
-        <File Name="include/openssl/tls1.h"/>
-        <File Name="include/openssl/symhacks.h"/>
-        <File Name="include/openssl/stack.h"/>
-        <File Name="include/openssl/ssl23.h"/>
-        <File Name="include/openssl/ssl3.h"/>
-        <File Name="include/openssl/ssl2.h"/>
-        <File Name="include/openssl/ssl.h"/>
-        <File Name="include/openssl/srtp.h"/>
-        <File Name="include/openssl/srp.h"/>
-        <File Name="include/openssl/sha.h"/>
-        <File Name="include/openssl/seed.h"/>
-        <File Name="include/openssl/safestack.h"/>
-        <File Name="include/openssl/rsa.h"/>
-        <File Name="include/openssl/ripemd.h"/>
-        <File Name="include/openssl/rc2.h"/>
-        <File Name="include/openssl/rand.h"/>
-        <File Name="include/openssl/pqueue.h"/>
-        <File Name="include/openssl/pkcs12.h"/>
-        <File Name="include/openssl/pkcs7.h"/>
-        <File Name="include/openssl/pem2.h"/>
-        <File Name="include/openssl/pem.h"/>
-        <File Name="include/openssl/ossl_typ.h"/>
-        <File Name="include/openssl/opensslv.h"/>
-        <File Name="include/openssl/opensslconf.h"/>
-        <File Name="include/openssl/ocsp.h"/>
-        <File Name="include/openssl/objects.h"/>
-        <File Name="include/openssl/obj_mac.h"/>
-        <File Name="include/openssl/modes.h"/>
-        <File Name="include/openssl/md5.h"/>
-        <File Name="include/openssl/md4.h"/>
-        <File Name="include/openssl/lhash.h"/>
-        <File Name="include/openssl/kssl.h"/>
-        <File Name="include/openssl/krb5_asn.h"/>
-        <File Name="include/openssl/hmac.h"/>
-        <File Name="include/openssl/evp.h"/>
-        <File Name="include/openssl/err.h"/>
-        <File Name="include/openssl/engine.h"/>
-        <File Name="include/openssl/ecdsa.h"/>
-        <File Name="include/openssl/ecdh.h"/>
-        <File Name="include/openssl/ec.h"/>
-        <File Name="include/openssl/ebcdic.h"/>
-        <File Name="include/openssl/e_os2.h"/>
-        <File Name="include/openssl/dtls1.h"/>
-        <File Name="include/openssl/dso.h"/>
-        <File Name="include/openssl/dsa.h"/>
-        <File Name="include/openssl/dh.h"/>
-        <File Name="include/openssl/des_old.h"/>
-        <File Name="include/openssl/des.h"/>
-        <File Name="include/openssl/crypto.h"/>
-        <File Name="include/openssl/conf_api.h"/>
-        <File Name="include/openssl/conf.h"/>
-        <File Name="include/openssl/comp.h"/>
-        <File Name="include/openssl/cms.h"/>
-        <File Name="include/openssl/cmac.h"/>
-        <File Name="include/openssl/cast.h"/>
-        <File Name="include/openssl/camellia.h"/>
-        <File Name="include/openssl/buffer.h"/>
-        <File Name="include/openssl/bn.h"/>
-        <File Name="include/openssl/blowfish.h"/>
-        <File Name="include/openssl/bio.h"/>
-        <File Name="include/openssl/asn1t.h"/>
-        <File Name="include/openssl/asn1_mac.h"/>
-        <File Name="include/openssl/asn1.h"/>
-        <File Name="include/openssl/aes.h"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="sensors">
-        <File Name="include/sensors/access.h"/>
-        <File Name="include/sensors/conf.h"/>
-        <File Name="include/sensors/conf-parse.h"/>
-        <File Name="include/sensors/data.h"/>
-        <File Name="include/sensors/error.h"/>
-        <File Name="include/sensors/general.h"/>
-        <File Name="include/sensors/init.h"/>
-        <File Name="include/sensors/scanner.h"/>
-        <File Name="include/sensors/sensors.h"/>
-        <File Name="include/sensors/sysfs.h"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="GeoIP">
-        <File Name="include/GeoIP/GeoIP.h"/>
-        <File Name="include/GeoIP/GeoIPCity.h"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="curl">
-        <File Name="include/curl/curl.h"/>
-        <File Name="include/curl/curlbuild.h"/>
-        <File Name="include/curl/curlrules.h"/>
-        <File Name="include/curl/curlver.h"/>
-        <File Name="include/curl/easy.h"/>
-        <File Name="include/curl/mprintf.h"/>
-        <File Name="include/curl/multi.h"/>
-        <File Name="include/curl/stdcheaders.h"/>
-        <File Name="include/curl/typecheck-gcc.h"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="GL">
-        <File Name="include/GL/glext.h"/>
-      </VirtualDirectory>
-      <VirtualDirectory Name="osx-cpu-temp">
-        <File Name="include/osx-cpu-temp/smc.h"/>
-      </VirtualDirectory>
-      <File Name="include/SDL.h"/>
-      <File Name="include/SDL_active.h"/>
-      <File Name="include/SDL_audio.h"/>
-      <File Name="include/SDL_byteorder.h"/>
-      <File Name="include/SDL_cdrom.h"/>
-      <File Name="include/SDL_config.h"/>
-      <File Name="include/SDL_config_freebsd.h"/>
-      <File Name="include/SDL_config_linux.h"/>
-      <File Name="include/SDL_config_macosx.h"/>
-      <File Name="include/SDL_config_win32.h"/>
-      <File Name="include/SDL_copying.h"/>
-      <File Name="include/SDL_cpuinfo.h"/>
-      <File Name="include/SDL_endian.h"/>
-      <File Name="include/SDL_error.h"/>
-      <File Name="include/SDL_events.h"/>
-      <File Name="include/SDL_getenv.h"/>
-      <File Name="include/SDL_image.h"/>
-      <File Name="include/SDL_joystick.h"/>
-      <File Name="include/SDL_keyboard.h"/>
-      <File Name="include/SDL_keysym.h"/>
-      <File Name="include/SDL_loadso.h"/>
-      <File Name="include/SDL_main.h"/>
-      <File Name="include/SDL_mixer.h"/>
-      <File Name="include/SDL_mouse.h"/>
-      <File Name="include/SDL_mutex.h"/>
-      <File Name="include/SDL_name.h"/>
-      <File Name="include/SDL_opengl.h"/>
-      <File Name="include/SDL_platform.h"/>
-      <File Name="include/SDL_quit.h"/>
-      <File Name="include/SDL_rwops.h"/>
-      <File Name="include/SDL_stdinc.h"/>
-      <File Name="include/SDL_syswm.h"/>
-      <File Name="include/SDL_thread.h"/>
-      <File Name="include/SDL_timer.h"/>
-      <File Name="include/SDL_types.h"/>
-      <File Name="include/SDL_version.h"/>
-      <File Name="include/SDL_video.h"/>
-      <File Name="include/begin_code.h"/>
-      <File Name="include/close_code.h"/>
-      <File Name="include/dlfcn.h"/>
-      <File Name="include/inttypes.h"/>
-      <File Name="include/zconf.h"/>
-      <File Name="include/zlib.h"/>
+    <VirtualDirectory Name="common">
+      <File Name="lib/src/common/cpucount.c"/>
     </VirtualDirectory>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
@@ -536,13 +611,14 @@ plugins/hwtemp
 plugins/hwtemp/include
 shared
 xcode
-include
-include/curl
-include/GeoIP
-include/GL
-include/openssl
-include/osx-cpu-temp
-include/sensors</SearchPaths>
+lib/include
+lib/include/SDL1
+lib/include/curl
+lib/include/GeoIP
+lib/include/GL
+lib/include/openssl
+lib/include/osx-cpu-temp
+lib/include/sensors</SearchPaths>
       </Completion>
     </Configuration>
     <Configuration Name="Release" CompilerType="clang++" DebuggerType="GNU gdb debugger" Type="Dynamic Library" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
@@ -581,12 +657,14 @@ include/sensors</SearchPaths>
         <ClangCmpFlags/>
         <ClangPP/>
         <SearchPaths>include
-include/openssl
-include/GeoIP
-include/curl
-include/GL
-include/osx-cpu-temp
-include/sensors</SearchPaths>
+lib/include
+lib/include/SDL1
+lib/include/openssl
+lib/include/GeoIP
+lib/include/curl
+lib/include/GL
+lib/include/osx-cpu-temp
+lib/include/sensors</SearchPaths>
       </Completion>
     </Configuration>
   </Settings>
