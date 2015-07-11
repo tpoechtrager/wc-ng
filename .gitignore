@@ -23,3 +23,5 @@ ipch
 wcchatd
 wcversion*
 cpucount
+src/lib
+src/include
