@@ -267,7 +267,7 @@ char *makerelpath(const char *dir, const char *file, const char *prefix, const c
 {
     static string localtmp; //NEW tmp -> localtmp
     char *tmp = (char*)mod::allocatethreadstorage(0, sizeof(localtmp), true, localtmp); //NEW
-    if(prefix) copystring(tmp, prefix);
+    if(prefix) copystring(tmp, prefix, sizeof(localtmp));
     else tmp[0] = '\0';
     if(file[0]=='<')
     {
@@ -279,13 +279,13 @@ char *makerelpath(const char *dir, const char *file, const char *prefix, const c
             file = end+1;
         }
     }
-    if(cmd) concatstring(tmp, cmd);
+    if(cmd) concatstring(tmp, cmd, sizeof(localtmp));
     if(dir)
     {
-        defformatstring(pname)("%s/%s", dir, file);
-        concatstring(tmp, pname);
+        defformatstring(pname, "%s/%s", dir, file);
+        concatstring(tmp, pname, sizeof(localtmp));
     }
-    else concatstring(tmp, file);
+    else concatstring(tmp, file, sizeof(localtmp));
     return tmp;
 }
 
@@ -339,7 +339,7 @@ char *path(const char *s, bool copy)
 {
     static string localtmp; //NEW tmp -> localtmp
     char *tmp = (char*)mod::allocatethreadstorage(0, sizeof(localtmp), true, localtmp); //NEW
-    copystring(tmp, s);
+    copystring(tmp, s, sizeof(localtmp));
     path(tmp);
     return tmp;
 }
@@ -410,8 +410,8 @@ bool subhomedir(char *dst, int len, const char *src)
         if(!home || !home[0]) return false;
 #endif
         dst[sub-src] = '\0';
-        concatstring(dst, home);
-        concatstring(dst, sub+(*sub == '~' ? 1 : strlen("$HOME")));
+        concatstring(dst, home, len);
+        concatstring(dst, sub+(*sub == '~' ? 1 : strlen("$HOME")), len);
     }
     return true;
 }
@@ -475,7 +475,7 @@ const char *findfile(const char *filename, const char *mode)
     streamlocker sl; //NEW
     if(homedir[0])
     {
-        formatstring(s)("%s%s", homedir, filename);
+        nformatstring(s, sizeof(locals), "%s%s", homedir, filename);
         if(fileexists(s, mode)) return s;
         if(mode[0]=='w' || mode[0]=='a')
         {
@@ -497,7 +497,7 @@ const char *findfile(const char *filename, const char *mode)
     {
         packagedir &pf = packagedirs[i];
         if(pf.filter && strncmp(filename, pf.filter, pf.filterlen)) continue;
-        formatstring(s)("%s%s", pf.dir, filename);
+        nformatstring(s, sizeof(locals), "%s%s", pf.dir, filename);
         if(fileexists(s, mode)) return s;
     }
     if(mode[0]=='e') return NULL;
@@ -508,7 +508,7 @@ bool listdir(const char *dirname, bool rel, const char *ext, vector<char *> &fil
 {
     size_t extsize = ext ? strlen(ext)+1 : 0;
 #ifdef WIN32
-    defformatstring(pathname)(rel ? ".\\%s\\*.%s" : "%s\\*.%s", dirname, ext ? ext : "*");
+    defformatstring(pathname, rel ? ".\\%s\\*.%s" : "%s\\*.%s", dirname, ext ? ext : "*");
     WIN32_FIND_DATA FindFileData;
     HANDLE Find = FindFirstFile(pathname, &FindFileData);
     if(Find != INVALID_HANDLE_VALUE)
@@ -530,7 +530,7 @@ bool listdir(const char *dirname, bool rel, const char *ext, vector<char *> &fil
         return true;
     }
 #else
-    defformatstring(pathname)(rel ? "./%s" : "%s", dirname);
+    defformatstring(pathname, rel ? "./%s" : "%s", dirname);
     DIR *d = opendir(pathname);
     if(d)
     {
@@ -569,7 +569,7 @@ int listfiles(const char *dir, const char *ext, vector<char *> &files)
     streamlocker sl; //NEW
     if(homedir[0])
     {
-        formatstring(s)("%s%s", homedir, dirname);
+        formatstring(s, "%s%s", homedir, dirname);
         if(listdir(s, false, ext, files)) dirs++;
     }
     loopv(packagedirs)
@@ -577,7 +577,7 @@ int listfiles(const char *dir, const char *ext, vector<char *> &files)
         packagedir &pf = packagedirs[i];
         if(pf.filter && strncmp(dirname, pf.filter, dirlen == pf.filterlen-1 ? dirlen : pf.filterlen))
             continue;
-        formatstring(s)("%s%s", pf.dir, dirname);
+        formatstring(s, "%s%s", pf.dir, dirname);
         if(listdir(s, false, ext, files)) dirs++;
     }
 #ifndef STANDALONE

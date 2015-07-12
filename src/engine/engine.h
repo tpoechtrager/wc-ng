@@ -126,8 +126,8 @@ extern int glversion, glslversion;
 
 extern float curfov, fovy, aspect, forceaspect;
 extern bool envmapping, minimapping, renderedgame, modelpreviewing;
-extern const glmatrixf viewmatrix;
-extern glmatrixf mvmatrix, projmatrix, mvpmatrix, invmvmatrix, invmvpmatrix, fogmatrix, invfogmatrix, envmatrix;
+extern const matrix4 viewmatrix;
+extern matrix4 mvmatrix, projmatrix, mvpmatrix, invmvmatrix, invmvpmatrix, fogmatrix, invfogmatrix, envmatrix;
 extern bvec fogcolor;
 
 extern void gl_checkextensions();
@@ -384,8 +384,7 @@ extern void writehistory(const char *file = ""); //NEW
 extern void conoutf(const char *s, ...) PRINTFARGS(1, 2);
 extern void conoutf(int type, const char *s, ...) PRINTFARGS(2, 3);
 extern void resetcomplete();
-extern void complete(char *s, const char *cmdprefix);
-extern void completename(char *s);
+extern void complete(char *s, int maxlen, const char *cmdprefix);
 const char *getkeyname(int code);
 extern const char *addreleaseaction(char *s);
 extern void writebinds(stream *f);
@@ -479,7 +478,7 @@ extern void clearparticleemitters();
 extern void seedparticles();
 extern void updateparticles();
 extern void renderparticles(bool mainpass = false);
-extern bool printparticles(extentity &e, char *buf);
+extern bool printparticles(extentity &e, char *buf, int len);
 
 // decal
 extern void initdecals();

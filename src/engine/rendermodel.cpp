@@ -309,7 +309,7 @@ void rdlimitrot(int *t1, int *t2, float *maxangle, float *qx, float *qy, float *
     r.tri[0] = *t1;
     r.tri[1] = *t2;
     r.maxangle = *maxangle * RAD;
-    r.middle = matrix3x3(quat(*qx, *qy, *qz, *qw));
+    r.middle = matrix3(quat(*qx, *qy, *qz, *qw));
 }
 COMMAND(rdlimitrot, "iifffff");
 
@@ -421,7 +421,7 @@ model *loadmodel(const char *name, int i, bool msg)
         if(!name[0] || loadingmodel || lightmapping > 1) return NULL;
         if(msg)
         {
-            defformatstring(filename)("packages/models/%s", name);
+            defformatstring(filename, "packages/models/%s", name);
             renderprogress(loadprogress, filename);
         }
         loopi(NUMMODELTYPES)
@@ -995,7 +995,7 @@ ICOMMAND(findanims, "s", (char *name),
     string num;
     loopv(anims)
     {
-        formatstring(num)("%d", anims[i]);
+        formatstring(num, "%d", anims[i]);
         if(i > 0) buf.add(' ');
         buf.put(num, strlen(num));
     }
@@ -1018,8 +1018,8 @@ void loadskin(const char *dir, const char *altdir, Texture *&skin, Texture *&mas
         } \
     }
    
-    defformatstring(mdir)("packages/models/%s", dir);
-    defformatstring(maltdir)("packages/models/%s", altdir);
+    defformatstring(mdir, "packages/models/%s", dir);
+    defformatstring(maltdir, "packages/models/%s", altdir);
     masks = notexture;
     tryload(skin, NULL, NULL, "skin");
     tryload(masks, NULL, NULL, "masks");

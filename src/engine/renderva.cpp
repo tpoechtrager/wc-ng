@@ -157,7 +157,7 @@ void calcvfcD()
 
 void setvfcP(float z, const vec &bbmin, const vec &bbmax)
 {
-    vec4 px = mvpmatrix.getrow(0), py = mvpmatrix.getrow(1), pz = mvpmatrix.getrow(2), pw = mvpmatrix.getrow(3);
+    vec4 px = mvpmatrix.rowx(), py = mvpmatrix.rowy(), pz = mvpmatrix.rowz(), pw = mvpmatrix.roww();
     vfcP[0] = plane(vec4(pw).mul(-bbmin.x).add(px)).normalize(); // left plane
     vfcP[1] = plane(vec4(pw).mul(bbmax.x).sub(px)).normalize(); // right plane
     vfcP[2] = plane(vec4(pw).mul(-bbmin.y).add(py)).normalize(); // bottom plane
@@ -1333,7 +1333,7 @@ void loadcaustics(bool force)
     if(caustictex[0]) return;
     loopi(NUMCAUSTICS)
     {
-        defformatstring(name)("<grey><mad:-0.6,0.6>packages/caustics/caust%.2d.png", i);
+        defformatstring(name, "<grey><mad:-0.6,0.6>packages/caustics/caust%.2d.png", i);
         caustictex[i] = textureload(name);
     }
 }

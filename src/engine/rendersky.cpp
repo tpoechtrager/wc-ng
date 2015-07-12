@@ -18,7 +18,7 @@ void loadsky(const char *basename, Texture *texs[6])
         }
         else
         {
-            defformatstring(ext)("_%s.jpg", side);
+            defformatstring(ext, "_%s.jpg", side);
             concatstring(name, ext);
             if((texs[i] = textureload(name, 3, true, false))==notexture)
             {
@@ -194,8 +194,8 @@ namespace fogdome
     GLushort *indices = NULL;
     int numverts = 0, numindices = 0, capindices = 0;
     GLuint vbuf = 0, ebuf = 0;
-    bvec color(0, 0, 0);
-    float minalpha = 0, maxalpha = 0, capsize = -1, clipz = 1;
+    bvec lastcolor(0, 0, 0);
+    float lastminalpha = 0, lastmaxalpha = 0, lastcapsize = -1, lastclipz = 1;
     
     void subdivide(int depth, int face);
     
@@ -304,14 +304,14 @@ namespace fogdome
     {
         float capsize = fogdomecap && fogdomeheight < 1 ? (1 + fogdomeheight) / (1 - fogdomeheight) : -1;
         bvec color = fogdomecolour ? fogdomecolor : fogcolor;
-        if(!numverts || color != color || minalpha != fogdomemin || maxalpha != fogdomemax || capsize != capsize || clipz != fogdomeclip) 
+        if(!numverts || lastcolor != color || lastminalpha != fogdomemin || lastmaxalpha != fogdomemax || lastcapsize != capsize || lastclipz != fogdomeclip)
         {
             init(color, min(fogdomemin, fogdomemax), fogdomemax, capsize, fogdomeclip);
-            color = color;
-            minalpha = fogdomemin;
-            maxalpha = fogdomemax;
-            capsize = capsize;
-            clipz = fogdomeclip;
+            lastcolor = color;
+            lastminalpha = fogdomemin;
+            lastmaxalpha = fogdomemax;
+            lastcapsize = capsize;
+            lastclipz = fogdomeclip;
         }
     
         glBindBuffer_(GL_ARRAY_BUFFER, vbuf);
@@ -389,7 +389,7 @@ static void drawfogdome(int farplane)
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glPushMatrix();
-    glLoadMatrixf(viewmatrix.v);
+    glLoadMatrixf(viewmatrix.a.v);
     glRotatef(camera1->roll, 0, 1, 0);
     glRotatef(camera1->pitch, -1, 0, 0);
     glRotatef(camera1->yaw, 0, 0, -1);
@@ -477,7 +477,7 @@ void drawskybox(int farplane, bool limited)
     glColor3f((skyboxcolour>>16)/255.0f, ((skyboxcolour>>8)&255)/255.0f, (skyboxcolour&255)/255.0f);
 
     glPushMatrix();
-    glLoadMatrixf(viewmatrix.v);
+    glLoadMatrixf(viewmatrix.a.v);
     glRotatef(camera1->roll, 0, 1, 0);
     glRotatef(camera1->pitch, -1, 0, 0);
     glRotatef(camera1->yaw+spinsky*lastmillis/1000.0f+yawsky, 0, 0, -1);
@@ -502,7 +502,7 @@ void drawskybox(int farplane, bool limited)
         glColor4f((cloudboxcolour>>16)/255.0f, ((cloudboxcolour>>8)&255)/255.0f, (cloudboxcolour&255)/255.0f, cloudboxalpha);
 
         glPushMatrix();
-        glLoadMatrixf(viewmatrix.v);
+        glLoadMatrixf(viewmatrix.a.v);
         glRotatef(camera1->roll, 0, 1, 0);
         glRotatef(camera1->pitch, -1, 0, 0);
         glRotatef(camera1->yaw+spinclouds*lastmillis/1000.0f+yawclouds, 0, 0, -1);
@@ -523,7 +523,7 @@ void drawskybox(int farplane, bool limited)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glPushMatrix();
-        glLoadMatrixf(viewmatrix.v);
+        glLoadMatrixf(viewmatrix.a.v);
         glRotatef(camera1->roll, 0, 1, 0);
         glRotatef(camera1->pitch, -1, 0, 0);
         glRotatef(camera1->yaw+spincloudlayer*lastmillis/1000.0f+yawcloudlayer, 0, 0, -1);

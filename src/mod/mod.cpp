@@ -707,7 +707,7 @@ namespace mod
 #if ENET_VERSION_CREATE(ENET_VERSION_MAJOR, ENET_VERSION_MINOR, ENET_VERSION_PATCH) >= ENET_1_3_8
             ENetVersion ev = enet_linked_version();
 
-            formatstring(enetversion)("%d.%d.%d",
+            formatstring(enetversion, "%d.%d.%d",
                          ENET_VERSION_GET_MAJOR(ev),
                          ENET_VERSION_GET_MINOR(ev),
                          ENET_VERSION_GET_PATCH(ev));

@@ -97,7 +97,7 @@ static void loopfiles2(const char *folder, const char *ext, int max,
         file &f = files2.add();
         f.cfile = files[i];
 
-        defformatstring(tmp)("%s%s.%s", folder, f.cfile, ext);
+        defformatstring(tmp, "%s%s.%s", folder, f.cfile, ext);
         path(tmp);
 
         if (stat(tmp, &f.stat) != 0)
@@ -288,7 +288,7 @@ void getserverdescription()
             res = servinfo;
         else if(curpeer)
         {
-            formatstring(hostname)("%s:%d", hostname, curpeer->address.port);
+            formatstring(hostname, "%s:%d", hostname, curpeer->address.port);
             res = hostname;
         }
         else

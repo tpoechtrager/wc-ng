@@ -1161,7 +1161,7 @@ namespace recorder
 
         //draw_textf("recorded %.1f%s %d%%", w*3-10*FONTH, h*3-FONTH-FONTH*3/2, totalsize, unit, int(calcquality()*100)); //NEW replaced
         //NEW
-        defformatstring(stats)("recorded %.1f%s %d%%", totalsize, unit, int(calcquality()*100));
+        defformatstring(stats, "recorded %.1f%s %d%%", totalsize, unit, int(calcquality()*100));
         w = int(w/conscale); h = int(h/conscale);
         int tw = text_width(stats);
         draw_text(stats, w-(2*FONTH+tw), h-FONTH*3/2-FONTH);

@@ -319,7 +319,7 @@ namespace mod
                 intret(0);
                 return;
             }
-            defformatstring(filename)("%s.scriptvec", file);
+            defformatstring(filename, "%s.scriptvec", file);
             binfile bf(filename);
             if (!bf.ok()) return;
             bf.putstring(name);
@@ -337,7 +337,7 @@ namespace mod
 
         void loadscriptvector(const char *file)
         {
-            defformatstring(filename)("%s.scriptvec", file);
+            defformatstring(filename, "%s.scriptvec", file);
             binfile bf(filename, "rb");
             char *vecname = NULL;
             if (!bf.ok())
@@ -584,7 +584,7 @@ namespace mod
                         if (!d)
                             continue;
 
-                        defformatstring(cn)("%d", d->clientnum);
+                        defformatstring(cn, "%d", d->clientnum);
                         resolveip(cn, "", "");
                     }
 
@@ -695,7 +695,7 @@ namespace mod
                 if (game::getclient(cn)->extinfo->ip.ui32 == uint32_t(-1))
                   return 0;
 
-                defformatstring(cnstr)("%u", cn);
+                defformatstring(cnstr, "%u", cn);
                 resolveip(cnstr, "", "");
                 resolvedcns.add(cn);
                 return 0;
