@@ -64,7 +64,7 @@ namespace hwtemp
             {
                 temp &temperature = t.temperatures[i];
 
-                formatstring(temperature.desc)("speedfan_%d", i+1);
+                formatstring(temperature.desc, "speedfan_%d", i+1);
                 temperature.temperature = sfmem->temps[i]/100.0f;
             }
 
@@ -141,7 +141,7 @@ namespace hwtemp
 
                     temp &tt = t.temperatures[t.ntemperatures];
 
-                    formatstring(tt.desc)("core %d", j+1);
+                    formatstring(tt.desc, "core %d", j+1);
                     tt.temperature = ctdata->fTemp[t.ntemperatures];
                     tt.load = (float)ctdata->uiLoad[t.ntemperatures];
 
@@ -177,7 +177,7 @@ namespace hwtemp
         {
             temp &tt = t.temperatures[t.ntemperatures];
 
-            formatstring(tt.desc)("GPU %d", t.ntemperatures);
+            formatstring(tt.desc, "GPU %d", t.ntemperatures);
             tt.temperature = (float)nvtemps[i];
 
             t.ntemperatures++;

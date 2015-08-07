@@ -428,8 +428,9 @@ namespace gamemod
             }
         }
 
-        glPushMatrix();
-        glScalef(fontscale, fontscale, 1);
+        pushhudmatrix();
+        hudmatrix.scale(fontscale, fontscale, 1);
+        flushhudmatrix();
 
         loopv(ctemps)
         {
@@ -471,6 +472,6 @@ namespace gamemod
             dt.drawtext(left, top);
         }
 
-        glPopMatrix();
+        pophudmatrix();
     }
 }

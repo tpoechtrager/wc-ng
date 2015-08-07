@@ -138,3 +138,7 @@ static inline const char **getcompilerversion()
 #endif // GCC >= 4.9.0
 #endif // ! __x86_64__
 #endif // __MINW32__
+
+#if CLANG_VERSION_AT_LEAST(3, 7, 0)
+#pragma clang diagnostic ignored "-Wshift-negative-value"
+#endif // Clang >= 3.7

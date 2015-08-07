@@ -30,25 +30,29 @@ namespace game
         vec pos = vec(d->o).sub(minimapcenter).mul(minimapscale).add(0.5f), dir;
         vecfromyawpitch(camera1->yaw, 0, 1, 0, dir);
         float scale = calcradarscale();
-        glBegin(GL_TRIANGLE_FAN);
+        gle::defvertex(2);
+        gle::deftexcoord0();
+        gle::begin(GL_TRIANGLE_FAN);
         loopi(16)
         {
-            vec tc = vec(dir).rotate_around_z(i/16.0f*2*M_PI);
-            glTexCoord2f(pos.x + tc.x*scale*minimapscale.x, pos.y + tc.y*scale*minimapscale.y);
             vec v = vec(0, -1, 0).rotate_around_z(i/16.0f*2*M_PI);
-            glVertex2f(x + 0.5f*s*(1.0f + v.x), y + 0.5f*s*(1.0f + v.y));
+            gle::attribf(x + 0.5f*s*(1.0f + v.x), y + 0.5f*s*(1.0f + v.y));
+            vec tc = vec(dir).rotate_around_z(i/16.0f*2*M_PI);
+            gle::attribf(pos.x + tc.x*scale*minimapscale.x, pos.y + tc.y*scale*minimapscale.y);
         }
-        glEnd();
+        gle::end();
     }
 
     void drawradar(float x, float y, float s)
     {
-        glBegin(GL_TRIANGLE_STRIP);
-        glTexCoord2f(0.0f, 0.0f); glVertex2f(x,   y);
-        glTexCoord2f(1.0f, 0.0f); glVertex2f(x+s, y);
-        glTexCoord2f(0.0f, 1.0f); glVertex2f(x,   y+s);
-        glTexCoord2f(1.0f, 1.0f); glVertex2f(x+s, y+s);
-        glEnd();
+        gle::defvertex(2);
+        gle::deftexcoord0();
+        gle::begin(GL_TRIANGLE_STRIP);
+        gle::attribf(x,   y);   gle::attribf(0, 0);
+        gle::attribf(x+s, y);   gle::attribf(1, 0);
+        gle::attribf(x,   y+s); gle::attribf(0, 1);
+        gle::attribf(x+s, y+s); gle::attribf(1, 1);
+        gle::end();
     }
 
     void drawteammate(fpsent *d, float x, float y, float s, fpsent *o, float scale)
@@ -63,10 +67,10 @@ namespace game
               by = y + s*0.5f*(1.0f + dir.y);
         vec v(-0.5f, -0.5f, 0);
         v.rotate_around_z((90+o->yaw-camera1->yaw)*RAD);
-        glTexCoord2f(0.0f, 0.0f); glVertex2f(bx + bs*v.x, by + bs*v.y);
-        glTexCoord2f(1.0f, 0.0f); glVertex2f(bx + bs*v.y, by - bs*v.x);
-        glTexCoord2f(1.0f, 1.0f); glVertex2f(bx - bs*v.x, by - bs*v.y);
-        glTexCoord2f(0.0f, 1.0f); glVertex2f(bx - bs*v.y, by + bs*v.x);
+        gle::attribf(bx + bs*v.x, by + bs*v.y); gle::attribf(0, 0);
+        gle::attribf(bx + bs*v.y, by - bs*v.x); gle::attribf(1, 0);
+        gle::attribf(bx - bs*v.x, by - bs*v.y); gle::attribf(1, 1);
+        gle::attribf(bx - bs*v.y, by + bs*v.x); gle::attribf(0, 1);
     }
 
     void drawteammates(fpsent *d, float x, float y, float s)
@@ -82,12 +86,14 @@ namespace game
                 if(!alive++) 
                 {
                     settexture(isteam(d->team, player1->team) ? "packages/hud/blip_blue_alive.png" : "packages/hud/blip_red_alive.png");
-                    glBegin(GL_QUADS);
+                    gle::defvertex(2);
+                    gle::deftexcoord0();
+                    gle::begin(GL_QUADS);
                 }
                 drawteammate(d, x, y, s, o, scale);
             }
         }
-        if(alive) glEnd();
+        if(alive) gle::end();
         loopv(players) 
         {
             fpsent *o = players[i];
@@ -96,12 +102,14 @@ namespace game
                 if(!dead++) 
                 {
                     settexture(isteam(d->team, player1->team) ? "packages/hud/blip_blue_dead.png" : "packages/hud/blip_red_dead.png");
-                    glBegin(GL_QUADS);
+                    gle::defvertex(2);
+                    gle::deftexcoord0();
+                    gle::begin(GL_QUADS);
                 }
                 drawteammate(d, x, y, s, o, scale);
             }
         }
-        if(dead) glEnd();
+        if(dead) gle::end();
     }
         
     #include "capture.h"
@@ -695,7 +703,7 @@ namespace game
         needclipboard = -1;
     }
 
-    void edittrigger(const selinfo &sel, int op, int arg1, int arg2, int arg3)
+    void edittrigger(const selinfo &sel, int op, int arg1, int arg2, int arg3, const VSlot *vs)
     {
         if(m_edit) switch(op)
         {
@@ -730,7 +738,6 @@ namespace game
             }
             case EDIT_MAT:
             case EDIT_FACE:
-            case EDIT_TEX:
             {
                 addmsg(N_EDITF + op, "ri9i6",
                    sel.o.x, sel.o.y, sel.o.z, sel.s.x, sel.s.y, sel.s.z, sel.grid, sel.orient,
@@ -738,17 +745,66 @@ namespace game
                    arg1, arg2);
                 break;
             }
+            case EDIT_TEX:
+            {
+                int tex1 = shouldpacktex(arg1);
+                if(addmsg(N_EDITF + op, "ri9i6",
+                    sel.o.x, sel.o.y, sel.o.z, sel.s.x, sel.s.y, sel.s.z, sel.grid, sel.orient,
+                    sel.cx, sel.cxs, sel.cy, sel.cys, sel.corner,
+                    tex1 ? tex1 : arg1, arg2))
+                {
+                    messages.pad(2);
+                    int offset = messages.length();
+                    if(tex1) packvslot(messages, arg1);
+                    *(ushort *)&messages[offset-2] = lilswap(ushort(messages.length() - offset));
+                }
+                break;
+            }
             case EDIT_REPLACE:
             {
-                addmsg(N_EDITF + op, "ri9i7",
-                   sel.o.x, sel.o.y, sel.o.z, sel.s.x, sel.s.y, sel.s.z, sel.grid, sel.orient,
-                   sel.cx, sel.cxs, sel.cy, sel.cys, sel.corner,
-                   arg1, arg2, arg3);
+                int tex1 = shouldpacktex(arg1), tex2 = shouldpacktex(arg2);
+                if(addmsg(N_EDITF + op, "ri9i7",
+                    sel.o.x, sel.o.y, sel.o.z, sel.s.x, sel.s.y, sel.s.z, sel.grid, sel.orient,
+                    sel.cx, sel.cxs, sel.cy, sel.cys, sel.corner,
+                    tex1 ? tex1 : arg1, tex2 ? tex2 : arg2, arg3))
+                {
+                    messages.pad(2);
+                    int offset = messages.length();
+                    if(tex1) packvslot(messages, arg1);
+                    if(tex2) packvslot(messages, arg2);
+                    *(ushort *)&messages[offset-2] = lilswap(ushort(messages.length() - offset));
+                }
                 break;
             }
             case EDIT_REMIP:
             {
                 addmsg(N_EDITF + op, "r");
+                break;
+            }
+            case EDIT_VSLOT:
+            {
+                if(addmsg(N_EDITF + op, "ri9i6",
+                    sel.o.x, sel.o.y, sel.o.z, sel.s.x, sel.s.y, sel.s.z, sel.grid, sel.orient,
+                    sel.cx, sel.cxs, sel.cy, sel.cys, sel.corner,
+                    arg1, arg2))
+                {
+                    messages.pad(2);
+                    int offset = messages.length();
+                    packvslot(messages, vs);
+                    *(ushort *)&messages[offset-2] = lilswap(ushort(messages.length() - offset));
+                }
+                break;
+            }
+            case EDIT_UNDO:
+            case EDIT_REDO:
+            {
+                uchar *outbuf = NULL;
+                int inlen = 0, outlen = 0;
+                if(packundo(op, inlen, outbuf, outlen))
+                {
+                    if(addmsg(N_EDITF + op, "ri2", inlen, outlen)) messages.put(outbuf, outlen);
+                    delete[] outbuf;
+                }
                 break;
             }
         }
@@ -838,9 +894,9 @@ namespace game
     vector<uchar> messages;
     int messagecn = -1, messagereliable = false;
 
-    void addmsg(int type, const char *fmt, ...)
+    bool addmsg(int type, const char *fmt, ...)
     {
-        if(!connected) return;
+        if(!connected) return false;
         static uchar buf[MAXTRANS];
         ucharbuf p(buf, sizeof(buf));
         putint(p, type);
@@ -899,6 +955,7 @@ namespace game
             messagecn = mcn;
         }
         messages.put(buf, p.length());
+        return true;
     }
 
     void connectattempt(const char *name, const char *password, const ENetAddress &address)
@@ -1718,6 +1775,15 @@ namespace game
                 if(d) unpackeditinfo(d->edit, q.buf, q.maxlen, unpacklen);
                 break;
             }
+            case N_UNDO:
+            case N_REDO:
+            {
+                int cn = getint(p), unpacklen = getint(p), packlen = getint(p);
+                fpsent *d = getclient(cn);
+                ucharbuf q = p.subbuf(max(packlen, 0));
+                if(d) unpackundo(q.buf, q.maxlen, unpacklen);
+                break;
+            }
 
             case N_EDITF:              // coop editing messages
             case N_EDITT:
@@ -1728,6 +1794,7 @@ namespace game
             case N_ROTATE:
             case N_REPLACE:
             case N_DELCUBE:
+            case N_EDITVSLOT:
             {
                 if(!d) return;
                 selinfo sel;
@@ -1736,19 +1803,49 @@ namespace game
                 sel.grid = getint(p); sel.orient = getint(p);
                 sel.cx = getint(p); sel.cxs = getint(p); sel.cy = getint(p), sel.cys = getint(p);
                 sel.corner = getint(p);
-                int dir, mode, tex, newtex, mat, filter, allfaces, insel;
-                ivec moveo;
                 switch(type)
                 {
-                    case N_EDITF: dir = getint(p); mode = getint(p); if(sel.validate()) mpeditface(dir, mode, sel, false); break;
-                    case N_EDITT: tex = getint(p); allfaces = getint(p); if(sel.validate()) mpedittex(tex, allfaces, sel, false); break;
-                    case N_EDITM: mat = getint(p); filter = getint(p); if(sel.validate()) mpeditmat(mat, filter, sel, false); break;
+                    case N_EDITF: { int dir = getint(p), mode = getint(p); if(sel.validate()) mpeditface(dir, mode, sel, false); break; }
+                    case N_EDITT:
+                    {
+                        int tex = getint(p),
+                            allfaces = getint(p);
+                        if(p.remaining() < 2) return;
+                        int extra = lilswap(*(const ushort *)p.pad(2));
+                        if(p.remaining() < extra) return;
+                        ucharbuf ebuf = p.subbuf(extra);
+                        if(sel.validate()) mpedittex(tex, allfaces, sel, ebuf);
+                        break;
+                    }
+                    case N_EDITM: { int mat = getint(p), filter = getint(p); if(sel.validate()) mpeditmat(mat, filter, sel, false); break; }
                     case N_FLIP: if(sel.validate()) mpflip(sel, false); break;
                     case N_COPY: if(d && sel.validate()) mpcopy(d->edit, sel, false); break;
                     case N_PASTE: if(d && sel.validate()) mppaste(d->edit, sel, false); break;
-                    case N_ROTATE: dir = getint(p); if(sel.validate()) mprotate(dir, sel, false); break;
-                    case N_REPLACE: tex = getint(p); newtex = getint(p); insel = getint(p); if(sel.validate()) mpreplacetex(tex, newtex, insel>0, sel, false); break;
+                    case N_ROTATE: { int dir = getint(p); if(sel.validate()) mprotate(dir, sel, false); break; }
+                    case N_REPLACE:
+                    {
+                        int oldtex = getint(p),
+                            newtex = getint(p),
+                            insel = getint(p);
+                        if(p.remaining() < 2) return;
+                        int extra = lilswap(*(const ushort *)p.pad(2));
+                        if(p.remaining() < extra) return;
+                        ucharbuf ebuf = p.subbuf(extra);
+                        if(sel.validate()) mpreplacetex(oldtex, newtex, insel>0, sel, ebuf);
+                        break;
+                    }
                     case N_DELCUBE: if(sel.validate()) mpdelcube(sel, false); break;
+                    case N_EDITVSLOT:
+                    {
+                        int delta = getint(p),
+                            allfaces = getint(p);
+                        if(p.remaining() < 2) return;
+                        int extra = lilswap(*(const ushort *)p.pad(2));
+                        if(p.remaining() < extra) return;
+                        ucharbuf ebuf = p.subbuf(extra);
+                        if(sel.validate()) mpeditvslot(delta, allfaces, sel, ebuf);
+                        break;
+                    }
                 }
                 break;
             }

@@ -165,8 +165,9 @@ namespace gamemod
 
         static const int lw[] = { -700, -1000 };
 
-        glPushMatrix();
-        glScalef(fontscale, fontscale, 1);
+        pushhudmatrix();
+        hudmatrix.scale(fontscale, fontscale, 1);
+        flushhudmatrix();
 
         if (!demoplayback)
             clients.add(player1);
@@ -346,6 +347,6 @@ namespace gamemod
         }
 
         retn:;
-        glPopMatrix();
+        pophudmatrix();
     }
 }

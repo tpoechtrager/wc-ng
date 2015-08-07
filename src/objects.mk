@@ -10,8 +10,8 @@ CLIENT_MOD_OBJS= \
     mod/ipbuf.o mod/proxy-detection.o
 
 CLIENT_OBJS= \
-    shared/crypto.o shared/geom.o  shared/stream.o  shared/tools.o \
-    shared/zip.o  engine/3dgui.o engine/bih.o engine/blend.o \
+    shared/crypto.o shared/geom.o shared/glemu.o shared/stream.o \
+    shared/tools.o  shared/zip.o  engine/3dgui.o engine/bih.o engine/blend.o \
     engine/blob.o engine/client.o engine/command.o engine/console.o \
     engine/cubeloader.o engine/decal.o engine/dynlight.o engine/glare.o \
     engine/grass.o engine/lightmap.o engine/main.o engine/material.o \

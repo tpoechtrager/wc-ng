@@ -47,18 +47,13 @@ void addglare()
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE);
 
-    SETSHADER(glare);
+    SETSHADER(screenrect);
 
     glBindTexture(GL_TEXTURE_2D, glaretex.rendertex);
 
-    LOCALPARAMF(glarescale, glarescale);
+    gle::colorf(glarescale, glarescale, glarescale);
 
-    glBegin(GL_TRIANGLE_STRIP);
-    glTexCoord2f(0, 0); glVertex3f(-1, -1, 0);
-    glTexCoord2f(1, 0); glVertex3f( 1, -1, 0);
-    glTexCoord2f(0, 1); glVertex3f(-1,  1, 0);
-    glTexCoord2f(1, 1); glVertex3f( 1,  1, 0);
-    glEnd();
+    screenquad(1, 1);
 
     glDisable(GL_BLEND);
 }

@@ -424,8 +424,10 @@ GLenum compressedformat(GLenum format, int w, int h, int force = 0)
         case GL_RGB5:
         case GL_RGB8:
         case GL_LUMINANCE:
+        case GL_LUMINANCE8:
         case GL_RGB: return usetexcompress > 1 ? GL_COMPRESSED_RGB_S3TC_DXT1_EXT : GL_COMPRESSED_RGB;
         case GL_LUMINANCE_ALPHA:
+        case GL_LUMINANCE8_ALPHA8:
         case GL_RGBA: return usetexcompress > 1 ? GL_COMPRESSED_RGBA_S3TC_DXT5_EXT : GL_COMPRESSED_RGBA;
     }
     return format;
@@ -462,7 +464,7 @@ void resizetexture(int w, int h, bool mipmap, bool canreduce, GLenum target, int
     }
     w = min(w, sizelimit);
     h = min(h, sizelimit);
-    if(!usenp2 && target!=GL_TEXTURE_RECTANGLE_ARB && (w&(w-1) || h&(h-1)))
+    if(!usenp2 && (w&(w-1) || h&(h-1)))
     {
         tw = th = 1;
         while(tw < w) tw *= 2;
@@ -604,16 +606,14 @@ void createtexture(int tnum, int w, int h, void *pixels, int clamp, int filter, 
             type = GL_FLOAT;
             break;
 
-        case GL_FLOAT_RG16_NV:
-        case GL_FLOAT_R32_NV:
-        case GL_RGB16F_ARB:
-        case GL_RGB32F_ARB:
+        case GL_RGB16F:
+        case GL_RGB32F:
             if(!format) format = GL_RGB;
             type = GL_FLOAT;
             break;
 
-        case GL_RGBA16F_ARB:
-        case GL_RGBA32F_ARB:
+        case GL_RGBA16F:
+        case GL_RGBA32F:
             if(!format) format = GL_RGBA;
             type = GL_FLOAT;
             break;
@@ -626,6 +626,7 @@ void createtexture(int tnum, int w, int h, void *pixels, int clamp, int filter, 
 
         case GL_RGB5:
         case GL_RGB8:
+        case GL_RGB10:
         case GL_RGB16:
         case GL_COMPRESSED_RGB:
         case GL_COMPRESSED_RGB_S3TC_DXT1_EXT:
@@ -639,6 +640,36 @@ void createtexture(int tnum, int w, int h, void *pixels, int clamp, int filter, 
         case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
         case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
             if(!format) format = GL_RGBA;
+            break;
+
+        case GL_DEPTH_STENCIL:
+        case GL_DEPTH24_STENCIL8:
+            if(!format) format = GL_DEPTH_STENCIL;
+            type = GL_UNSIGNED_INT_24_8;
+            break;
+
+        case GL_R8:
+        case GL_R16:
+            if(!format) format = GL_RED;
+            break;
+
+        case GL_RG8:
+        case GL_RG16:
+            if(!format) format = GL_RG;
+            break;
+
+        case GL_LUMINANCE8:
+        case GL_LUMINANCE16:
+            if(!format) format = GL_LUMINANCE;
+            break;
+
+        case GL_LUMINANCE8_ALPHA8:
+        case GL_LUMINANCE16_ALPHA16:
+            if(!format) format = GL_LUMINANCE_ALPHA;
+            break;
+
+        case GL_ALPHA8:
+            if(!format) format = GL_ALPHA;
             break;
     }
     if(!format) format = component;
@@ -662,7 +693,7 @@ void createcompressedtexture(int tnum, int w, int h, uchar *data, int align, int
     uploadcompressedtexture(target, subtarget, format, w, h, data, align, blocksize, levels, filter > 1); 
 }
 
-hashtable<char *, Texture> textures;
+hashnameset<Texture> textures;
 
 Texture *notexture = NULL; // used as default, ensured to be loaded
 
@@ -1224,11 +1255,12 @@ static bool texturedata(ImageData &d, const char *tname, Slot::Tex *tex = NULL, 
     return true;
 }
 
-void loadalphamask(Texture *t)
+uchar *loadalphamask(Texture *t)
 {
-    if(t->alphamask || !(t->type&Texture::ALPHA)) return;
+    if(t->alphamask) return t->alphamask;
+    if(!(t->type&Texture::ALPHA)) return NULL;
     ImageData s;
-    if(!texturedata(s, t->name, NULL, false) || !s.data || s.compressed) return;
+    if(!texturedata(s, t->name, NULL, false) || !s.data || s.compressed) return NULL;
     t->alphamask = new uchar[s.h * ((s.w+7)/8)];
     uchar *srcrow = s.data, *dst = t->alphamask-1;
     loop(y, s.h)
@@ -1243,6 +1275,7 @@ void loadalphamask(Texture *t)
         }
         srcrow += s.pitch;
     }
+    return t->alphamask;
 }
 
 Texture *textureload(const char *name, int clamp, bool mipit, bool msg)
@@ -1337,6 +1370,11 @@ void compactvslot(int &index)
         if(vs.index < 0) assignvslot(vs);
         if(!markingvslots) index = vs.index;
     }
+}
+
+void compactvslot(VSlot &vs)
+{
+    if(vs.index < 0) assignvslot(vs);
 }
 
 void compactvslots(cube *c, int n)
@@ -1567,6 +1605,132 @@ static bool comparevslot(const VSlot &dst, const VSlot &src, int diff)
     return true;
 }
 
+void packvslot(vector<uchar> &buf, const VSlot &src)
+{
+    if(src.changed & (1<<VSLOT_SHPARAM))
+    {
+        loopv(src.params)
+        {
+            const SlotShaderParam &p = src.params[i];
+            buf.put(VSLOT_SHPARAM);
+            sendstring(p.name, buf);
+            loopj(4) putfloat(buf, p.val[j]);
+        }
+    }
+    if(src.changed & (1<<VSLOT_SCALE))
+    {
+        buf.put(VSLOT_SCALE);
+        putfloat(buf, src.scale);
+    }
+    if(src.changed & (1<<VSLOT_ROTATION))
+    {
+        buf.put(VSLOT_ROTATION);
+        putfloat(buf, src.rotation);
+    }
+    if(src.changed & (1<<VSLOT_OFFSET))
+    {
+        buf.put(VSLOT_OFFSET);
+        putint(buf, src.offset.x);
+        putint(buf, src.offset.y);
+    }
+    if(src.changed & (1<<VSLOT_SCROLL))
+    {
+        buf.put(VSLOT_SCROLL);
+        putfloat(buf, src.scroll.x);
+        putfloat(buf, src.scroll.y);
+    }
+    if(src.changed & (1<<VSLOT_LAYER))
+    {
+        buf.put(VSLOT_LAYER);
+        putuint(buf, vslots.inrange(src.layer) && !vslots[src.layer]->changed ? src.layer : 0);
+    }
+    if(src.changed & (1<<VSLOT_ALPHA))
+    {
+        buf.put(VSLOT_ALPHA);
+        putfloat(buf, src.alphafront);
+        putfloat(buf, src.alphaback);
+    }
+    if(src.changed & (1<<VSLOT_COLOR))
+    {
+        buf.put(VSLOT_COLOR);
+        putfloat(buf, src.colorscale.r);
+        putfloat(buf, src.colorscale.g);
+        putfloat(buf, src.colorscale.b);
+    }
+    buf.put(0xFF);
+}
+
+void packvslot(vector<uchar> &buf, int index)
+{
+    if(vslots.inrange(index)) packvslot(buf, *vslots[index]);
+    else buf.put(0xFF);
+}
+
+void packvslot(vector<uchar> &buf, const VSlot *vs)
+{
+    if(vs) packvslot(buf, *vs);
+    else buf.put(0xFF);
+}
+
+bool unpackvslot(ucharbuf &buf, VSlot &dst, bool delta)
+{
+    while(buf.remaining())
+    {
+        int changed = buf.get();
+        if(changed >= 0x80) break;
+        switch(changed)
+        {
+            case VSLOT_SHPARAM:
+            {
+                string name;
+                getstring(name, buf);
+                SlotShaderParam p = { name[0] ? getshaderparamname(name) : NULL, -1, { 0, 0, 0, 0 } };
+                loopi(4) p.val[i] = getfloat(buf);
+                if(p.name) dst.params.add(p);
+                break;
+            }
+            case VSLOT_SCALE:
+                dst.scale = getfloat(buf);
+                if(dst.scale <= 0) dst.scale = 1;
+                else if(!delta) dst.scale = clamp(dst.scale, 1/8.0f, 8.0f);
+                break;
+            case VSLOT_ROTATION:
+                dst.rotation = getint(buf);
+                if(!delta) dst.rotation = clamp(dst.rotation, 0, 5);
+                break;
+            case VSLOT_OFFSET:
+                dst.offset.x = getint(buf);
+                dst.offset.y = getint(buf);
+                if(!delta) dst.offset.max(0);
+                break;
+            case VSLOT_SCROLL:
+                dst.scroll.x = getfloat(buf);
+                dst.scroll.y = getfloat(buf);
+                break;
+            case VSLOT_LAYER:
+            {
+                int tex = getuint(buf);
+                dst.layer = vslots.inrange(tex) ? tex : 0;
+                break;
+            }
+            case VSLOT_ALPHA:
+                dst.alphafront = clamp(getfloat(buf), 0.0f, 1.0f);
+                dst.alphaback = clamp(getfloat(buf), 0.0f, 1.0f);
+                break;
+            case VSLOT_COLOR:
+                dst.colorscale.r = clamp(getfloat(buf), 0.0f, 2.0f);
+                dst.colorscale.g = clamp(getfloat(buf), 0.0f, 2.0f);
+                dst.colorscale.b = clamp(getfloat(buf), 0.0f, 2.0f);
+                break;
+            default:
+                return false;
+        }
+        dst.changed |= 1<<changed;
+    }
+    if(buf.overread()) return false;
+    return true;
+}
+
 VSlot *findvslot(Slot &slot, const VSlot &src, const VSlot &delta)
 {
     for(VSlot *dst = slot.variants; dst; dst = dst->next)
@@ -1612,9 +1776,9 @@ static void fixinsidefaces(cube *c, const ivec &o, int size, int tex)
 {
     loopi(8) 
     {
-        ivec co(i, o.x, o.y, o.z, size);
+        ivec co(i, o, size);
         if(c[i].children) fixinsidefaces(c[i].children, co, size>>1, tex);
-        else loopj(6) if(!visibletris(c[i], j, co.x, co.y, co.z, size))
+        else loopj(6) if(!visibletris(c[i], j, co, size))
             c[i].texture[j] = tex;
     }
 }
@@ -2043,34 +2207,25 @@ void forcecubemapload(GLuint tex)
     extern int ati_cubemap_bug;
     if(!ati_cubemap_bug || !tex) return;
 
-    glMatrixMode(GL_PROJECTION);
-    glPushMatrix();
-    glLoadIdentity();
-    glMatrixMode(GL_MODELVIEW);
-    glPushMatrix();
-    glLoadIdentity();
-
-    cubemapshader->set();
+    SETSHADER(cubemap);
     GLenum depthtest = glIsEnabled(GL_DEPTH_TEST), blend = glIsEnabled(GL_BLEND);
     if(depthtest) glDisable(GL_DEPTH_TEST);
     glBindTexture(GL_TEXTURE_CUBE_MAP, tex);
     if(!blend) glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    glBegin(GL_POINTS);
-    loopi(3)
+    gle::defvertex(2);
+    gle::deftexcoord0(3);
+    gle::defcolor(4);
+    gle::begin(GL_LINES);
+    loopi(2)
     {
-        glColor4f(1, 1, 1, 0);
-        glTexCoord3f(0, 0, 1);
-        glVertex2f(0, 0);
+        gle::attribf(i*1e-3f, 0);
+        gle::attribf(0, 0, 1);
+        gle::attribf(1, 1, 1, 0);
     }
-    glEnd();
+    gle::end();
     if(!blend) glDisable(GL_BLEND);
     if(depthtest) glEnable(GL_DEPTH_TEST);
-
-    glMatrixMode(GL_PROJECTION);
-    glPopMatrix();
-    glMatrixMode(GL_MODELVIEW);
-    glPopMatrix();
 }
 
 cubemapside cubemapsides[6] =
@@ -2346,9 +2501,9 @@ ushort closestenvmap(const vec &o)
     return minemid;
 }
 
-ushort closestenvmap(int orient, int x, int y, int z, int size)
+ushort closestenvmap(int orient, const ivec &co, int size)
 {
-    vec loc(x, y, z);
+    vec loc(co);
     int dim = dimension(orient);
     if(dimcoord(orient)) loc[dim] += size;
     loc[R[dim]] += size/2;
