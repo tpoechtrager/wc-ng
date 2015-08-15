@@ -453,6 +453,7 @@ void fatal(const char *fmt, ...)
         vfprintf(logfd, fmt, args);
         fputc('\n', logfd);
         va_end(args);
+        fflush(logfd);
     }
     _exit(EXIT_FAILURE);
 }
