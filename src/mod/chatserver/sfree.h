@@ -30,24 +30,22 @@ static inline void szeromemory(void *ptr, size_t size)
     *(volatile char*)ptr = *(volatile char*)ptr;
 }
 
-#if !defined(_WIN32) && !defined(__APPLE__)
+#ifdef __GLIBC__
 #include <stdint.h>
 #include <dlfcn.h>
 
-extern "C" size_t malloc_usable_size(void *ptr);
+extern "C" {
 
-static void free_hook(void *ptr, const void*)
+size_t malloc_usable_size(void *ptr);
+void __libc_free(void *mem);
+
+void free(void *mem)
 {
     extern int useopenssl;
-    if (useopenssl) szeromemory(ptr, malloc_usable_size(ptr));
+    if (useopenssl) szeromemory(mem, malloc_usable_size(mem));
+    __libc_free(mem);
 }
 
-__attribute__((constructor (101)))
-__attribute__((visibility ("hidden")))
-void init_free_hook()
-{
-   void *f = dlsym(NULL, "__free_hook");
-   if (f) *(uintptr_t*)f = (uintptr_t)&free_hook;
 }
 #endif
 
