@@ -2843,11 +2843,10 @@ namespace server
 
     void receivefile(int sender, uchar *data, int len)
     {
-        if(!m_edit || len > 4*1024*1024) return;
+        if(!m_edit || len <= 0 || len > 4*1024*1024) return;
         clientinfo *ci = getinfo(sender);
         if(ci->state.state==CS_SPECTATOR && !ci->privilege && !ci->local) return;
         if(mapdata) DELETEP(mapdata);
-        if(!len) return;
         mapdata = opentempfile("mapdata", "w+b");
         if(!mapdata) { sendf(sender, 1, "ris", N_SERVMSG, "failed to open temporary file for map"); return; }
         mapdata->write(data, len);
