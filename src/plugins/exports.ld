@@ -1,0 +1,5 @@
+{
+  global: init;
+  local: *;
+};
+ 

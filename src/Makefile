@@ -72,7 +72,7 @@ ENET_INCLUDE= -Ienet/include
 ENET_CFLAGS= $(ENET_INCLUDE)
 
 ifeq (,$(findstring mingw,$(PLATFORM)))
-  override ENET_CFLAGS+= -fPIC $(shell ./build/enet_cflags.sh $(CC))
+  override ENET_CFLAGS+= $(shell ./build/enet_cflags.sh $(CC))
 endif
 
 ### Setup includes
@@ -143,6 +143,8 @@ ifneq (,$(findstring mingw,$(PLATFORM)))
   ARCH ?=
   MINGWPREFIX ?=
   MINGWCLANGPREFIX ?=
+
+  PLUGIN_LIBS= plugins/exports.def
 
   ifeq (,$(ARCH))
     $(error ARCH must be given! i686 or x86_64)
@@ -225,7 +227,7 @@ ifneq (,$(findstring mingw,$(PLATFORM)))
   CLIENT_LIBS+= -Wl,-Bdynamic
 
   PLUGIN_INCLUDES= $(CLIENT_INCLUDES) -DPLUGIN
-  PLUGIN_LIBS= -L$(WINLIB) -Wl,-Bstatic -lz -lSDL -Wl,-Bdynamic
+  PLUGIN_LIBS+= -L$(WINLIB) -Wl,-Bstatic -lz -lSDL -Wl,-Bdynamic
   PLUGIN_LIBS+= -lws2_32 $(SDL_DEP_LIBS)
 
   # Old MinGW-w64-crt doesn't have strtok_r.
@@ -281,6 +283,8 @@ ifeq (darwin,$(PLATFORM))
   UNIVERSAL ?= 0
   TARGETS ?=
   NOPCH= 1
+
+  PLUGIN_LIBS= -Wl,-exported_symbols_list,plugins/exports.ld64
 
   ifeq ($(UNIVERSAL), 1)
     override TARGETS= -arch i386 -arch x86_64
@@ -370,6 +374,8 @@ else
 
   ARCH ?= $(shell uname -m)
   GLIBCCOMPAT ?= 1
+
+  PLUGIN_LIBS= -Wl,--version-script,plugins/exports.ld
 
   ifneq (,$(findstring x86_64,$(ARCH)))
     PLATFORMFLAG= -m64
