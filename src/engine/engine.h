@@ -121,7 +121,7 @@ static inline bool pvsoccluded(const ivec &bborigin, int size)
 }
 
 // rendergl
-extern bool hasVAO, hasFBO, hasAFBO, hasDS, hasTF, hasTRG, hasS3TC, hasFXT1, hasAF, hasFBB, hasUBO, hasMBR;
+extern bool hasVAO, hasFBO, hasAFBO, hasDS, hasTF, hasTRG, TSW, hasS3TC, hasFXT1, hasAF, hasFBB, hasUBO, hasMBR;
 extern int hasstencil;
 extern int glversion, glslversion;
 
@@ -250,6 +250,7 @@ extern void previewprefab(const char *name, const vec &color);
 
 // octarender
 extern vector<tjoint> tjoints;
+extern vector<vtxarray *> varoot, valist;
 
 extern ushort encodenormal(const vec &n);
 extern vec decodenormal(ushort norm);
@@ -265,6 +266,8 @@ extern void updatevabb(vtxarray *va, bool force = false);
 extern void updatevabbs(bool force = false);
 
 // renderva
+extern vtxarray *visibleva, *reflectedva;
+
 extern void visiblecubes(bool cull = true);
 extern void setvfcP(float z = -1, const vec &bbmin = vec(-1, -1, -1), const vec &bbmax = vec(1, 1, 1));
 extern void savevfcP();

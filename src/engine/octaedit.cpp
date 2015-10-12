@@ -407,7 +407,7 @@ void rendereditcursor()
             normalizelookupcube(ivec(w));
             if(sdist == 0 || sdist > wdist) rayboxintersect(vec(lu), vec(gridsize), player->o, camdir, t=0, orient); // just getting orient
             cur = lu;
-            cor = ivec(w).mul(2).div(gridsize);
+            cor = ivec(vec(w).mul(2).div(gridsize));
             od = dimension(orient);
             d = dimension(sel.orient);
 
@@ -567,7 +567,6 @@ void commitchanges(bool force)
     if(!force && !haschanged) return;
     haschanged = false;
 
-    extern vector<vtxarray *> valist;
     int oldlen = valist.length();
     resetclipplanes();
     entitiesinoctanodes();
