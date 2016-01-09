@@ -844,7 +844,7 @@ struct ctfclientmode : clientmode
         if(shouldeffect) flageffect(i, m_hold ? 0 : team, interpflagpos(f), f.spawnloc);
         f.interptime = 0;
         returnflag(i, m_protect ? 0 : -1000);
-        mod::event::run(mod::event::FLAG_RESET); //NEW
+        mod::event::run(mod::event::FLAG_RESET, "s", ctfflagteam(team)); //NEW
         f.wasdropped = false; //NEW
         if(shouldeffect)
         {
