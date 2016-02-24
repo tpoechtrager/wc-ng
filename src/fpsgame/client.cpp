@@ -1376,6 +1376,7 @@ namespace game
 
             case N_SERVINFO:                   // welcome messsage from the server
             {
+                DEMORECORDER_SKIP_PACKET_NC; //NEW
                 int mycn = getint(p), prot = getint(p);
                 if(prot!=PROTOCOL_VERSION)
                 {

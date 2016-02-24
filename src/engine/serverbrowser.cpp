@@ -998,7 +998,7 @@ static inline void installextinfomenu()
 {
     extern bool menuexists(const char *name);
     if (!menuexists("extinfo"))
-        execute("newgui \"extinfo\" [ guistayopen [ guinoautotab [ guiextinfo ] ] ]"); // hack to get extinfo browser working, if the menu isn't installed...
+        execute("newgui \"extinfo\" [ guistayopen [ guinoautotab [ guiextinfo ] ] ]"); // hack to get extinfo browser working if the menu isn't installed...
 }
 
 void extinfoconnect(const char *name, const int *port, const char *pw)
@@ -1137,8 +1137,8 @@ void parsemasterreply(const char *reply, const char *mastername)
     conoutf("received %d server%s from master server%s", servercount, mod::plural(servercount), mastername);
     return;
     invalidcommand:
-    mod::erroroutf_r("master server%s sent an invalid command - executing scripts from master server is disabled in WC for security reasons", mastername);
-    conoutf("if you want to enable them anyway, type '/allowmasterserverscripts 1' - but be warned, the master server owner can controll your client");
+    mod::erroroutf_r("master server%s sent an invalid command - executing scripts from master server is disabled in WC-NG for security reasons", mastername);
+    conoutf("if you want to enable them anyway, type '/allowmasterserverscripts 1' - but be warned, the master server owner can control your client");
 }
 
 static const int MAXMASTERSERVERS = 100;
@@ -1146,7 +1146,7 @@ static vector<mod::strtool> masterservers;
 
 //
 // required in server.cpp
-// do NOT reset it to false once it was set to true
+// do NOT set this variable to false once it was set to true
 //
 bool havemultiplemasterservers = false;
 

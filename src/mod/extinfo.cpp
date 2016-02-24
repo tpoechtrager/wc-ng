@@ -475,22 +475,6 @@ namespace extinfo
                 break;
             }
 
-            if (addressequal(*addr, bouncerextinfohost))
-            {
-                // include sessionid when sending request to bouncer forward socket
-
-                packetbuf p(min(5+buf.dataLength, (size_t)MAXTRANS));
-
-                putint(p, game::sessionid);
-                p.put((uchar*)buf.data, buf.dataLength);
-
-                buf.data = p.buf;
-                buf.dataLength = p.length();
-
-                enet_socket_send(extsock, &address, &buf, 1);
-                return;
-            }
-
             enet_socket_send(extsock, &address, &buf, 1);
         }
 
@@ -562,11 +546,11 @@ namespace extinfo
 
         void connect()
         {
-            if (!game::showextinfo) return;
-
             serveruptime = -1;
             serveruptimerecv = -1;
             servermodname = NULL;
+
+            if (!game::showextinfo) return;
 
             ENetAddress extaddress = getextinfoaddress();
             requestuptime(&extaddress);
