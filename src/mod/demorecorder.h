@@ -78,11 +78,16 @@ namespace demorecorder
     void setupdemorecord(const char *name = NULL, bool force = false);
     void stopdemorecord();
 
-    class skip_packet_
+    class skippacket
     {
     public:
-        skip_packet_(ucharbuf &pb, int packettype) : initlen(pb.length()), p(pb)
+        skippacket(ucharbuf &p, int packettype, bool cond = true) : p(p), cond(cond)
         {
+            if (!demorecord || !cond)
+                return;
+
+            initlen = p.length();
+
             if (packettype < 128 && packettype > -127)
                 initlen--;
             else if (packettype < 0x8000 && packettype >= -0x8000)
@@ -90,39 +95,26 @@ namespace demorecorder
             else
                 initlen -= 5; // 0x81 + 4 bytes
         }
-        ~skip_packet_()
-        {
-            int bytes_to_skip = p.length()-initlen;
-            p.len -= bytes_to_skip;
-            p.maxlen -= bytes_to_skip;
-            if (p.maxlen) // there are packets left, need to move buffer
-                memmove(p.buf+p.length(), p.buf+p.length()+bytes_to_skip, p.maxlen-p.length());
-        }
-    private:
-        int initlen;
-        ucharbuf &p;
-    };
-
-    class skip_packet
-    {
-    public:
-        skip_packet(ucharbuf &p, int packettype, bool cond = true) : sp(NULL)
+        ~skippacket()
         {
             if (!demorecord || !cond)
                 return;
-            sp = new skip_packet_(p, packettype);
+
+            int bytestoskip = p.length()-initlen;
+            p.len -= bytestoskip;
+            p.maxlen -= bytestoskip;
+            if (p.maxlen) // there are packets left, need to move buffer
+                memmove(p.buf+p.length(), p.buf+p.length()+bytestoskip, p.maxlen-p.length());
         }
-        ~skip_packet()
-        {
-            if (sp) delete sp;
-        }
-    private:
-        skip_packet_ *sp;
+	private:
+        ucharbuf &p;
+        bool cond;
+        int initlen;
     };
 
-    #define DEMORECORDER_SKIP_PACKET(c) mod::demorecorder::skip_packet sp(p, type, !!(c))
-    #define DEMORECORDER_SKIP_PACKET_NC mod::demorecorder::skip_packet sp(p, type)
-    #define DEMORECORDER_SKIP_PACKET_FUNC(c, f) bool cond = !!(c); if (cond) f; mod::demorecorder::skip_packet sp(p, type, cond)
+    #define DEMORECORDER_SKIP_PACKET(c) mod::demorecorder::skippacket sp(p, type, !!(c))
+    #define DEMORECORDER_SKIP_PACKET_NC mod::demorecorder::skippacket sp(p, type)
+    #define DEMORECORDER_SKIP_PACKET_FUNC(c, f) bool cond = !!(c); if (cond) f; mod::demorecorder::skippacket sp(p, type, cond)
 
     struct demoinfo_t
     {
