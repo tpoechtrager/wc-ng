@@ -495,8 +495,12 @@ namespace demorecorder
             uchar buf[64];
             ucharbuf p(buf, sizeof(buf));
 
+            if (!d)
+                d = player1;
+
             putint(p, N_SOUND);
             putint(p, n);
+
             clientmsg(p.buf, p.length(), (fpsent*)d);
         }
 
@@ -537,6 +541,20 @@ namespace demorecorder
             putint(p, td);
             writedemo(0, p.buf, p.length());
         }
+		
+		void servinfo()
+		{
+            uchar buf[MAXTRANS];
+            ucharbuf p(buf, sizeof(buf));
+
+			putint(p, N_SERVINFO);
+			putint(p, -1); // cn
+			putint(p, PROTOCOL_VERSION);
+			putint(p, 0); // sessionid
+			sendstring(game::servinfo, p);
+			sendstring("", p); // servauth
+			writedemo(0, p.buf, p.length());
+		}
 
         void putextinfoobj(extinfo::playerv2 *ep)
         {
@@ -621,7 +639,7 @@ namespace demorecorder
 
             putint(p, curpeer ? (int)curpeer->address.host : -1);
             putint(p, curpeer ? (int)curpeer->address.port : -1);
-            sendstring(servinfo, p);
+            sendstring(::servinfo, p);
             putint(p, gamemode);
             sendstring(getclientmap(), p);
             putint(p, 0);
