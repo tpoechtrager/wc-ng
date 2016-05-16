@@ -541,20 +541,6 @@ namespace demorecorder
             putint(p, td);
             writedemo(0, p.buf, p.length());
         }
-		
-		void servinfo()
-		{
-            uchar buf[MAXTRANS];
-            ucharbuf p(buf, sizeof(buf));
-
-			putint(p, N_SERVINFO);
-			putint(p, -1); // cn
-			putint(p, PROTOCOL_VERSION);
-			putint(p, 0); // sessionid
-			sendstring(game::servinfo, p);
-			sendstring("", p); // servauth
-			writedemo(0, p.buf, p.length());
-		}
 
         void putextinfoobj(extinfo::playerv2 *ep)
         {
