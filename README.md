@@ -2,7 +2,7 @@
 
 ## Latest Release: ##
 
-Nightly Builds: [http://wc-ng.sauerworld.org/builds/nightly/b/list](http://wc-ng.sauerworld.org/builds/nightly/b/list)
+You can download the latest release [here](http://77.119.236.193/wc-ng/).
 
 ### Installation: ###
 
