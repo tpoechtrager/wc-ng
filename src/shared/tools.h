@@ -11,6 +11,7 @@
 typedef unsigned char uchar;
 typedef unsigned short ushort;
 typedef unsigned int uint;
+typedef unsigned long ulong;
 typedef signed long long int llong;
 typedef unsigned long long int ullong;
 
@@ -98,6 +99,30 @@ constexpr T clamp(T a, U b, U c) //NEW constexpr instead of static inline
 {
     return max(T(b), min(a, T(c)));
 }
+
+#ifdef __GNUC__
+#define bitscan(mask) (__builtin_ffs(mask)-1)
+#else
+#ifdef WIN32
+#pragma intrinsic(_BitScanForward)
+static inline int bitscan(uint mask)
+{
+    ulong i;
+    return _BitScanForward(&i, mask) ? i : -1;
+}
+#else
+static inline int bitscan(uint mask)
+{
+    if(!mask) return -1;
+    int i = 1;
+    if(!(mask&0xFFFF)) { i += 16; mask >>= 16; }
+    if(!(mask&0xFF)) { i += 8; mask >>= 8; }
+    if(!(mask&0xF)) { i += 4; mask >>= 4; }
+    if(!(mask&3)) { i += 2; mask >>= 2; }
+    return i - (mask&1);
+}
+#endif
+#endif
 
 #define rnd(x) ((int)(randomMT()&0x7FFFFFFF)%(x))
 #define rndscale(x) (float((randomMT()&0x7FFFFFFF)*double(x)/double(0x7FFFFFFF)))
@@ -253,6 +278,19 @@ struct databuf
     template<class U>
     databuf(T *buf, U maxlen) : buf(buf), len(0), maxlen((int)maxlen), flags(0) {}
 
+    void reset()
+    {
+        len = 0;
+        flags = 0;
+    }
+
+    void reset(T *buf_, int maxlen_)
+    {
+        reset();
+        buf = buf_;
+        maxlen = maxlen_;
+    }
+
     const T &get()
     {
         static T overreadval = 0;
@@ -266,6 +304,13 @@ struct databuf
         sz = clamp(sz, 0, maxlen-len);
         len += sz;
         return databuf(&buf[len-sz], sz);
+    }
+
+    T *pad(int numvals)
+    {
+        T *vals = &buf[len];
+        len += min(numvals, maxlen-len);
+        return vals;
     }
 
     void put(const T &val)
@@ -298,11 +343,14 @@ struct databuf
         len = max(len-n, 0);
     }
 
+    T *getbuf() const { return buf; }
     bool empty() const { return len==0; }
     int length() const { return len; }
     int remaining() const { return maxlen-len; }
     bool overread() const { return (flags&OVERREAD)!=0; }
     bool overwrote() const { return (flags&OVERWROTE)!=0; }
+
+    bool check(int n) { return remaining() >= n; }
 
     void forceoverread()
     {
@@ -707,7 +755,7 @@ template <class T, bool GLOBAL=false> struct vector //NEW  bool GLOBAL=false
 
     databuf<T> reserve(int sz)
     {
-        if(ulen+sz > alen) growbuf(ulen+sz);
+        if(alen-ulen < sz) growbuf(ulen+sz);
         return databuf<T>(&buf[ulen], sz);
     }
 
@@ -803,7 +851,7 @@ template <class T, bool GLOBAL=false> struct vector //NEW  bool GLOBAL=false
 
     T *insert(int i, const T *e, int n)
     {
-        if(ulen+n>alen) growbuf(ulen+n);
+        if(alen-ulen < n) growbuf(ulen+n);
         loopj(n) add(T());
         for(int p = ulen-1; p>=i+n; p--) buf[p] = buf[p-n];
         loopj(n) buf[i+j] = e[j];
@@ -959,13 +1007,6 @@ template<class H, class E, class K, class T> struct hashbase
         HTFIND( , insert(h, key) = elem);
     }
 
-    template<class V>
-    T &add(const V &elem)
-    {
-        const K &key = H::getkey(elem);
-        HTFIND( , insert(h, key) = elem);
-    }
-
     template<class U>
     T &operator[](const U &key)
     {
@@ -1050,6 +1091,12 @@ template<class T> struct hashset : hashbase<hashset<T>, T, T, T>
     static inline const T &getkey(const T &elem) { return elem; }
     static inline T &getdata(T &elem) { return elem; }
     template<class K> static inline void setkey(T &elem, const K &key) {}
+
+    template<class V>
+    T &add(const V &elem)
+    {
+        return basetype::access(elem, elem);
+    }
 };
 
 template<class T> struct hashnameset : hashbase<hashnameset<T>, T, const char *, T>
@@ -1062,6 +1109,12 @@ template<class T> struct hashnameset : hashbase<hashnameset<T>, T, const char *,
     template<class U> static inline const char *getkey(U *elem) { return elem->name; }
     static inline T &getdata(T &elem) { return elem; }
     template<class K> static inline void setkey(T &elem, const K &key) {}
+
+    template<class V>
+    T &add(const V &elem)
+    {
+        return basetype::access(getkey(elem), elem);
+    }
 };
 
 template<class K, class T> struct hashtableentry
