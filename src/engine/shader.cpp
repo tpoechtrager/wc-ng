@@ -57,9 +57,10 @@ Shader *generateshader(const char *name, const char *fmt, ...)
     if(!s)
     {
         defvformatstring(cmd, fmt, fmt);
+        bool wasstandard = standardshaders;
         standardshaders = true;
         execute(cmd); 
-        standardshaders = false;
+        standardshaders = wasstandard;
         s = name ? lookupshaderbyname(name) : NULL;
         if(!s) s = nullshader;
     }
@@ -998,7 +999,7 @@ void defershader(int *type, const char *name, const char *contents)
 
 void Shader::force()
 {
-    if(!deferred()) return;
+    if(!deferred() || !defer) return;
         
     char *cmd = defer;
     defer = NULL;
@@ -1442,6 +1443,7 @@ void cleanupshaders()
 {
     cleanuppostfx(true);
 
+    loadedshaders = false;
     nullshader = hudshader = hudnotextureshader = textureshader = notextureshader = nocolorshader = foggedshader = foggednotextureshader = stdworldshader = NULL;
     enumerate(shaders, Shader, s, s.cleanup());
     Shader::lastshader = NULL;

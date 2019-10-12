@@ -12,6 +12,8 @@ namespace game
     VARP(showspectators, 0, 1, 1);
     VARP(highlightscore, 0, 1, 1);
     VARP(showconnecting, 0, 0, 1);
+    VARP(hidefrags, 0, 1, 1);
+
     //NEW
     MODHVARP(scoreboardtextcolorhead, 0, 0xFFFF80, 0xFFFFFF);
     MODHVARP(scoreboardtextcolor, 0, 0xFFFFDD, 0xFFFFFF);
@@ -452,9 +454,8 @@ namespace game
                 g.pushlist(); // horizontal
             }
 
-            if(!cmode || !cmode->hidefrags() || displayextinfo(showfrags)) //NEW || displayextinfo(showfrags)
-            {
-                bool hidefrags = cmode && cmode->hidefrags(); //NEW
+            if(!cmode || !cmode->hidefrags() || !hidefrags || displayextinfo(showfrags)) //NEW || displayextinfo(showfrags)
+            { 
                 g.pushlist();
                 g.strut(6);
                 g.text("frags", fgcolor);

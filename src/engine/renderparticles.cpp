@@ -971,7 +971,7 @@ void renderparticles(bool mainpass)
     
     bool rendered = false;
     uint lastflags = PT_LERP|PT_SHADER,
-         flagmask = PT_LERP|PT_MOD|PT_SHADER;
+         flagmask = PT_LERP|PT_MOD|PT_SHADER|PT_NOTEX;
    
     if(binddepthfxtex()) flagmask |= PT_SOFT;
 

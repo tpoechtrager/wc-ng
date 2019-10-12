@@ -367,6 +367,7 @@ extern void adddecal(int type, const vec &center, const vec &surface, float radi
 // worldio
 extern bool load_world(const char *mname, const char *cname = NULL);
 extern bool save_world(const char *mname, bool nolms = false);
+extern void fixmapname(char *name);
 extern void getmapfilenames(const char *fname, const char *cname, char *pakname, char *mapname, char *cfgname);
 extern uint getmapcrc();
 extern void clearmapcrc();
@@ -401,7 +402,9 @@ extern void findplayerspawn(dynent *d, int forceent = -1, int tag = 0);
 // sound
 enum
 {
-    SND_MAP = 1<<0
+    SND_MAP     = 1<<0,
+    SND_NO_ALT  = 1<<1,
+    SND_USE_ALT = 1<<2
 };
 
 extern int playsound(int n, const vec *loc = NULL, extentity *ent = NULL, int flags = 0, int loops = 0, int fade = 0, int chanid = -1, int radius = 0, int expire = -1);
@@ -487,6 +490,7 @@ extern void notifywelcome();
 
 // crypto
 extern void genprivkey(const char *seed, vector<char> &privstr, vector<char> &pubstr);
+extern bool calcpubkey(const char *privstr, vector<char> &pubstr);
 extern bool hashstring(const char *str, char *result, int maxlen);
 extern bool hashstring(const char *str, const char *salt, string &hash); //NEW
 extern void answerchallenge(const char *privstr, const char *challenge, vector<char> &answerstr);

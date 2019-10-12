@@ -3,9 +3,7 @@
 
 #define _FILE_OFFSET_BITS 64
 
-#ifdef __GNUC__
-#define gamma __gamma
-#else
+#ifndef __GNUC__
 #define _CRT_SECURE_NO_WARNINGS //NEW
 #endif
 
@@ -18,10 +16,6 @@
 #endif
 //NEW END
 #include <math.h>
-
-#ifdef __GNUC__
-#undef gamma
-#endif
 
 #include <string.h>
 #include <stdio.h>

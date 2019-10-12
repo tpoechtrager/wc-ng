@@ -778,7 +778,7 @@ struct ctfclientmode : clientmode
         if(mod::event::run(append, sizeof(append), mod::event::FLAG_DROP, "dsd", d->clientnum, d->name, d->flags) != mod::event::RESULT) append[0] = 0;
         //NEW END
         conoutf(CON_GAMEINFO, "%s dropped %s", teamcolorname(d), teamcolorflag(f));
-        playsound(S_FLAGDROP);
+        teamsound(d, S_FLAGDROP);
     }
 
     void flagexplosion(int i, int team, const vec &loc)
@@ -823,7 +823,7 @@ struct ctfclientmode : clientmode
         mod::event::run(mod::event::FLAG_RETURN, "dsd", d->clientnum, d->name, d->flags); //NEW
         f.wasdropped = false; //NEW
         conoutf(CON_GAMEINFO, "%s returned %s", teamcolorname(d), teamcolorflag(f));
-        playsound(S_FLAGRETURN);
+        teamsound(d, S_FLAGRETURN);
     }
 
     void spawnflag(flag &f)
@@ -851,7 +851,7 @@ struct ctfclientmode : clientmode
         if(shouldeffect)
         {
             conoutf(CON_GAMEINFO, "%s reset", teamcolorflag(f));
-            playsound(S_FLAGRESET);
+            teamsound(team == ctfteamflag(player1->team), S_FLAGRESET);
         }
     }
 
@@ -915,7 +915,7 @@ struct ctfclientmode : clientmode
         else conoutf(CON_GAMEINFO, "%s stole %s%s", teamcolorname(d), teamcolorflag(f), append); //NEW append
         f.droptime = 0; //NEW
         ownflag(i, d, lastmillis);
-        playsound(S_FLAGPICKUP);
+        teamsound(d, S_FLAGPICKUP);
     }
 
     void invisflag(int i, int invis)

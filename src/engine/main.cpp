@@ -333,6 +333,16 @@ void renderprogress(float bar, const char *text, GLuint tex, bool background)   
 {
     if(!inbetweenframes || drawtex) return;
 
+    extern int menufps, maxfps;
+    int fps = menufps ? (maxfps ? min(maxfps, menufps) : menufps) : maxfps;
+    if(fps)
+    {
+        static int lastprogress = 0;
+        int ticks = SDL_GetTicks(), diff = ticks - lastprogress;
+        if(bar > 0 && diff >= 0 && diff < (1000 + fps-1)/fps) return;
+        lastprogress = ticks;
+    }
+
     clientkeepalive();      // make sure our connection doesn't time out while loading maps etc.
     
     #ifdef __APPLE__
@@ -558,10 +568,10 @@ static void setgamma(int val)
 }   
 
 static int curgamma = 100;
-VARFP(gamma, 30, 100, 300,
+VARFNP(gamma, reqgamma, 30, 100, 300,
 {
-    if(initing || gamma == curgamma) return;
-    curgamma = gamma;
+    if(initing || reqgamma == curgamma) return;
+    curgamma = reqgamma;
     setgamma(curgamma);
 });
 

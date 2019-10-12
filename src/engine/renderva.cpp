@@ -93,7 +93,7 @@ void addvisibleva(vtxarray *va)
     float dist = vadist(va, camera1->o);
     va->distance = int(dist); /*cv.dist(camera1->o) - va->size*SQRT3/2*/
 
-    int hash = min(int(dist*VASORTSIZE/worldsize), VASORTSIZE-1);
+    int hash = clamp(int(dist*VASORTSIZE/worldsize), 0, VASORTSIZE-1);
     vtxarray **prev = &vasort[hash], *cur = vasort[hash];
 
     while(cur && va->distance >= cur->distance)
@@ -1186,10 +1186,11 @@ static void changetexgen(renderstate &cur, int dim, Slot &slot, VSlot &vslot)
              cur.texgenvslot->rotation != vslot.rotation || cur.texgenvslot->scale != vslot.scale ||
              cur.texgenvslot->offset != vslot.offset || cur.texgenvslot->scroll != vslot.scroll))
         {
-            float xs = vslot.rotation>=2 && vslot.rotation<=4 ? -tex->xs : tex->xs,
-                  ys = (vslot.rotation>=1 && vslot.rotation<=2) || vslot.rotation==5 ? -tex->ys : tex->ys;
+            const texrotation &r = texrotations[vslot.rotation];
+            float xs = r.flipx ? -tex->xs : tex->xs,
+                  ys = r.flipy ? -tex->ys : tex->ys;
             vec2 scroll(vslot.scroll);
-            if((vslot.rotation&5)==1) swap(scroll.x, scroll.y);
+            if(r.swapxy) swap(scroll.x, scroll.y);
             scroll.x *= lastmillis*tex->xs/xs;
             scroll.y *= lastmillis*tex->ys/ys;
             if(cur.texgenscroll != scroll)

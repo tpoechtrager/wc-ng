@@ -291,8 +291,19 @@ namespace game
         genprivkey(secret, privkey, pubkey);
         conoutf("private key: %s", privkey.getbuf());
         conoutf("public key: %s", pubkey.getbuf());
+        result(privkey.getbuf());
     }
     COMMAND(genauthkey, "s");
+
+    void getpubkey(const char *desc)
+    {
+        authkey *k = findauthkey(desc);
+        if(!k) { if(desc[0]) conoutf("no authkey found: %s", desc); else conoutf("no global authkey found"); return; }
+        vector<char> pubkey;
+        if(!calcpubkey(k->key, pubkey)) { conoutf("failed calculating pubkey"); return; }
+        result(pubkey.getbuf());
+    }
+    COMMAND(getpubkey, "s");
 
     void saveauthkeys()
     {
@@ -557,6 +568,8 @@ namespace game
     ICOMMAND(auth, "s", (char *desc), tryauth(desc));
     ICOMMAND(sauth, "", (), if(servauth[0]) tryauth(servauth));
     ICOMMAND(dauth, "s", (char *desc), if(desc[0]) tryauth(desc));
+
+    ICOMMAND(getservauth, "", (), result(servauth));
 
     void togglespectator(int val, const char *who)
     {
@@ -1242,7 +1255,7 @@ namespace game
                 float yaw, pitch, roll;
                 loopk(3)
                 {
-                    int n = p.get(); n |= p.get()<<8; if(flags&(1<<k)) { n |= p.get()<<16; if(n&0x800000) n |= -1<<24; }
+                    int n = p.get(); n |= p.get()<<8; if(flags&(1<<k)) { n |= p.get()<<16; if(n&0x800000) n |= ~0U<<24; }
                     o[k] = n/DMF;
                 }
                 int dir = p.get(); dir |= p.get()<<8;
@@ -1694,7 +1707,8 @@ namespace game
                 if(!actor) break;
                 actor->frags = frags;
                 if(m_teammode) setteaminfo(actor->team, tfrags);
-                if(actor!=player1 && (!cmode || !cmode->hidefrags()))
+                extern int hidefrags;
+                if(actor!=player1 && (!cmode || !cmode->hidefrags() || !hidefrags))
                 {
                     defformatstring(ds, "%d", actor->frags);
                     particle_textcopy(actor->abovehead(), ds, PART_TEXT, 2000, 0x32FF64, 4.0f, -8);
@@ -2096,7 +2110,7 @@ namespace game
             {
                 int t = getint(p);
                 if     (t==I_QUAD)  { playsound(S_V_QUAD10, NULL, NULL, 0, 0, 0, -1, 0, 3000);  conoutf(CON_GAMEINFO, "\f2quad damage will spawn in 10 seconds!"); }
-                else if(t==I_BOOST) { playsound(S_V_BOOST10, NULL, NULL, 0, 0, 0, -1, 0, 3000); conoutf(CON_GAMEINFO, "\f2+10 health will spawn in 10 seconds!"); }
+                else if(t==I_BOOST) { playsound(S_V_BOOST10, NULL, NULL, 0, 0, 0, -1, 0, 3000); conoutf(CON_GAMEINFO, "\f2health boost will spawn in 10 seconds!"); }
                 break;
             }
 

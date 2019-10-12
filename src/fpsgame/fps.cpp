@@ -128,7 +128,7 @@ namespace game
 
     fpsent *hudplayer()
     {
-        if(thirdperson) return player1;
+        if(thirdperson && allowthirdperson()) return player1;
         fpsent *target = followingplayer();
         return target ? target : player1;
     }
@@ -143,6 +143,11 @@ namespace game
             player1->o = target->o;
             player1->resetinterp();
         }
+    }
+
+    bool allowthirdperson()
+    {
+        return !multiplayer(false) || player1->state==CS_SPECTATOR || player1->state==CS_EDITING || m_edit;
     }
 
     bool detachcamera()
@@ -784,6 +789,18 @@ namespace game
         return colorname(d, NULL, isteam(d->team, player1->team) ? "\fs\f1" : "\fs\f3", "\fr");
     }
     //NEW END
+
+    VARP(teamsounds, 0, 1, 1);
+
+    void teamsound(bool sameteam, int n, const vec *loc)
+    {
+        playsound(n, loc, NULL, teamsounds ? (m_teammode && sameteam ? SND_USE_ALT : SND_NO_ALT) : 0);
+    }
+
+    void teamsound(fpsent *d, int n, const vec *loc)
+    {
+        teamsound(isteam(d->team, player1->team), n, loc);
+    }
 
     void suicide(physent *d)
     {

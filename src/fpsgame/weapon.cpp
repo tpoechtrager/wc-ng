@@ -24,8 +24,9 @@ namespace game
         if(gun!=d->gunselect)
         {
             addmsg(N_GUNSELECT, "rci", d, gun);
-            playsound(S_WEAPLOAD, &d->o);
+            playsound(S_WEAPLOAD, d == player1 ? NULL : &d->o);
             if(mod::demorecorder::demorecord) mod::demorecorder::self::gunselect(gun); //NEW
+
         }
         d->gunselect = gun;
     }

@@ -175,10 +175,8 @@ bool isvalidcube(const cube &c)
     genclipplanes(c, ivec(0, 0, 0), 256, p);
     loopi(8) // test that cube is convex
     {
-        vec v;
-        calcvert(c, ivec(0, 0, 0), 256, v, i);
-        if(!pointincube(p, v))
-            return false;
+        vec v = p.v[i];
+        loopj(p.size) if(p.p[j].dist(v)>1e-3f) return false;
     }
     return true;
 }
@@ -240,7 +238,7 @@ cube &lookupcube(const ivec &to, int tsize, ivec &ro, int &rsize)
         scale--;
         c = &c->children[octastep(tx, ty, tz, scale)];
     } while(!(csize>>scale));
-    ro = ivec(tx, ty, tz).mask(~0<<scale);
+    ro = ivec(tx, ty, tz).mask(~0U<<scale);
     rsize = 1<<scale;
     return *c;
 }
@@ -286,7 +284,7 @@ const cube &neighbourcube(const cube &c, int orient, const ivec &co, int size, i
         scale--;
         nc = &nc->children[octastep(n.x, n.y, n.z, scale)];
     } while(!(size>>scale) && nc->children);
-    ro = n.mask(~0<<scale);
+    ro = n.mask(~0U<<scale);
     rsize = 1<<scale;
     return *nc;
 }

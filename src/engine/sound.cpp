@@ -37,9 +37,11 @@ struct soundconfig
         return p >= v.getbuf() + slots && p < v.getbuf() + slots+numslots && slots+numslots < v.length(); 
     }
 
-    int chooseslot() const
+    int chooseslot(int flags) const
     {
-        return numslots > 1 ? slots + rnd(numslots) : slots;
+        if(flags&SND_NO_ALT || numslots <= 1) return slots;
+        if(flags&SND_USE_ALT) return slots + 1 + rnd(numslots - 1);
+        return slots + rnd(numslots);
     }
 };
 
@@ -157,6 +159,15 @@ VARF(soundbufferlen, 128, 1024, 4096, initwarning("sound configuration", INIT_RE
 
 void initsound()
 {
+    SDL_version version;
+    SDL_GetVersion(&version);
+    if(version.major == 2 && version.minor == 0 && version.patch == 6)
+    {
+        nosound = true;
+        conoutf(CON_ERROR, "audio is broken in SDL 2.0.6");
+        return;
+    }
+
     if(Mix_OpenAudio(soundfreq, MIX_DEFAULT_FORMAT, 2, soundbufferlen)<0)
     {
         nosound = true;
@@ -457,7 +468,7 @@ void checkmapsounds()
 
 VAR(stereo, 0, 1, 1);
 
-VARP(maxsoundradius, 0, 340, 10000);
+VAR(maxsoundradius, 1, 340, 0);
 
 bool updatechannel(soundchannel &chan)
 {
@@ -605,7 +616,7 @@ int playsound(int n, const vec *loc, extentity *ent, int flags, int loops, int f
     }
     if(fade < 0) return -1;
 
-    soundslot &slot = sounds.slots[config.chooseslot()];
+    soundslot &slot = sounds.slots[config.chooseslot(flags)];
     if(!slot.sample->chunk && !slot.sample->load()) return -1;
 
     if(dbgsound) conoutf("sound: %s", slot.sample->name);

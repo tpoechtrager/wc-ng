@@ -332,11 +332,11 @@ static struct itemstat { int add, max, sound; const char *name; int icon, info; 
     {5,     15,    S_ITEMAMMO,   "RI", HICON_RIFLE, GUN_RIFLE},
     {10,    30,    S_ITEMAMMO,   "GL", HICON_GL, GUN_GL},
     {30,    120,   S_ITEMAMMO,   "PI", HICON_PISTOL, GUN_PISTOL},
-    {25,    100,   S_ITEMHEALTH, "H", HICON_HEALTH, -1},
-    {10,    1000,  S_ITEMHEALTH, "MH", HICON_HEALTH, -1},
+    {25,    100,   S_ITEMHEALTH, "H",  HICON_HEALTH, -1},
+    {100,   200,   S_ITEMHEALTH, "MH", HICON_HEALTH, 50},
     {100,   100,   S_ITEMARMOUR, "GA", HICON_GREEN_ARMOUR, A_GREEN},
     {200,   200,   S_ITEMARMOUR, "YA", HICON_YELLOW_ARMOUR, A_YELLOW},
-    {20000, 30000, S_ITEMPUP,    "Q", HICON_QUAD, -1},
+    {20000, 30000, S_ITEMPUP,    "Q",  HICON_QUAD, -1},
 };
 
 #define MAXRAYS 20
@@ -397,7 +397,7 @@ struct fpsstate
         itemstat &is = itemstats[type-I_SHELLS];
         switch(type)
         {
-            case I_BOOST: return maxhealth<is.max;
+            case I_BOOST: return maxhealth<is.max || health<maxhealth;
             case I_HEALTH: return health<maxhealth;
             case I_GREENARMOUR:
                 // (100h/100g only absorbs 200 damage)
@@ -415,7 +415,7 @@ struct fpsstate
         switch(type)
         {
             case I_BOOST:
-                maxhealth = min(maxhealth+is.add, is.max);
+                maxhealth = min(maxhealth+is.info, is.max);
             case I_HEALTH: // boost also adds to health
                 health = min(health+is.add, maxhealth);
                 break;
@@ -435,6 +435,7 @@ struct fpsstate
 
     void respawn()
     {
+        maxhealth = 100;
         health = maxhealth;
         armour = 0;
         armourtype = A_BLUE;
@@ -750,6 +751,8 @@ namespace game
     extern const char *teamcolor(const char *name, bool sameteam, const char *alt = NULL);
     extern const char *teamcolor(const char *name, const char *team, const char *alt = NULL);
     extern const char *chatcolorname(fpsent *d); //NEW
+    extern void teamsound(bool sameteam, int n, const vec *loc = NULL);
+    extern void teamsound(fpsent *d, int n, const vec *loc = NULL);
     extern fpsent *pointatplayer();
     extern fpsent *hudplayer();
     extern fpsent *followingplayer();
