@@ -2,8 +2,7 @@
 
 #include "engine.h"
 
-bool hasVAO = false,  hasFBO = false, hasAFBO = false, hasDS = false, hasTF = false, hasTRG = false, hasS3TC = false, hasFXT1 = false, hasAF = false, hasFBB = false, hasUBO = false, hasMBR = false;
-int hasstencil = 0;
+bool hasVAO = false, hasFBO = false, hasAFBO = false, hasDS = false, hasTF = false, hasTRG = false, hasTSW = false, hasS3TC = false, hasFXT1 = false, hasLATC = false, hasRGTC = false, hasAF = false, hasFBB = false, hasUBO = false, hasMBR = false;
 
 VAR(glversion, 1, 0, 0);
 VAR(glslversion, 1, 0, 0);
@@ -135,6 +134,9 @@ PFNGLUNIFORMMATRIX4X3FVPROC       glUniformMatrix4x3fv_       = NULL;
 PFNGLDRAWBUFFERSPROC glDrawBuffers_ = NULL;
 #endif
 
+// OpenGL 3.0
+PFNGLGETSTRINGIPROC glGetStringi_ = NULL;
+
 // GL_EXT_framebuffer_object
 PFNGLBINDRENDERBUFFERPROC        glBindRenderbuffer_        = NULL;
 PFNGLDELETERENDERBUFFERSPROC     glDeleteRenderbuffers_     = NULL;
@@ -190,20 +192,42 @@ VAR(rtsharefb, 0, 1, 1);
 
 VAR(dbgexts, 0, 0, 1);
 
-bool hasext(const char *exts, const char *ext)
+hashset<const char *> glexts;
+
+void parseglexts()
 {
-    int len = strlen(ext);
-    if(len) for(const char *cur = exts; (cur = strstr(cur, ext)); cur += len)
+    if(glversion >= 300)
     {
-        if((cur == exts || cur[-1] == ' ') && (cur[len] == ' ' || !cur[len])) return true;
+        GLint numexts = 0;
+        glGetIntegerv(GL_NUM_EXTENSIONS, &numexts);
+        loopi(numexts)
+        {
+            const char *ext = (const char *)glGetStringi_(GL_EXTENSIONS, i);
+            glexts.add(newstring(ext));
+        }
     }
-    return false;
+    else
+    {
+        const char *exts = (const char *)glGetString(GL_EXTENSIONS);
+        for(;;)
+        {
+            while(*exts == ' ') exts++;
+            if(!*exts) break;
+            const char *ext = exts;
+            while(*exts && *exts != ' ') exts++;
+            if(exts > ext) glexts.add(newstring(ext, size_t(exts-ext)));
+        }
+    }
+}
+
+bool hasext(const char *ext)
+{
+    return glexts.access(ext)!=NULL;
 }
 
 void gl_checkextensions()
 {
     const char *vendor = (const char *)glGetString(GL_VENDOR);
-    const char *exts = (const char *)glGetString(GL_EXTENSIONS);
     const char *renderer = (const char *)glGetString(GL_RENDERER);
     const char *version = (const char *)glGetString(GL_VERSION);
     conoutf(CON_INIT, "Renderer: %s (%s)", renderer, vendor);
@@ -233,18 +257,6 @@ void gl_checkextensions()
     else glversion = glmajorversion*100 + glminorversion*10;
 
     if(glversion < 210) fatal("OpenGL 2.1 or greater is required!");
-
-    const char *glslstr = (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
-    uint glslmajorversion, glslminorversion;
-    if(glslstr && sscanf(glslstr, " %u.%u", &glslmajorversion, &glslminorversion) == 2) glslversion = glslmajorversion*100 + glslminorversion;
-
-    if(glslversion < 120) fatal("GLSL 1.20 or greater is required!");
-
-    GLint val;
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &val);
-    hwtexsize = val;
-    glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE, &val);
-    hwcubetexsize = val;
 
 #ifdef WIN32
     glActiveTexture_ =            (PFNGLACTIVETEXTUREPROC)            getprocaddress("glActiveTexture");
@@ -371,7 +383,26 @@ void gl_checkextensions()
     glDrawBuffers_ =              (PFNGLDRAWBUFFERSPROC)              getprocaddress("glDrawBuffers");
 #endif
 
-    if(glversion >= 300 || hasext(exts, "GL_ARB_texture_float") || hasext(exts, "GL_ATI_texture_float"))
+    if(glversion >= 300)
+    {
+        glGetStringi_ =            (PFNGLGETSTRINGIPROC)          getprocaddress("glGetStringi");
+    }
+
+    const char *glslstr = (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
+    uint glslmajorversion, glslminorversion;
+    if(glslstr && sscanf(glslstr, " %u.%u", &glslmajorversion, &glslminorversion) == 2) glslversion = glslmajorversion*100 + glslminorversion;
+
+    if(glslversion < 120) fatal("GLSL 1.20 or greater is required!");
+
+    parseglexts();
+
+    GLint val;
+    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &val);
+    hwtexsize = val;
+    glGetIntegerv(GL_MAX_CUBE_MAP_TEXTURE_SIZE, &val);
+    hwcubetexsize = val;
+
+    if(glversion >= 300 || hasext("GL_ARB_texture_float") || hasext("GL_ATI_texture_float"))
     {
         hasTF = true;
         if(glversion < 300 && dbgexts) conoutf(CON_INIT, "Using GL_ARB_texture_float extension.");
@@ -380,30 +411,30 @@ void gl_checkextensions()
         smoothshadowmappeel = 1;
     }
 
-    if(glversion >= 300 || hasext(exts, "GL_ARB_texture_rg"))
+    if(glversion >= 300 || hasext("GL_ARB_texture_rg"))
     {
         hasTRG = true;
         if(glversion < 300 && dbgexts) conoutf(CON_INIT, "Using GL_ARB_texture_rg extension.");
     }
 
-    if(glversion >= 300 || hasext(exts, "GL_ARB_framebuffer_object"))
+    if(glversion >= 300 || hasext("GL_ARB_framebuffer_object"))
     {
-        glBindRenderbuffer_        = (PFNGLBINDRENDERBUFFERPROC)       getprocaddress("glBindRenderbufferEXT");
-        glDeleteRenderbuffers_     = (PFNGLDELETERENDERBUFFERSPROC)    getprocaddress("glDeleteRenderbuffersEXT");
-        glGenRenderbuffers_        = (PFNGLGENFRAMEBUFFERSPROC)        getprocaddress("glGenRenderbuffersEXT");
-        glRenderbufferStorage_     = (PFNGLRENDERBUFFERSTORAGEPROC)    getprocaddress("glRenderbufferStorageEXT");
-        glCheckFramebufferStatus_  = (PFNGLCHECKFRAMEBUFFERSTATUSPROC) getprocaddress("glCheckFramebufferStatusEXT");
-        glBindFramebuffer_         = (PFNGLBINDFRAMEBUFFERPROC)        getprocaddress("glBindFramebufferEXT");
-        glDeleteFramebuffers_      = (PFNGLDELETEFRAMEBUFFERSPROC)     getprocaddress("glDeleteFramebuffersEXT");
-        glGenFramebuffers_         = (PFNGLGENFRAMEBUFFERSPROC)        getprocaddress("glGenFramebuffersEXT");
-        glFramebufferTexture2D_    = (PFNGLFRAMEBUFFERTEXTURE2DPROC)   getprocaddress("glFramebufferTexture2DEXT");
-        glFramebufferRenderbuffer_ = (PFNGLFRAMEBUFFERRENDERBUFFERPROC)getprocaddress("glFramebufferRenderbufferEXT");
-        glGenerateMipmap_          = (PFNGLGENERATEMIPMAPPROC)         getprocaddress("glGenerateMipmapEXT");
-        glBlitFramebuffer_         = (PFNGLBLITFRAMEBUFFERPROC)        getprocaddress("glBlitFramebufferEXT");
+        glBindRenderbuffer_        = (PFNGLBINDRENDERBUFFERPROC)       getprocaddress("glBindRenderbuffer");
+        glDeleteRenderbuffers_     = (PFNGLDELETERENDERBUFFERSPROC)    getprocaddress("glDeleteRenderbuffers");
+        glGenRenderbuffers_        = (PFNGLGENFRAMEBUFFERSPROC)        getprocaddress("glGenRenderbuffers");
+        glRenderbufferStorage_     = (PFNGLRENDERBUFFERSTORAGEPROC)    getprocaddress("glRenderbufferStorage");
+        glCheckFramebufferStatus_  = (PFNGLCHECKFRAMEBUFFERSTATUSPROC) getprocaddress("glCheckFramebufferStatus");
+        glBindFramebuffer_         = (PFNGLBINDFRAMEBUFFERPROC)        getprocaddress("glBindFramebuffer");
+        glDeleteFramebuffers_      = (PFNGLDELETEFRAMEBUFFERSPROC)     getprocaddress("glDeleteFramebuffers");
+        glGenFramebuffers_         = (PFNGLGENFRAMEBUFFERSPROC)        getprocaddress("glGenFramebuffers");
+        glFramebufferTexture2D_    = (PFNGLFRAMEBUFFERTEXTURE2DPROC)   getprocaddress("glFramebufferTexture2D");
+        glFramebufferRenderbuffer_ = (PFNGLFRAMEBUFFERRENDERBUFFERPROC)getprocaddress("glFramebufferRenderbuffer");
+        glGenerateMipmap_          = (PFNGLGENERATEMIPMAPPROC)         getprocaddress("glGenerateMipmap");
+        glBlitFramebuffer_         = (PFNGLBLITFRAMEBUFFERPROC)        getprocaddress("glBlitFramebuffer");
         hasAFBO = hasFBO = hasFBB = hasDS = true;
         if(glversion < 300 && dbgexts) conoutf(CON_INIT, "Using GL_ARB_framebuffer_object extension.");
     }
-    else if(hasext(exts, "GL_EXT_framebuffer_object"))
+    else if(hasext("GL_EXT_framebuffer_object"))
     {
         glBindRenderbuffer_        = (PFNGLBINDRENDERBUFFERPROC)       getprocaddress("glBindRenderbufferEXT");
         glDeleteRenderbuffers_     = (PFNGLDELETERENDERBUFFERSPROC)    getprocaddress("glDeleteRenderbuffersEXT");
@@ -419,14 +450,14 @@ void gl_checkextensions()
         hasFBO = true;
         if(dbgexts) conoutf(CON_INIT, "Using GL_EXT_framebuffer_object extension.");
 
-        if(hasext(exts, "GL_EXT_framebuffer_blit"))
+        if(hasext("GL_EXT_framebuffer_blit"))
         {
             glBlitFramebuffer_     = (PFNGLBLITFRAMEBUFFERPROC)        getprocaddress("glBlitFramebufferEXT");
             hasFBB = true;
             if(dbgexts) conoutf(CON_INIT, "Using GL_EXT_framebuffer_blit extension.");
         }
 
-        if(hasext(exts, "GL_EXT_packed_depth_stencil") || hasext(exts, "GL_NV_packed_depth_stencil"))
+        if(hasext("GL_EXT_packed_depth_stencil") || hasext("GL_NV_packed_depth_stencil"))
         {
             hasDS = true;
             if(dbgexts) conoutf(CON_INIT, "Using GL_EXT_packed_depth_stencil extension.");
@@ -449,7 +480,7 @@ void gl_checkextensions()
         reservevpparams = 10;
         rtsharefb = 0; // work-around for strange driver stalls involving when using many FBOs
         extern int filltjoints;
-        if(glversion < 300 && !hasext(exts, "GL_EXT_gpu_shader4")) filltjoints = 0; // DX9 or less NV cards seem to not cause many sparklies
+        if(glversion < 300 && !hasext("GL_EXT_gpu_shader4")) filltjoints = 0; // DX9 or less NV cards seem to not cause many sparklies
 
         if(hasTF && hasTRG) fpdepthfx = 1;
     }
@@ -467,7 +498,7 @@ void gl_checkextensions()
         reservevpparams = 20;
     }
 
-    if(glversion >= 300 || hasext(exts, "GL_ARB_map_buffer_range"))
+    if(glversion >= 300 || hasext("GL_ARB_map_buffer_range"))
     {
         glMapBufferRange_         = (PFNGLMAPBUFFERRANGEPROC)        getprocaddress("glMapBufferRange");
         glFlushMappedBufferRange_ = (PFNGLFLUSHMAPPEDBUFFERRANGEPROC)getprocaddress("glFlushMappedBufferRange");
@@ -475,7 +506,7 @@ void gl_checkextensions()
         if(glversion < 300 && dbgexts) conoutf(CON_INIT, "Using GL_ARB_map_buffer_range.");
     }
 
-    if(glversion >= 310 || hasext(exts, "GL_ARB_uniform_buffer_object"))
+    if(glversion >= 310 || hasext("GL_ARB_uniform_buffer_object"))
     {
         glGetUniformIndices_       = (PFNGLGETUNIFORMINDICESPROC)      getprocaddress("glGetUniformIndices");
         glGetActiveUniformsiv_     = (PFNGLGETACTIVEUNIFORMSIVPROC)    getprocaddress("glGetActiveUniformsiv");
@@ -490,7 +521,7 @@ void gl_checkextensions()
         if(glversion < 310 && dbgexts) conoutf(CON_INIT, "Using GL_ARB_uniform_buffer_object extension.");
     }
 
-    if(glversion >= 300 || hasext(exts, "GL_ARB_vertex_array_object"))
+    if(glversion >= 300 || hasext("GL_ARB_vertex_array_object"))
     {
         glBindVertexArray_ =    (PFNGLBINDVERTEXARRAYPROC)   getprocaddress("glBindVertexArray");
         glDeleteVertexArrays_ = (PFNGLDELETEVERTEXARRAYSPROC)getprocaddress("glDeleteVertexArrays");
@@ -499,7 +530,7 @@ void gl_checkextensions()
         hasVAO = true;
         if(glversion < 300 && dbgexts) conoutf(CON_INIT, "Using GL_ARB_vertex_array_object extension.");
     }
-    else if(hasext(exts, "GL_APPLE_vertex_array_object"))
+    else if(hasext("GL_APPLE_vertex_array_object"))
     {
         glBindVertexArray_ =    (PFNGLBINDVERTEXARRAYPROC)   getprocaddress("glBindVertexArrayAPPLE");
         glDeleteVertexArrays_ = (PFNGLDELETEVERTEXARRAYSPROC)getprocaddress("glDeleteVertexArraysAPPLE");
@@ -509,7 +540,13 @@ void gl_checkextensions()
         if(dbgexts) conoutf(CON_INIT, "Using GL_APPLE_vertex_array_object extension.");
     }
 
-    if(hasext(exts, "GL_EXT_texture_compression_s3tc"))
+    if(glversion >= 330 || hasext("GL_ARB_texture_swizzle") || hasext("GL_EXT_texture_swizzle"))
+    {
+        hasTSW = true;
+        if(glversion < 330 && dbgexts) conoutf(CON_INIT, "Using GL_ARB_texture_swizzle extension.");
+    }
+
+    if(hasext("GL_EXT_texture_compression_s3tc"))
     {
         hasS3TC = true;
 #ifdef __APPLE__
@@ -519,19 +556,29 @@ void gl_checkextensions()
 #endif
         if(dbgexts) conoutf(CON_INIT, "Using GL_EXT_texture_compression_s3tc extension.");
     }
-    else if(hasext(exts, "GL_EXT_texture_compression_dxt1") && hasext(exts, "GL_ANGLE_texture_compression_dxt3") && hasext(exts, "GL_ANGLE_texture_compression_dxt5"))
+    else if(hasext("GL_EXT_texture_compression_dxt1") && hasext("GL_ANGLE_texture_compression_dxt3") && hasext("GL_ANGLE_texture_compression_dxt5"))
     {
         hasS3TC = true;
         if(dbgexts) conoutf(CON_INIT, "Using GL_EXT_texture_compression_dxt1 extension.");
     }
-    if(hasext(exts, "GL_3DFX_texture_compression_FXT1"))
+    if(hasext("GL_3DFX_texture_compression_FXT1"))
     {
         hasFXT1 = true;
         if(mesa) usetexcompress = max(usetexcompress, 1);
         if(dbgexts) conoutf(CON_INIT, "Using GL_3DFX_texture_compression_FXT1.");
     }
+    if(hasext("GL_EXT_texture_compression_latc"))
+    {
+        hasLATC = true;
+        if(dbgexts) conoutf(CON_INIT, "Using GL_EXT_texture_compression_latc extension.");
+    }
+    if(glversion >= 300 || hasext("GL_ARB_texture_compression_rgtc") || hasext("GL_EXT_texture_compression_rgtc"))
+    {
+        hasRGTC = true;
+        if(glversion < 300 && dbgexts) conoutf(CON_INIT, "Using GL_ARB_texture_compression_rgtc extension.");
+    }
 
-    if(hasext(exts, "GL_EXT_texture_filter_anisotropic"))
+    if(hasext("GL_EXT_texture_filter_anisotropic"))
     {
         GLint val;
         glGetIntegerv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &val);
@@ -540,7 +587,7 @@ void gl_checkextensions()
         if(dbgexts) conoutf(CON_INIT, "Using GL_EXT_texture_filter_anisotropic extension.");
     }
 
-    if(glversion >= 300 || hasext(exts, "GL_EXT_gpu_shader4"))
+    if(glversion >= 300 || hasext("GL_EXT_gpu_shader4"))
     {
         // on DX10 or above class cards (i.e. GF8 or RadeonHD) enable expensive features
         extern int grass, glare, maxdynlights, depthfxsize, blurdepthfx;
@@ -555,14 +602,17 @@ void gl_checkextensions()
 
 void glext(char *ext)
 {
-    const char *exts = (const char *)glGetString(GL_EXTENSIONS);
-    intret(hasext(exts, ext) ? 1 : 0);
+    intret(hasext(ext) ? 1 : 0);
 }
 COMMAND(glext, "s");
 
-void gl_init(int w, int h, int bpp, int depth, int fsaa)
+void gl_resize()
 {
-    glViewport(0, 0, w, h);
+    glViewport(0, 0, screenw, screenh);
+}
+
+void gl_init()
+{
     glClearColor(0, 0, 0, 0);
     glClearDepth(1);
     glDepthFunc(GL_LESS);
@@ -578,7 +628,8 @@ void gl_init(int w, int h, int bpp, int depth, int fsaa)
 #ifdef __APPLE__
     if(sdl_backingstore_bug)
     {
-        if(fsaa)
+        int fsaa = 0;
+        if(!SDL_GL_GetAttribute(SDL_GL_MULTISAMPLE_BUFFERS, &fsaa) && fsaa)
         {
             sdl_backingstore_bug = 1;
             // since SDL doesn't add kCGLPFABackingStore to the pixelformat and so it isn't guaranteed to be preserved - only manifests when using fsaa?
@@ -590,10 +641,11 @@ void gl_init(int w, int h, int bpp, int depth, int fsaa)
 
     gle::setup();
 
-    extern void setupshaders();
     setupshaders();
 
     setuptexcompress();
+
+    gl_resize();
 }
 
 VAR(wireframe, 0, 0, 1);
@@ -1031,10 +1083,10 @@ static void setupscreenquad()
     if(!screenquadvbo)
     {
         glGenBuffers_(1, &screenquadvbo);
-        glBindBuffer_(GL_ARRAY_BUFFER, screenquadvbo);
+        gle::bindvbo(screenquadvbo);
         vec2 verts[4] = { vec2(1, -1), vec2(-1, -1), vec2(1, 1), vec2(-1, 1) };
         glBufferData_(GL_ARRAY_BUFFER, sizeof(verts), verts, GL_STATIC_DRAW);
-        glBindBuffer_(GL_ARRAY_BUFFER, 0);
+        gle::clearvbo();
     }
 }
 
@@ -1046,12 +1098,12 @@ static void cleanupscreenquad()
 void screenquad()
 {
     setupscreenquad();
-    glBindBuffer_(GL_ARRAY_BUFFER, screenquadvbo);
+    gle::bindvbo(screenquadvbo);
     gle::enablevertex();
     gle::vertexpointer(sizeof(vec2), (const vec2 *)0, GL_FLOAT, 2);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     gle::disablevertex();
-    glBindBuffer_(GL_ARRAY_BUFFER, 0);
+    gle::clearvbo();
 }
 
 static LocalShaderParam screentexcoord[2] = { LocalShaderParam("screentexcoord0"), LocalShaderParam("screentexcoord1") };
@@ -1102,7 +1154,6 @@ void screenquadoffset(float x, float y, float w, float h, float x2, float y2, fl
     gle::attribf(x2, y2); gle::attribf(sx2, sy2); \
     gle::attribf(x1, y2); gle::attribf(sx1, sy2); \
     gle::end(); \
-    gle::disable(); \
 }
 
 void hudquad(float x, float y, float w, float h, float tx, float ty, float tw, float th)
@@ -1543,14 +1594,24 @@ void drawcubemap(int size, const vec &o, float yaw, float pitch, const cubemapsi
     drawtex = 0;
 }
 
+VAR(modelpreviewfov, 10, 20, 100);
+VAR(modelpreviewpitch, -90, -15, 90);
+
 namespace modelpreview
 {
     physent *oldcamera;
     physent camera;
 
-    void start(bool background)
+    float oldaspect, oldfovy, oldfov;
+    int oldfarplane;
+
+    void start(int x, int y, int w, int h, bool background)
     {
         drawtex = DRAWTEX_MODELPREVIEW;
+
+        glViewport(x, y, w, h);
+        glScissor(x, y, w, h);
+        glEnable(GL_SCISSOR_TEST);
 
         oldcamera = camera1;
         camera = *camera1;
@@ -1558,9 +1619,19 @@ namespace modelpreview
         camera.type = ENT_CAMERA;
         camera.o = vec(0, 0, 0);
         camera.yaw = 0;
-        camera.pitch = 0;
+        camera.pitch = modelpreviewpitch;
         camera.roll = 0;
         camera1 = &camera;
+
+        oldaspect = aspect;
+        oldfovy = fovy;
+        oldfov = curfov;
+        oldfarplane = farplane;
+
+        aspect = w/float(h);
+        fovy = modelpreviewfov;
+        curfov = 2*atan2(tan(fovy/2*RAD), 1/aspect)/RAD;
+        farplane = 1024;
 
         clearfogdist();
         zerofogcolor();
@@ -1568,7 +1639,7 @@ namespace modelpreview
 
         glClear((background ? GL_COLOR_BUFFER_BIT : 0) | GL_DEPTH_BUFFER_BIT);
 
-        projmatrix.perspective(90.0f, 1.0f, nearplane, 1024);
+        projmatrix.perspective(fovy, aspect, nearplane, farplane);
         setcamprojmatrix();
 
         glEnable(GL_CULL_FACE);
@@ -1584,9 +1655,24 @@ namespace modelpreview
         resetfogcolor();
         glClearColor(curfogcolor.r, curfogcolor.g, curfogcolor.b, 1);
 
+        aspect = oldaspect;
+        fovy = oldfovy;
+        curfov = oldfov;
+        farplane = oldfarplane;
+
         camera1 = oldcamera;
         drawtex = 0;
+
+        glDisable(GL_SCISSOR_TEST);
+        glViewport(0, 0, screenw, screenh);
     }
+}
+
+vec calcmodelpreviewpos(const vec &radius, float &yaw)
+{
+    yaw = fmod(lastmillis/10000.0f*360.0f, 360.0f);
+    float dist = 1.15f*max(radius.magnitude2()/aspect, radius.magnitude())/sinf(fovy/2*RAD);
+    return vec(0, dist, 0).rotate_around_x(camera1->pitch*RAD);
 }
 
 GLuint minimaptex = 0;
@@ -1631,11 +1717,10 @@ void drawminimap()
 
     renderprogress(0, "generating mini-map...", 0, !renderedframe);
 
-    int size = 1<<minimapsize, sizelimit = min(hwtexsize, min(screen->w, screen->h));
+    int size = 1<<minimapsize, sizelimit = min(hwtexsize, min(screenw, screenh));
     while(size > sizelimit) size /= 2;
     if(!minimaptex) glGenTextures(1, &minimaptex);
 
-    extern vector<vtxarray *> valist;
     ivec bbmin(worldsize, worldsize, worldsize), bbmax(0, 0, 0);
     loopv(valist)
     {
@@ -1715,7 +1800,7 @@ void drawminimap()
     glDisable(GL_DEPTH_TEST);
     glDisable(GL_CULL_FACE);
 
-    glViewport(0, 0, screen->w, screen->h);
+    glViewport(0, 0, screenw, screenh);
 
     camera1 = oldcamera;
     drawtex = 0;
@@ -1756,15 +1841,15 @@ FVARP(motionblurscale, 0, 0.5f, 1);
 
 void addmotionblur()
 {
-    if(!motionblur || max(screen->w, screen->h) > hwtexsize) return;
+    if(!motionblur || max(screenw, screenh) > hwtexsize) return;
 
     if(game::ispaused()) { lastmotion = 0; return; }
 
-    if(!motiontex || motionw != screen->w || motionh != screen->h)
+    if(!motiontex || motionw != screenw || motionh != screenh)
     {
         if(!motiontex) glGenTextures(1, &motiontex);
-        motionw = screen->w;
-        motionh = screen->h;
+        motionw = screenw;
+        motionh = screenh;
         lastmotion = 0;
         createtexture(motiontex, motionw, motionh, NULL, 3, 0, GL_RGB);
     }
@@ -1785,7 +1870,7 @@ void addmotionblur()
     {
         lastmotion = lastmillis - lastmillis%motionblurmillis;
 
-        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, screen->w, screen->h);
+        glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, screenw, screenh);
     }
 }
 
@@ -1796,16 +1881,15 @@ void invalidatepostfx()
     dopostfx = false;
 }
 
-void gl_drawhud(int w, int h);
-
 int xtraverts, xtravertsva;
 
-void gl_drawframe(int w, int h)
+void gl_drawframe()
 {
     if(deferdrawtextures) drawtextures();
 
     updatedynlights();
 
+    int w = screenw, h = screenh;
     aspect = forceaspect ? forceaspect : w/float(h);
     fovy = 2*atan2(tan(curfov/2*RAD), aspect)/RAD;
     
@@ -1840,7 +1924,7 @@ void gl_drawframe(int w, int h)
 
     visiblecubes();
     
-    glClear(GL_DEPTH_BUFFER_BIT|(wireframe && editmode ? GL_COLOR_BUFFER_BIT : 0)|(hasstencil ? GL_STENCIL_BUFFER_BIT : 0));
+    glClear(GL_DEPTH_BUFFER_BIT|(wireframe && editmode ? GL_COLOR_BUFFER_BIT : 0));
 
     if(wireframe && editmode) glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); 
 
@@ -1890,12 +1974,12 @@ void gl_drawframe(int w, int h)
     renderpostfx();
 
     g3d_render();
-    gl_drawhud(w, h);
+    gl_drawhud();
 
     renderedgame = false;
 }
 
-void gl_drawmainmenu(int w, int h)
+void gl_drawmainmenu()
 {
     xtravertsva = xtraverts = glde = gbatches = 0;
 
@@ -1904,7 +1988,7 @@ void gl_drawmainmenu(int w, int h)
     
     g3d_render();
     mod::event::run(mod::event::FRAME); //NEW
-    gl_drawhud(w, h);
+    gl_drawhud();
 }
 
 VARNP(damagecompass, usedamagecompass, 0, 1, 1);
@@ -2118,8 +2202,9 @@ namespace game
 }
 //NEW END
 
-void gl_drawhud(int w, int h)
+void gl_drawhud()
 {
+    int w = screenw, h = screenh;
     if(forceaspect) w = int(ceil(h*forceaspect));
 
     if(editmode && !hidehud && !mainmenu)
@@ -2207,7 +2292,7 @@ void gl_drawhud(int w, int h)
             game::renderping(conw, conh, FONTH);
             game::rendertimeleft(conw, conh, FONTH);
             if(recorder::isrecording() && (showfps || game::showtimeleft || (isconnected(false, false) && (game::shownetworkdisplay || game::showpingdisplay)))) roffset += FONTH;
-            game::rendernetwork(conw, conh, screen->w, screen->h, FONTH);
+            game::rendernetwork(conw, conh, screenw, screenh, FONTH);
             if(!showfps && ((game::showtimeleft || (isconnected(false, false) && (game::shownetworkdisplay || game::showpingdisplay))))) roffset += FONTH;
             if(game::renderstatsdisplay(conw, conh, FONTH, wallclock ? 220 : 0, roffset) && !wallclock) roffset += FONTH;
             //NEW END
@@ -2321,8 +2406,6 @@ void gl_drawhud(int w, int h)
     drawcrosshair(w, h);
     gamemod::renderplayerdisplay(w, h, FONTH, w, h); //NEW
     gamemod::renderhwdisplay(w, h, FONTH, w, h); //NEW
-
-    gle::disable();
 
     glDisable(GL_BLEND);
 }

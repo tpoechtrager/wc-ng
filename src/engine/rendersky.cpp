@@ -136,8 +136,6 @@ void drawenvbox(int w, float z1clip = 0.0f, float z2clip = 1.0f, int faces = 0x3
                        0.0f, 0.0f, -w,  w, w,
                        1.0f, 0.0f, -w, -w, w,
                        1.0f, 1.0f,  w, -w, w, sky[5]);
-
-    gle::disable();
 }
 
 void drawenvoverlay(int w, Texture *overlay = NULL, float tx = 0, float ty = 0)
@@ -174,7 +172,6 @@ void drawenvoverlay(int w, Texture *overlay = NULL, float tx = 0, float ty = 0)
             gle::attrib(color, 0.0f);
     }
     xtraverts += gle::end();
-    gle::disable();
 }
 
 FVARR(fogdomeheight, -1, -0.5f, 1);
@@ -296,12 +293,12 @@ namespace fogdome
         }
     
         if(!vbuf) glGenBuffers_(1, &vbuf);
-        glBindBuffer_(GL_ARRAY_BUFFER, vbuf);
+        gle::bindvbo(vbuf);
         glBufferData_(GL_ARRAY_BUFFER, numverts*sizeof(vert), verts, GL_STATIC_DRAW);
         DELETEA(verts);
     
         if(!ebuf) glGenBuffers_(1, &ebuf);
-        glBindBuffer_(GL_ELEMENT_ARRAY_BUFFER, ebuf);
+        gle::bindebo(ebuf);
         glBufferData_(GL_ELEMENT_ARRAY_BUFFER, (numindices + capindices)*sizeof(GLushort), indices, GL_STATIC_DRAW);
         DELETEA(indices);
     }
@@ -327,8 +324,8 @@ namespace fogdome
             lastclipz = fogdomeclip;
         }
     
-        glBindBuffer_(GL_ARRAY_BUFFER, vbuf);
-        glBindBuffer_(GL_ELEMENT_ARRAY_BUFFER, ebuf);
+        gle::bindvbo(vbuf);
+        gle::bindebo(ebuf);
 
         gle::vertexpointer(sizeof(vert), &verts->pos);
         gle::colorpointer(sizeof(vert), &verts->color);
@@ -342,8 +339,8 @@ namespace fogdome
         gle::disablevertex();
         gle::disablecolor();
     
-        glBindBuffer_(GL_ARRAY_BUFFER, 0);
-        glBindBuffer_(GL_ELEMENT_ARRAY_BUFFER, 0);
+        gle::clearvbo();
+        gle::clearebo();
     }
 }
 
@@ -439,7 +436,6 @@ void drawskybox(int farplane, bool limited)
     }
     else if(!alwaysrender)
     {
-        extern vtxarray *visibleva;
         renderedskyfaces = 0;
         renderedskyclip = INT_MAX;
         for(vtxarray *va = visibleva; va; va = va->next)

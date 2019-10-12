@@ -713,7 +713,7 @@ namespace searchdemo
     static SDL_mutex *searchmutex = NULL;
 
     static const int MAXTHREADS = 32;
-    MODVARP(searchdemothreadlimit, 1, min(guessnumcpus(), MAXTHREADS), min(guessnumcpus(), MAXTHREADS));
+    MODVARP(searchdemothreadlimit, 1, min(SDL_GetCPUCount(), MAXTHREADS), min(SDL_GetCPUCount(), MAXTHREADS));
     MODVARP(searchdemomaxresults, 0, 100, 250);
     MODVARP(searchdemomindemosize, 0, 0, 0x7FFFFFFF);
     ICOMMAND(searchdemoactive, "", (), intret(searchdemothread ? 1 : 0));
@@ -1196,7 +1196,7 @@ namespace searchdemo
 
         void createthread()
         {
-            thread = SDL_CreateThread(&checkdemothread, this);
+            thread = SDL_CreateThread(&checkdemothread, "", this);
 
             if (!thread)
                 abort();
@@ -1393,7 +1393,7 @@ namespace searchdemo
             abort();
 
         demothread_t *threads[MAXTHREADS];
-        int threadcount = min(guessnumcpus(), min(files.length(), maxthreads));
+        int threadcount = min(SDL_GetCPUCount(), min(files.length(), maxthreads));
         loopi(threadcount) threads[i] = new demothread_t(fp, filecount, gamemode, servername, mapname, mindemosize, i+1, threadavailablecond);
 
         #define JOIN do { joinallthreads((checkdemo**)&threads, threadcount); } while(0)
@@ -1840,7 +1840,7 @@ namespace searchdemo
 
         sdti->maxthreads = searchdemothreadlimit;
 
-        searchdemothread = SDL_CreateThread(&searchthread, sdti);
+        searchdemothread = SDL_CreateThread(&searchthread, "", sdti);
 
         if (!searchdemothread)
             abort();

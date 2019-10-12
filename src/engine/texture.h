@@ -549,6 +549,7 @@ struct Texture
         TRANSIENT  = 1<<9,
         COMPRESSED = 1<<10, 
         ALPHA      = 1<<11,
+        MIRROR     = 1<<12,
         FLAGS      = 0xFF00
     };
 
@@ -737,6 +738,9 @@ extern void linkslotshader(Slot &s, bool load = true);
 extern void linkvslotshader(VSlot &s, bool load = true);
 extern void linkslotshaders();
 extern const char *getshaderparamname(const char *name, bool insert = true);
+extern void setupshaders();
+extern void reloadshaders();
+extern void cleanupshaders();
 
 #define MAXDYNLIGHTS 5
 #define DYNLIGHTBITS 6

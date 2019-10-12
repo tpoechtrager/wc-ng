@@ -67,11 +67,11 @@ namespace mod
     SDL_mutex *threadmutex = NULL;
     vector<threadmessage*> threadmessages;
     vector<cubescript> threadscripts;
-    atomic<Uint32> mainthreadid(-1);
+    atomic<SDL_threadID> mainthreadid(-1);
 
     bool ismainthread()
     {
-        if (SDL_ThreadID() == mainthreadid || mainthreadid == (Uint32)-1)
+        if (SDL_ThreadID() == mainthreadid || mainthreadid == (SDL_threadID)-1)
             return true;
 
         return false;

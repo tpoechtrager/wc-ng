@@ -32,6 +32,7 @@ struct editline
             vformatstring(newtext, fmt, args, maxlen);
             va_end(args);
         }
+        else newtext[0] = '\0';
         DELETEA(text);
         text = newtext;
         return true;
@@ -226,7 +227,7 @@ struct editor
     bool region(int &sx, int &sy, int &ex, int &ey)
     {
         int n = lines.length(); 
-        assert(n != 0);
+        ASSERT(n != 0);
         if(cy < 0) cy = 0; else if(cy >= n) cy = n-1;
         int len = lines[cy].len;
         if(cx < 0) cx = 0; else if(cx > len) cx = len;
@@ -251,7 +252,7 @@ struct editor
     editline &currentline()
     {
         int n = lines.length(); 
-        assert(n != 0);
+        ASSERT(n != 0);
         if(cy < 0) cy = 0; else if(cy >= n) cy = n-1;
         if(cx < 0) cx = 0; else if(cx > lines[cy].len) cx = lines[cy].len;
         return lines[cy];
@@ -428,7 +429,7 @@ struct editor
         }
     }
 
-    void key(int code, int cooked)
+    void key(int code)
     {
         switch(code) 
         {
@@ -507,12 +508,14 @@ struct editor
             case SDLK_RSHIFT:
                 break;
             case SDLK_RETURN:    
-                cooked = '\n';
-                // fall through
-            default:
-                insert(cooked);
+                insert('\n');
                 break;
         }
+    }
+
+    void input(const char *str, int len)
+    {
+        loopi(len) insert(str[i]);
     }
 
     void hit(int hitx, int hity, bool dragged)
@@ -653,8 +656,6 @@ struct editor
             }
             h+=height;
         }
-
-        gle::disable();
     }
 };
 

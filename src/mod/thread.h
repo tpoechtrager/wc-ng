@@ -21,6 +21,8 @@
 
 #ifdef _WIN32
 #include <process.h>
+#else
+#include <pthread.h>
 #endif //_WIN32
 
 //#define CHECKMUTEX
@@ -124,7 +126,7 @@ public:
         // SDL_CreateThread deadlocks somewhere in the kernel on windows, don't know why ...
         t = (void*)_beginthreadex(NULL, 0, (uint (__stdcall *)(void *))fn, data, 0, NULL);
 #else
-        t = SDL_CreateThread(fn, data);
+        t = SDL_CreateThread(fn, "", data);
 #endif //_WIN32
 
 #ifdef PLUGIN
@@ -185,3 +187,33 @@ struct SDL_Mutex_Locker
     ~SDL_Mutex_Locker() { SDL_UnlockMutex(mutex); }
     SDL_mutex *mutex;
 };
+
+#ifdef _WIN32
+typedef HANDLE SYS_ThreadHandle;
+#else
+typedef pthread_t SYS_ThreadHandle;
+#endif // _WIN32
+
+static const int SDL_THREAD_KILLED = 0xFEFEFEFE;
+
+struct SDL_Thread
+{
+    SDL_threadID threadid;
+    SYS_ThreadHandle handle;
+    int status;
+};
+
+static inline void SDL_KillThread(SDL_Thread *thread)
+{
+#ifdef _WIN32
+    TerminateThread(thread->handle, 0);
+#else
+#ifdef PTHREAD_CANCEL_ASYNCHRONOUS
+    pthread_cancel(thread->handle);
+#else
+#error PTHREAD_CANCEL_ASYNCHRONOUS not defined
+#endif
+#endif // _WIN32
+    memset(&thread->handle, 0, sizeof(thread->handle));
+    thread->status = SDL_THREAD_KILLED;
+}

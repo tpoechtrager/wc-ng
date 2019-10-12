@@ -32,23 +32,6 @@ WEAK void operator delete[](void *p) throw() { if(p) free(p); }
 WEAK void operator delete[](void *p, size_t) throw() { if(p) free(p); } //NEW
 #endif //!USE_STD_NEW
 
-#ifndef WIN32
-#include <unistd.h>
-#endif
-
-int guessnumcpus()
-{
-    int numcpus = 1;
-#ifdef WIN32
-    SYSTEM_INFO info;
-    GetSystemInfo(&info);
-    numcpus = (int)info.dwNumberOfProcessors;
-#elif defined(_SC_NPROCESSORS_ONLN)
-    numcpus = (int)sysconf(_SC_NPROCESSORS_ONLN);
-#endif
-    return max(numcpus, 1);
-}
-    
 ////////////////////////// rnd numbers ////////////////////////////////////////
 
 #define N (624)             

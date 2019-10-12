@@ -40,6 +40,8 @@ void destroyvbo(GLuint vbo)
 
 void genvbo(int type, void *buf, int len, vtxarray **vas, int numva)
 {
+    gle::disable();
+
     GLuint vbo;
     glGenBuffers_(1, &vbo);
     GLenum target = type==VBO_VBUF ? GL_ARRAY_BUFFER : GL_ELEMENT_ARRAY_BUFFER;
@@ -77,13 +79,13 @@ bool readva(vtxarray *va, ushort *&edata, vertex *&vdata)
     edata = new ushort[3*va->tris];
     vdata = new vertex[va->verts];
 
-    glBindBuffer_(GL_ELEMENT_ARRAY_BUFFER, va->ebuf);
+    gle::bindebo(va->ebuf);
     glGetBufferSubData_(GL_ELEMENT_ARRAY_BUFFER, (size_t)va->edata, 3*va->tris*sizeof(ushort), edata);
-    glBindBuffer_(GL_ELEMENT_ARRAY_BUFFER, 0);
+    gle::clearebo();
 
-    glBindBuffer_(GL_ARRAY_BUFFER, va->vbuf);
+    gle::bindvbo(va->vbuf);
     glGetBufferSubData_(GL_ARRAY_BUFFER, va->voffset*sizeof(vertex), va->verts*sizeof(vertex), vdata);
-    glBindBuffer_(GL_ARRAY_BUFFER, 0);
+    gle::clearvbo();
     return true;
 }
 
@@ -771,6 +773,37 @@ vec decodenormal(ushort norm)
     norm--;
     const vec2 &yaw = sincos360[norm%360], &pitch = sincos360[norm/360+270];
     return vec(-yaw.y*pitch.x, yaw.x*pitch.x, pitch.y);
+}
+
+void guessnormals(const vec *pos, int numverts, vec *normals)
+{
+    vec n1, n2;
+    n1.cross(pos[0], pos[1], pos[2]);
+    if(numverts != 4)
+    {
+        n1.normalize();
+        loopk(numverts) normals[k] = n1;
+        return;
+    }
+    n2.cross(pos[0], pos[2], pos[3]);
+    if(n1.iszero())
+    {
+        n2.normalize();
+        loopk(4) normals[k] = n2;
+        return;
+    }
+    else n1.normalize();
+    if(n2.iszero())
+    {
+        loopk(4) normals[k] = n1;
+        return;
+    }
+    else n2.normalize();
+    vec avg = vec(n1).add(n2).normalize();
+    normals[0] = avg;
+    normals[1] = n1;
+    normals[2] = avg;
+    normals[3] = n2;
 }
 
 void addcubeverts(VSlot &vslot, int orient, int size, vec *pos, int convex, ushort texture, ushort lmid, vertinfo *vinfo, int numverts, int tj = -1, ushort envmap = EMID_NONE, int grassy = 0, bool alpha = false, int layer = LAYER_TOP)
@@ -1709,7 +1742,6 @@ void octarender()                               // creates va s for all leaf cub
         skyarea += va->skyarea;
     }
 
-    extern vtxarray *visibleva;
     visibleva = NULL;
 }
 

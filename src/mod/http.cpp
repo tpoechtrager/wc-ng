@@ -109,7 +109,7 @@ namespace http
 
         void process()
         {
-            if (!(thread = SDL_CreateThread((int (*)(void *))requestthread, this)))
+            if (!(thread = SDL_CreateThread((int (*)(void *))requestthread, "", this)))
                 fatal("failed to create http request thread");
         }
 

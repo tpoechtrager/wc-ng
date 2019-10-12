@@ -650,6 +650,11 @@ namespace game
         mod::event::run(mod::event::MAPSTART, "ss", server::modename(gamemode), game::getclientmap()); //NEW
     }
 
+    void loadingmap(const char *name)
+    {
+        if(identexists("playsong")) execute("playsong");
+    }
+
     void startmap(const char *name)   // called just after a map load
     {
         ai::savewaypoints();
@@ -1278,6 +1283,8 @@ namespace game
 
     void loadconfigs()
     {
+        if(identexists("playsong")) execute("playsong");
+
         execfile("auth.cfg", false);
     }
 }

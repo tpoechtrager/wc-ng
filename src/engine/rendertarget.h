@@ -242,8 +242,6 @@ struct rendertarget
             rendertiles();
         }
 
-        gle::disable();
-
         if(scissor) glDisable(GL_SCISSOR_TEST);
             
         glEnable(GL_DEPTH_TEST);
@@ -315,8 +313,8 @@ struct rendertarget
         h = min(h, hwtexsize);
         if(screenrect())
         {
-            if(w > screen->w) w = screen->w;
-            if(h > screen->h) h = screen->h;
+            if(w > screenw) w = screenw;
+            if(h > screenh) h = screenh;
         }
         vieww = w;
         viewh = h;
@@ -383,7 +381,7 @@ struct rendertarget
         }
 
         glBindFramebuffer_(GL_FRAMEBUFFER, 0);
-        glViewport(0, 0, screen->w, screen->h);
+        glViewport(0, 0, screenw, screenh);
     }
 
     virtual void dodebug(int w, int h) {}
@@ -448,7 +446,7 @@ struct rendertarget
     void debug()
     {
         if(!rendertex) return;
-        int w = min(screen->w, screen->h)/2, h = (w*screen->h)/screen->w;
+        int w = min(screenw, screenh)/2, h = (w*screenh)/screenw;
         hudshader->set(); 
         gle::colorf(1, 1, 1);
         glBindTexture(GL_TEXTURE_2D, rendertex);
@@ -457,7 +455,6 @@ struct rendertarget
         hudquad(0, 0, w, h, tx1, ty1, tx2-tx1, ty2-ty1);
         hudnotextureshader->set();
         dodebug(w, h);
-        gle::disable();
     }
 };
 

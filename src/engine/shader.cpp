@@ -103,13 +103,56 @@ static void showglslinfo(GLenum type, GLuint obj, const char *name, const char *
     }
 }
 
+static const char *finddecls(const char *line)
+{
+    for(;;)
+    {
+        const char *start = line + strspn(line, " \t\r");
+        switch(*start)
+        {
+            case '\n':
+                line = start + 1;
+                continue;
+            case '#':
+                do
+                {
+                    start = strchr(start + 1, '\n');
+                    if(!start) return NULL;
+                } while(start[-1] == '\\');
+                line = start + 1;
+                continue;
+            case '/':
+                switch(start[1])
+                {
+                    case '/':
+                        start = strchr(start + 2, '\n');
+                        if(!start) return NULL;
+                        line = start + 1;
+                        continue;
+                    case '*':
+                        start = strstr(start + 2, "*/");
+                        if(!start) return NULL;
+                        line = start + 2;
+                        continue;
+                }
+                // fall-through
+            default:
+                return line;
+        }
+    }
+}
+
 static void compileglslshader(GLenum type, GLuint &obj, const char *def, const char *name, bool msg = true) 
 {
     const char *source = def + strspn(def, " \t\r\n");
+    char *modsource = NULL;
     const char *parts[16];
     int numparts = 0;
     static const struct { int version; const char * const header; } glslversions[] =
     {
+        { 330, "#version 330\n" },
+        { 150, "#version 150\n" },
+        { 130, "#version 130\n" },
         { 120, "#version 120\n" }
     };
     loopi(sizeof(glslversions)/sizeof(glslversions[0])) if(glslversion >= glslversions[i].version)
@@ -117,8 +160,40 @@ static void compileglslshader(GLenum type, GLuint &obj, const char *def, const c
         parts[numparts++] = glslversions[i].header;
         break;
     }
-
-    parts[numparts++] = source;
+    if(glslversion >= 130)
+    {
+        if(type == GL_VERTEX_SHADER) parts[numparts++] =
+            "#define attribute in\n"
+            "#define varying out\n";
+        else if(type == GL_FRAGMENT_SHADER)
+        {
+            parts[numparts++] = "#define varying in\n";
+            if(glslversion < 150)
+            {
+                const char *decls = finddecls(source);
+                if(decls)
+                {
+                    static const char * const prec = "precision highp float;\n";
+                    if(decls != source)
+                    {
+                        static const int preclen = strlen(prec);
+                        int beforelen = int(decls-source), afterlen = strlen(decls);
+                        modsource = newstring(beforelen + preclen + afterlen);
+                        memcpy(modsource, source, beforelen);
+                        memcpy(&modsource[beforelen], prec, preclen);
+                        memcpy(&modsource[beforelen + preclen], decls, afterlen);
+                        modsource[beforelen + preclen + afterlen] = '\0';
+                    }
+                    else parts[numparts++] = prec;
+                }
+            }
+        }
+        parts[numparts++] =
+            "#define texture2D(sampler, coords) texture(sampler, coords)\n"
+            "#define texture2DProj(sampler, coords) textureProj(sampler, coords)\n"
+            "#define textureCube(sampler, coords) texture(sampler, coords)\n";
+    }
+    parts[numparts++] = modsource ? modsource : source;
 
     obj = glCreateShader_(type);
     glShaderSource_(obj, numparts, (const GLchar **)parts, NULL);
@@ -132,6 +207,8 @@ static void compileglslshader(GLenum type, GLuint &obj, const char *def, const c
         obj = 0;
     }
     else if(dbgshader > 1 && msg) showglslinfo(type, obj, name, parts, numparts);
+
+    if(modsource) delete[] modsource;
 }  
 
 VAR(dbgubo, 0, 0, 1);
@@ -477,8 +554,6 @@ void Shader::bindprograms()
     glUseProgram_(program);
     lastshader = this;
 }
-
-VARF(shaderprecision, 0, 0, 2, initwarning("shader quality"));
 
 bool Shader::compile()
 {
@@ -1266,7 +1341,7 @@ static int allocatepostfxtex(int scale)
     postfxtex &t = postfxtexs.add();
     t.scale = scale;
     glGenTextures(1, &t.id);
-    createtexture(t.id, max(screen->w>>scale, 1), max(screen->h>>scale, 1), NULL, 3, 1, GL_RGB);
+    createtexture(t.id, max(screenw>>scale, 1), max(screenh>>scale, 1), NULL, 3, 1, GL_RGB);
     return postfxtexs.length()-1;
 }
 
@@ -1289,11 +1364,11 @@ void renderpostfx()
 {
     if(postfxpasses.empty()) return;
 
-    if(postfxw != screen->w || postfxh != screen->h) 
+    if(postfxw != screenw || postfxh != screenh) 
     {
         cleanuppostfx(false);
-        postfxw = screen->w;
-        postfxh = screen->h;
+        postfxw = screenw;
+        postfxh = screenh;
     }
 
     int binds[NUMPOSTFXBINDS];
@@ -1303,7 +1378,7 @@ void renderpostfx()
     binds[0] = allocatepostfxtex(0);
     postfxtexs[binds[0]].used = 0;
     glBindTexture(GL_TEXTURE_2D, postfxtexs[binds[0]].id);
-    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, screen->w, screen->h);
+    glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, screenw, screenh);
 
     if(postfxpasses.length() > 1)
     {
@@ -1328,8 +1403,8 @@ void renderpostfx()
             glFramebufferTexture2D_(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, postfxtexs[tex].id, 0);
         }
 
-        int w = tex >= 0 ? max(screen->w>>postfxtexs[tex].scale, 1) : screen->w, 
-            h = tex >= 0 ? max(screen->h>>postfxtexs[tex].scale, 1) : screen->h;
+        int w = tex >= 0 ? max(screenw>>postfxtexs[tex].scale, 1) : screenw, 
+            h = tex >= 0 ? max(screenh>>postfxtexs[tex].scale, 1) : screenh;
         glViewport(0, 0, w, h);
         p.shader->set();
         LOCALPARAM(params, p.params);
@@ -1338,8 +1413,8 @@ void renderpostfx()
         {
             if(!tmu)
             {
-                tw = max(screen->w>>postfxtexs[binds[j]].scale, 1);
-                th = max(screen->h>>postfxtexs[binds[j]].scale, 1);
+                tw = max(screenw>>postfxtexs[binds[j]].scale, 1);
+                th = max(screenh>>postfxtexs[binds[j]].scale, 1);
             }
             else glActiveTexture_(GL_TEXTURE0 + tmu);
             glBindTexture(GL_TEXTURE_2D, postfxtexs[binds[j]].id);

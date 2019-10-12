@@ -27,8 +27,9 @@ extern const uchar fvmasks[64];
 extern const uchar faceedgesidx[6][4];
 extern bool inbetweenframes, renderedframe;
 
-extern SDL_Surface *screen;
-extern int zpass, glowpass;
+extern SDL_Window *screen;
+extern int screenw, screenh;
+extern int zpass;
 
 extern vector<int> entgroup;
 
@@ -57,6 +58,8 @@ struct font
 extern font *curfont;
 extern const matrix4x3 *textmatrix;
 
+extern void reloadfonts();
+
 // texture
 extern int hwtexsize, hwcubetexsize, hwmaxaniso, maxtexsize;
 
@@ -68,8 +71,8 @@ extern void loadlayermasks();
 extern Texture *cubemapload(const char *name, bool mipit = true, bool msg = true, bool transient = false);
 extern void drawcubemap(int size, const vec &o, float yaw, float pitch, const cubemapside &side);
 extern void loadshaders();
-extern void setuptexparameters(int tnum, void *pixels, int clamp, int filter, GLenum format = GL_RGB, GLenum target = GL_TEXTURE_2D);
-extern void createtexture(int tnum, int w, int h, void *pixels, int clamp, int filter, GLenum component = GL_RGB, GLenum target = GL_TEXTURE_2D, int pw = 0, int ph = 0, int pitch = 0, bool resize = true, GLenum format = GL_FALSE);
+extern void setuptexparameters(int tnum, void *pixels, int clamp, int filter, GLenum format = GL_RGB, GLenum target = GL_TEXTURE_2D, bool swizzle = false);
+extern void createtexture(int tnum, int w, int h, void *pixels, int clamp, int filter, GLenum component = GL_RGB, GLenum target = GL_TEXTURE_2D, int pw = 0, int ph = 0, int pitch = 0, bool resize = true, GLenum format = GL_FALSE, bool swizzle = false);
 extern void blurtexture(int n, int bpp, int w, int h, uchar *dst, const uchar *src, int margin = 0);
 extern void blurnormals(int n, int w, int h, bvec *dst, const bvec *src, int margin = 0);
 extern void renderpostfx();
@@ -89,6 +92,8 @@ extern void compactvslots(cube *c, int n = 8);
 extern void compactvslot(int &index);
 extern void compactvslot(VSlot &vs);
 extern int compactvslots();
+extern void reloadtextures();
+extern void cleanuptextures();
 
 // shadowmap
 
@@ -121,8 +126,7 @@ static inline bool pvsoccluded(const ivec &bborigin, int size)
 }
 
 // rendergl
-extern bool hasVAO, hasFBO, hasAFBO, hasDS, hasTF, hasTRG, hasS3TC, hasFXT1, hasAF, hasFBB, hasUBO, hasMBR;
-extern int hasstencil;
+extern bool hasVAO, hasFBO, hasAFBO, hasDS, hasTF, hasTRG, hasTSW, hasS3TC, hasFXT1, hasLATC, hasRGTC, hasAF, hasFBB, hasUBO, hasMBR;
 extern int glversion, glslversion;
 
 enum { DRAWTEX_NONE = 0, DRAWTEX_ENVMAP, DRAWTEX_MINIMAP, DRAWTEX_MODELPREVIEW };
@@ -138,12 +142,14 @@ extern int fog;
 extern float curfogstart, curfogend;
 
 extern void gl_checkextensions();
-extern void gl_init(int w, int h, int bpp, int depth, int fsaa);
-extern void cleangl();
+extern void gl_init();
+extern void gl_resize();
+extern void cleanupgl();
 extern void rendergame(bool mainpass = false);
 extern void invalidatepostfx();
-extern void gl_drawframe(int w, int h);
-extern void gl_drawmainmenu(int w, int h);
+extern void gl_drawhud();
+extern void gl_drawframe();
+extern void gl_drawmainmenu();
 extern void drawminimap();
 extern void drawtextures();
 extern void enablepolygonoffset(GLenum type);
@@ -169,7 +175,7 @@ extern void writecrosshairs(stream *f);
 
 namespace modelpreview
 {
-    extern void start(bool background = true);
+    extern void start(int x, int y, int w, int h, bool background = true);
     extern void end();
 }
 
@@ -245,11 +251,16 @@ extern void commitchanges(bool force = false);
 extern void rendereditcursor();
 extern void tryedit();
 
+extern void renderprefab(const char *name, const vec &o, float yaw, float pitch, float roll, float size = 1, const vec &color = vec(1, 1, 1));
+extern void previewprefab(const char *name, const vec &color);
+
 // octarender
 extern vector<tjoint> tjoints;
+extern vector<vtxarray *> varoot, valist;
 
 extern ushort encodenormal(const vec &n);
 extern vec decodenormal(ushort norm);
+extern void guessnormals(const vec *pos, int numverts, vec *normals);
 extern void reduceslope(ivec &n);
 extern void findtjoints();
 extern void octarender();
@@ -261,6 +272,8 @@ extern void updatevabb(vtxarray *va, bool force = false);
 extern void updatevabbs(bool force = false);
 
 // renderva
+extern vtxarray *visibleva, *reflectedva;
+
 extern void visiblecubes(bool cull = true);
 extern void setvfcP(float z = -1, const vec &bbmin = vec(-1, -1, -1), const vec &bbmax = vec(1, 1, 1));
 extern void savevfcP();
@@ -396,7 +409,8 @@ extern void checksleep(int millis);
 extern void clearsleep(bool clearoverrides = true);
 
 // console
-extern void keypress(int code, bool isdown, int cooked);
+extern void processtextinput(const char *str, int len);
+extern void processkey(int code, bool isdown);
 extern int rendercommand(int x, int y, int w);
 extern int renderconsole(int w, int h, int abovehud);
 extern void loadhistory(const char *file = ""); //NEW
@@ -415,6 +429,7 @@ extern void writecompletions(stream *f);
 enum
 {
     NOT_INITING = 0,
+    INIT_GAME,
     INIT_LOAD,
     INIT_RESET
 };
@@ -439,6 +454,14 @@ extern void renderprogress(float bar, const char *text, GLuint tex = 0, bool bac
 extern void getfps(int &fps, int &bestdiff, int &worstdiff);
 extern void swapbuffers(bool overlay = true);
 extern int getclockmillis();
+
+enum { KR_CONSOLE = 1<<0, KR_GUI = 1<<1, KR_EDITMODE = 1<<2 };
+
+extern void keyrepeat(bool on, int mask = ~0);
+
+enum { TI_CONSOLE = 1<<0, TI_GUI = 1<<1 };
+
+extern void textinput(bool on, int mask = ~0);
 
 // menu
 extern void menuprocess();
@@ -493,7 +516,7 @@ static inline model *loadmapmodel(int n)
 }
 
 // renderparticles
-extern void particleinit();
+extern void initparticles();
 extern void clearparticles();
 extern void clearparticleemitters();
 extern void seedparticles();
@@ -531,7 +554,8 @@ extern bool limitsky();
 // 3dgui
 extern void g3d_render();
 extern bool g3d_windowhit(bool on, bool act);
-
+extern bool g3d_key(int code, bool isdown);
+extern bool g3d_input(const char *str, int len);
 // menus
 extern int mainmenu;
 

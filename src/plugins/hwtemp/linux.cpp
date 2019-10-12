@@ -85,7 +85,7 @@ namespace hwtemp
 
                             temp &tt = t.temperatures[t.ntemperatures];
 
-                            if (t.exists(devicename)) formatstring(tt.desc)("%s@%s", devicename, sensorname);
+                            if (t.exists(devicename)) formatstring(tt.desc, "%s@%s", devicename, sensorname);
                             else copystring(tt.desc, devicename);
 
                             tt.temperature = (float)temperature;
@@ -166,7 +166,7 @@ namespace hwtemp
 
             temp &tt = t.temperatures[t.ntemperatures];
 
-            formatstring(tt.desc)("%s %d", hwdesc, t.ntemperatures);
+            formatstring(tt.desc, "%s %d", hwdesc, t.ntemperatures);
             tt.temperature = (float)temperature;
 
             if (type == 'F')

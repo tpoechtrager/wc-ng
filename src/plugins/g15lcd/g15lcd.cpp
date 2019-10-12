@@ -194,7 +194,7 @@ namespace g15lcd
 
         if (!(updatecond = SDL_CreateCond()) ||
             !(updatelock =  SDL_CreateMutex()) ||
-            !(updatethread = SDL_CreateThread(update, NULL)) ||
+            !(updatethread = SDL_CreateThread(update, "", NULL)) ||
             !(textlock = SDL_CreateMutex()))
         {
             host->client.erroroutf_r("g15lcd: failed to create required ressources");

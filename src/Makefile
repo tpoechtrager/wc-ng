@@ -109,7 +109,7 @@ ifeq (,$(findstring mingw,$(PLATFORM)))
 
   ifeq (1,$(USESTATICLIBS))
     CHATSERV_INCLUDES+= -Ilib/include
-    CHATSERV_LIBS+= $(STATIC_LIB_DIR)/libSDL.a
+    CHATSERV_LIBS+= $(STATIC_LIB_DIR)/libSDL2.a
   endif
 
   ifeq (,$(findstring darwin,$(PLATFORM)))
@@ -124,8 +124,8 @@ ifeq (,$(findstring mingw,$(PLATFORM)))
       STATIC_LIB_DIR= lib/$(PLATFORM)/$(LIBDIR)
     endif
 
-    CHATSERV_INCLUDES+= -Ilib/include/SDL1
-    CLIENT_INCLUDES+= -Ilib/include -Ilib/include/SDL1 -Ilib/include/GeoIP
+    CHATSERV_INCLUDES+= -Ilib/include/SDL2
+    CLIENT_INCLUDES+= -Ilib/include -Ilib/include/SDL2 -Ilib/include/GeoIP
     CLIENT_LIBS+= $(STATIC_LIB_DIR)/libcurl.a $(STATIC_LIB_DIR)/libGeoIP.a
     CLIENT_LIBS+= $(STATIC_LIB_DIR)/libssl.a $(STATIC_LIB_DIR)/libcrypto.a
   else
@@ -202,8 +202,8 @@ ifneq (,$(findstring mingw,$(PLATFORM)))
   override CFLAGS:= $(PLATFORMFLAG) $(CFLAGS)
   override LDFLAGS:= $(PLATFORMFLAG) $(LDFLAGS)
 
-  CLIENT_INCLUDES= $(INCLUDES) -Ilib/include -Ilib/include/SDL1 -Ilib/include/GeoIP
-  SERVER_INCLUDES= -DSTANDALONE $(INCLUDES) -Ilib/include -Ilib/include/SDL1
+  CLIENT_INCLUDES= $(INCLUDES) -Ilib/include -Ilib/include/SDL2 -Ilib/include/GeoIP
+  SERVER_INCLUDES= -DSTANDALONE $(INCLUDES) -Ilib/include -Ilib/include/SDL2
 
   SDL_DEP_LIBS= -lgdi32 -ldxguid -lole32 -lwinmm
   SDL_DEP_LIBS+= -limm32 -lversion -loleaut32
@@ -325,15 +325,15 @@ ifeq (darwin,$(PLATFORM))
   # The Apple Linker doesn't understand -Bstatic ...
   CLIENT_LIBS+= -framework OpenGL
   CLIENT_LIBS+= $(SDL_DEP_LIBS)
-  CLIENT_LIBS+= $(STATIC_LIB_DIR)/libSDL_mixer.a
-  CLIENT_LIBS+= $(STATIC_LIB_DIR)/libSDL.a
+  CLIENT_LIBS+= $(STATIC_LIB_DIR)/libSDL2_mixer.a
+  CLIENT_LIBS+= $(STATIC_LIB_DIR)/libSDL2.a
   CLIENT_LIBS+= -liconv
-  CLIENT_LIBS+= $(STATIC_LIB_DIR)/libSDL_image.a
+  CLIENT_LIBS+= $(STATIC_LIB_DIR)/libSDL2_image.a
   CLIENT_LIBS+= $(STATIC_LIB_DIR)/libvorbisfile.a
   CLIENT_LIBS+= $(STATIC_LIB_DIR)/libvorbis.a
   CLIENT_LIBS+= $(STATIC_LIB_DIR)/libogg.a
-  CLIENT_LIBS+= $(STATIC_LIB_DIR)/libSDL.a
-  CLIENT_LIBS+= $(STATIC_LIB_DIR)/libSDL_image.a
+  CLIENT_LIBS+= $(STATIC_LIB_DIR)/libSDL2.a
+  CLIENT_LIBS+= $(STATIC_LIB_DIR)/libSDL2_image.a
   CLIENT_LIBS+= $(STATIC_LIB_DIR)/libpng16.a
   CLIENT_LIBS+= $(STATIC_LIB_DIR)/libjpeg.a
   CLIENT_LIBS+= $(STATIC_LIB_DIR)/libz.a
@@ -345,7 +345,7 @@ ifeq (darwin,$(PLATFORM))
   HWTEMP_LIBS= $(STATIC_LIB_DIR)/smc.a
 
   ifeq (1, $(LTO))
-    HWTEMP_LIBS+= $(STATIC_LIB_DIR)/libSDL.a -framework IOKit
+    HWTEMP_LIBS+= $(STATIC_LIB_DIR)/libSDL2.a -framework IOKit
   endif
 
   xcode/Launcher%: override OBJCFLAGS+=-Wno-deprecated-declarations
@@ -442,15 +442,15 @@ else
   ifeq ($(USESTATICLIBS),1)
     CLIENT_LIBS+= $(NATIVE_LIB_PATH)
     CLIENT_LIBS+= -lGL -lX11 -lXext -lXrandr
-    CLIENT_LIBS+= $(STATIC_LIB_DIR)/libSDL_mixer.a
+    CLIENT_LIBS+= $(STATIC_LIB_DIR)/libSDL2_mixer.a
     CLIENT_LIBS+= $(STATIC_LIB_DIR)/libvorbisfile.a
     CLIENT_LIBS+= $(STATIC_LIB_DIR)/libvorbis.a
     CLIENT_LIBS+= $(STATIC_LIB_DIR)/libogg.a
-    CLIENT_LIBS+= $(STATIC_LIB_DIR)/libSDL.a
-    CLIENT_LIBS+= $(STATIC_LIB_DIR)/libSDL_image.a
+    CLIENT_LIBS+= $(STATIC_LIB_DIR)/libSDL2.a
+    CLIENT_LIBS+= $(STATIC_LIB_DIR)/libSDL2_image.a
     CLIENT_LIBS+= $(STATIC_LIB_DIR)/libpng16.a
     CLIENT_LIBS+= $(STATIC_LIB_DIR)/libjpeg.a
-    PLUGIN_LIBS+= $(STATIC_LIB_DIR)/libSDL.a
+    PLUGIN_LIBS+= $(STATIC_LIB_DIR)/libSDL2.a
     ifeq ($(PLATFORM),freebsd)
       CLIENT_LIBS+= -lvgl -liconv -lpulse -lpulse-simple
     endif

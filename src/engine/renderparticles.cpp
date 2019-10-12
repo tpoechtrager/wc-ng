@@ -400,7 +400,6 @@ struct meterrenderer : listrenderer
 
     void endrender()
     {
-        gle::disable();
         glEnable(GL_BLEND);
     }
 
@@ -477,7 +476,6 @@ struct textrenderer : listrenderer
 
     void endrender()
     {
-        gle::disable();
     }
 
     void killpart(listparticle *p)
@@ -786,10 +784,10 @@ struct varenderer : partrenderer
         genverts();
 
         if(!vbo) glGenBuffers_(1, &vbo);
-        glBindBuffer_(GL_ARRAY_BUFFER, vbo);
+        gle::bindvbo(vbo);
         glBufferData_(GL_ARRAY_BUFFER, maxparts*4*sizeof(partvert), NULL, GL_STREAM_DRAW);
         glBufferSubData_(GL_ARRAY_BUFFER, 0, numparts*4*sizeof(partvert), verts);
-        glBindBuffer_(GL_ARRAY_BUFFER, 0);
+        gle::clearvbo();
     }
  
     void render()
@@ -797,7 +795,7 @@ struct varenderer : partrenderer
         if(!tex) tex = textureload(texname, texclamp);
         glBindTexture(GL_TEXTURE_2D, tex->id);
 
-        glBindBuffer_(GL_ARRAY_BUFFER, vbo);
+        gle::bindvbo(vbo);
         const partvert *ptr = 0;
         gle::vertexpointer(sizeof(partvert), ptr->pos.v);
         gle::texcoord0pointer(sizeof(partvert), ptr->tc.v);
@@ -813,7 +811,7 @@ struct varenderer : partrenderer
         gle::disablevertex();
         gle::disabletexcoord0();
         gle::disablecolor();
-        glBindBuffer_(GL_ARRAY_BUFFER, 0);
+        gle::clearvbo();
     }
 };
 typedef varenderer<PT_PART> quadrenderer;
@@ -915,10 +913,10 @@ void finddepthfxranges()
     if(depthfxscissor<2 && numdepthfxranges>0) depthfxtex.addscissorbox(depthfxmin, depthfxmax);
 }
  
-VARFP(maxparticles, 10, 4000, 40000, particleinit());
-VARFP(fewparticles, 10, 100, 40000, particleinit());
+VARFP(maxparticles, 10, 4000, 40000, initparticles());
+VARFP(fewparticles, 10, 100, 40000, initparticles());
 
-void particleinit() 
+void initparticles() 
 {
     if(!particleshader) particleshader = lookupshaderbyname("particle");
     if(!particlenotextureshader) particlenotextureshader = lookupshaderbyname("particlenotexture");
@@ -950,7 +948,7 @@ void debugparticles()
     if(!dbgparts) return;
     int n = sizeof(parts)/sizeof(parts[0]);
     pushhudmatrix();
-    hudmatrix.ortho(0, FONTH*n*2*screen->w/float(screen->h), FONTH*n*2, 0, -1, 1); //squeeze into top-left corner        
+    hudmatrix.ortho(0, FONTH*n*2*screenw/float(screenh), FONTH*n*2, 0, -1, 1); //squeeze into top-left corner        
     flushhudmatrix();
     hudshader->set();
     loopi(n) draw_text(parts[i]->info, FONTH, (i+n/2)*FONTH);
