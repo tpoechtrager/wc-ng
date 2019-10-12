@@ -1002,7 +1002,7 @@ namespace recorder
 
     void readbuffer(videobuffer &m, uint nextframe)
     {
-        bool accelyuv = movieaccelyuv && renderpath!=R_FIXEDFUNCTION && !(m.w%8),
+        bool accelyuv = movieaccelyuv && !(m.w%8),
              usefbo = movieaccel && hasFBO && hasTR && file->videow <= (uint)screen->w && file->videoh <= (uint)screen->h && (accelyuv || file->videow < (uint)screen->w || file->videoh < (uint)screen->h);
         uint w = screen->w, h = screen->h;
         if(usefbo) { w = file->videow; h = file->videoh; }
@@ -1052,7 +1052,7 @@ namespace recorder
                 glCopyTexSubImage2D(GL_TEXTURE_RECTANGLE_ARB, 0, 0, 0, 0, 0, screen->w, screen->h);
             }
 
-            if(tw > m.w || th > m.h || (!accelyuv && renderpath != R_FIXEDFUNCTION && tw >= m.w && th >= m.h))
+            if(tw > m.w || th > m.h || (!accelyuv && tw >= m.w && th >= m.h))
             {
                 glBindFramebuffer_(GL_FRAMEBUFFER_EXT, scalefb);
                 glViewport(0, 0, tw, th);
@@ -1062,20 +1062,18 @@ namespace recorder
                 glOrtho(0, tw, 0, th, -1, 1);
                 glMatrixMode(GL_MODELVIEW);
                 glLoadIdentity();
-                glEnable(GL_TEXTURE_RECTANGLE_ARB);
                 do
                 {
                     glFramebufferTexture2D_(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_RECTANGLE_ARB, scaletex[1], 0);
                     glBindTexture(GL_TEXTURE_RECTANGLE_ARB, scaletex[0]);
                     uint dw = max(tw/2, m.w), dh = max(th/2, m.h);
-                    if(dw == m.w && dh == m.h && !accelyuv && renderpath != R_FIXEDFUNCTION) { SETSHADER(movieyuv); m.format = aviwriter::VID_YUV; }
+                    if(dw == m.w && dh == m.h && !accelyuv) { SETSHADER(movieyuv); m.format = aviwriter::VID_YUV; }
                     else SETSHADER(moviergb);
                     drawquad(tw, th, 0, 0, dw, dh);
                     tw = dw;
                     th = dh;
                     swap(scaletex[0], scaletex[1]);
                 } while(tw > m.w || th > m.h);
-                glDisable(GL_TEXTURE_RECTANGLE_ARB);
             }
             if(accelyuv)
             {
@@ -1087,12 +1085,10 @@ namespace recorder
                 glOrtho(0, (m.w*3)/8, m.h, 0, -1, 1);
                 glMatrixMode(GL_MODELVIEW);
                 glLoadIdentity();
-                glEnable(GL_TEXTURE_RECTANGLE_ARB);
                 glBindTexture(GL_TEXTURE_RECTANGLE_ARB, scaletex[0]); 
                 SETSHADER(moviey); drawquad(m.w, m.h, 0, 0, m.w/4, m.h);
                 SETSHADER(moviev); drawquad(m.w, m.h, m.w/4, 0, m.w/8, m.h/2);
                 SETSHADER(movieu); drawquad(m.w, m.h, m.w/4, m.h/2, m.w/8, m.h/2);
-                glDisable(GL_TEXTURE_RECTANGLE_ARB);
                 const uint planesize = m.w * m.h;
                 glPixelStorei(GL_PACK_ALIGNMENT, texalign(m.video, m.w/4, 4)); 
                 glReadPixels(0, 0, m.w/4, m.h, GL_BGRA, GL_UNSIGNED_BYTE, m.video);
@@ -1152,7 +1148,6 @@ namespace recorder
         glLoadIdentity();
 
         glEnable(GL_BLEND);
-        glEnable(GL_TEXTURE_2D);
         defaultshader->set();
 
         glPushMatrix();
@@ -1166,7 +1161,7 @@ namespace recorder
 
         //draw_textf("recorded %.1f%s %d%%", w*3-10*FONTH, h*3-FONTH-FONTH*3/2, totalsize, unit, int(calcquality()*100)); //NEW replaced
         //NEW
-        defformatstring(stats)("recorded %.1f%s %d%%", totalsize, unit, int(calcquality()*100));
+        defformatstring(stats, "recorded %.1f%s %d%%", totalsize, unit, int(calcquality()*100));
         w = int(w/conscale); h = int(h/conscale);
         int tw = text_width(stats);
         draw_text(stats, w-(2*FONTH+tw), h-FONTH*3/2-FONTH);
@@ -1174,7 +1169,6 @@ namespace recorder
 
         glPopMatrix();
 
-        glDisable(GL_TEXTURE_2D);
         glDisable(GL_BLEND);
     }
 

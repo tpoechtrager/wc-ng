@@ -86,7 +86,7 @@ ICOMMAND(moving, "b", (int *n),
 {
     if(*n >= 0)
     {
-        if(!*n || (moving<=1 && !pointinsel(sel, cur.tovec().add(1)))) moving = 0;
+        if(!*n || (moving<=1 && !pointinsel(sel, vec(cur).add(1)))) moving = 0;
         else if(!moving) moving = 1;
     }
     intret(moving);
@@ -157,7 +157,7 @@ bool noedit(bool view, bool msg)
     if(!editmode) { if(msg) conoutf(CON_ERROR, "operation only allowed in edit mode"); return true; }
     if(view || haveselent()) return false;
     float r = 1.0f;
-    vec o = sel.o.tovec(), s = sel.s.tovec();
+    vec o(sel.o), s(sel.s);
     s.mul(float(sel.grid) / 2.0f);
     o.add(s);
     r = float(max(s.x, max(s.y, s.z)));
@@ -306,12 +306,12 @@ void rendereditcursor()
     if(moving)
     {
         static vec dest, handle;
-        if(editmoveplane(sel.o.tovec(), camdir, od, sel.o[D[od]]+odc*sel.grid*sel.s[D[od]], handle, dest, moving==1))
+        if(editmoveplane(vec(sel.o), camdir, od, sel.o[D[od]]+odc*sel.grid*sel.s[D[od]], handle, dest, moving==1))
         {
             if(moving==1)
             {
                 dest.add(handle);
-                handle = ivec(handle).mask(~(sel.grid-1)).tovec();
+                handle = vec(ivec(handle).mask(~(sel.grid-1)));
                 dest.sub(handle);
                 moving = 2;
             }
@@ -338,7 +338,7 @@ void rendereditcursor()
                        | (passthroughcube==1 ? RAY_PASS : 0), gridsize, entorient, ent);
 
         if((havesel || dragging) && !passthroughsel && !hmapedit)     // now try selecting the selection
-            if(rayboxintersect(sel.o.tovec(), vec(sel.s.tovec()).mul(sel.grid), player->o, camdir, sdist, orient))
+            if(rayboxintersect(vec(sel.o), vec(sel.s).mul(sel.grid), player->o, camdir, sdist, orient))
             {   // and choose the nearest of the two
                 if(sdist < wdist)
                 {
@@ -373,7 +373,7 @@ void rendereditcursor()
             if(gridlookup && !dragging && !moving && !havesel && hmapedit!=1) gridsize = lusize;
             int mag = lusize / gridsize;
             normalizelookupcube(int(w.x), int(w.y), int(w.z));
-            if(sdist == 0 || sdist > wdist) rayboxintersect(lu.tovec(), vec(gridsize), player->o, camdir, t=0, orient); // just getting orient
+            if(sdist == 0 || sdist > wdist) rayboxintersect(vec(lu), vec(gridsize), player->o, camdir, t=0, orient); // just getting orient
             cur = lu;
             cor = vec(w).mul(2).div(gridsize);
             od = dimension(orient);
@@ -441,7 +441,7 @@ void rendereditcursor()
 
     // cursors
 
-    lineshader->set();
+    notextureshader->set();
 
     renderentselection(player->o, camdir, entmoving!=0);
 
@@ -455,7 +455,7 @@ void rendereditcursor()
             glColor3ub(0, hmapsel ? 255 : 40, 0);
         else
             glColor3ub(120,120,120);
-        boxs(orient, lu.tovec(), vec(lusize));
+        boxs(orient, vec(lu), vec(lusize));
     }
 
     // selections
@@ -463,9 +463,9 @@ void rendereditcursor()
     {
         d = dimension(sel.orient);
         glColor3ub(50,50,50);   // grid
-        boxsgrid(sel.orient, sel.o.tovec(), sel.s.tovec(), sel.grid);
+        boxsgrid(sel.orient, vec(sel.o), vec(sel.s), sel.grid);
         glColor3ub(200,0,0);    // 0 reference
-        boxs3D(sel.o.tovec().sub(0.5f*min(gridsize*0.25f, 2.0f)), vec(min(gridsize*0.25f, 2.0f)), 1);
+        boxs3D(vec(sel.o).sub(0.5f*min(gridsize*0.25f, 2.0f)), vec(min(gridsize*0.25f, 2.0f)), 1);
         glColor3ub(200,200,200);// 2D selection box
         vec co(sel.o.v), cs(sel.s.v);
         co[R[d]] += 0.5f*(sel.cx*gridsize);
@@ -478,7 +478,7 @@ void rendereditcursor()
             glColor3ub(0,120,0);
         else
             glColor3ub(0,0,120);
-        boxs3D(sel.o.tovec(), sel.s.tovec(), sel.grid);
+        boxs3D(vec(sel.o), vec(sel.s), sel.grid);
     }
 
     disablepolygonoffset(GL_POLYGON_OFFSET_LINE);
@@ -960,7 +960,7 @@ void saveprefab(char *name)
     if(b->copy) freeblock(b->copy);
     protectsel(b->copy = blockcopy(block3(sel), sel.grid));
     changed(sel);
-    defformatstring(filename)(strpbrk(name, "/\\") ? "packages/%s.obr" : "packages/prefab/%s.obr", name);
+    defformatstring(filename, strpbrk(name, "/\\") ? "packages/%s.obr" : "packages/prefab/%s.obr", name);
     path(filename);
     stream *f = opengzfile(filename, "wb");
     if(!f) { conoutf(CON_ERROR, "could not write prefab to %s", filename); return; }
@@ -992,7 +992,7 @@ void pasteprefab(char *name)
     prefab *b = prefabs.access(name);
     if(!b)
     {
-        defformatstring(filename)(strpbrk(name, "/\\") ? "packages/%s.obr" : "packages/prefab/%s.obr", name);
+        defformatstring(filename, strpbrk(name, "/\\") ? "packages/%s.obr" : "packages/prefab/%s.obr", name);
         path(filename);
         stream *f = opengzfile(filename, "rb");
         if(!f) { conoutf(CON_ERROR, "could not read prefab %s", filename); return; }
@@ -1735,8 +1735,8 @@ void voffset(int *x, int *y)
     if(noedit() || (nompedit && multiplayer())) return;
     VSlot ds;
     ds.changed = 1<<VSLOT_OFFSET;
-    ds.xoffset = usevdelta ? *x : max(*x, 0);
-    ds.yoffset = usevdelta ? *y : max(*y, 0);
+    ds.offset = ivec2(*x, *y);
+    if(!usevdelta) ds.offset.max(0);
     mpeditvslot(ds, allfaces, sel, true);
 }
 COMMAND(voffset, "ii");
@@ -1746,8 +1746,7 @@ void vscroll(float *s, float *t)
     if(noedit() || (nompedit && multiplayer())) return;
     VSlot ds;
     ds.changed = 1<<VSLOT_SCROLL;
-    ds.scrollS = *s/1000.0f;
-    ds.scrollT = *t/1000.0f;
+    ds.scroll = vec2(*s, *t).div(1000);
     mpeditvslot(ds, allfaces, sel, true);
 }
 COMMAND(vscroll, "ff");
@@ -1808,7 +1807,7 @@ void vshaderparam(const char *name, float *x, float *y, float *z, float *w)
     ds.changed = 1<<VSLOT_SHPARAM;
     if(name[0])
     {
-        ShaderParam p = { getshaderparamname(name), SHPARAM_LOOKUP, -1, -1, {*x, *y, *z, *w} };
+        SlotShaderParam p = { getshaderparamname(name), -1, {*x, *y, *z, *w} };
         ds.params.add(p);
     }
     mpeditvslot(ds, allfaces, sel, true);
@@ -2288,7 +2287,7 @@ void rendertexturepanel(int w, int h)
                 float sx = min(1.0f, tex->xs/(float)tex->ys), sy = min(1.0f, tex->ys/(float)tex->xs);
                 int x = w*1800/h-s-50, r = s;
                 float tc[4][2] = { { 0, 0 }, { 1, 0 }, { 1, 1 }, { 0, 1 } };
-                float xoff = vslot.xoffset, yoff = vslot.yoffset;
+                float xoff = vslot.offset.x, yoff = vslot.offset.y;
                 if(vslot.rotation)
                 {
                     if((vslot.rotation&5) == 1) { swap(xoff, yoff); loopk(4) swap(tc[k][0], tc[k][1]); }

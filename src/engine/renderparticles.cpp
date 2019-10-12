@@ -140,9 +140,8 @@ struct particle
 struct partvert
 {
     vec pos;
-    float u, v;
-    bvec color;
-    uchar alpha;
+    bvec4 color;
+    vec2 tc;
 };
 
 #define COLLIDERADIUS 8.0f
@@ -374,14 +373,12 @@ struct meterrenderer : listrenderer
     void startrender()
     {
          glDisable(GL_BLEND);
-         glDisable(GL_TEXTURE_2D);
          particlenotextureshader->set();
     }
 
     void endrender()
     {
          glEnable(GL_BLEND);
-         glEnable(GL_TEXTURE_2D);
          particleshader->set();
     }
 
@@ -718,14 +715,10 @@ struct varenderer : partrenderer
             { \
                 float u1 = u1c, u2 = u2c, v1 = v1c, v2 = v2c; \
                 body; \
-                vs[0].u = u1; \
-                vs[0].v = v1; \
-                vs[1].u = u2; \
-                vs[1].v = v1; \
-                vs[2].u = u2; \
-                vs[2].v = v2; \
-                vs[3].u = u1; \
-                vs[3].v = v2; \
+                vs[0].tc = vec2(u1, v1); \
+                vs[1].tc = vec2(u2, v1); \
+                vs[2].tc = vec2(u2, v2); \
+                vs[3].tc = vec2(u1, v2); \
             }
             if(type&PT_RND4)
             {
@@ -745,15 +738,15 @@ struct varenderer : partrenderer
 
             #define SETCOLOR(r, g, b, a) \
             do { \
-                uchar col[4] = { uchar(r), uchar(g), uchar(b), uchar(a) }; \
-                loopi(4) memcpy(vs[i].color.v, col, sizeof(col)); \
-            } while(0) 
+                bvec4 col(r, g, b, a); \
+                loopi(4) vs[i].color = col; \
+            } while(0)
             #define SETMODCOLOR SETCOLOR((p->color[0]*blend)>>8, (p->color[1]*blend)>>8, (p->color[2]*blend)>>8, 255)
             if(type&PT_MOD) SETMODCOLOR;
             else SETCOLOR(p->color[0], p->color[1], p->color[2], blend);
         }
         else if(type&PT_MOD) SETMODCOLOR;
-        else loopi(4) vs[i].alpha = blend;
+        else loopi(4) vs[i].color.a = blend;
 
         if(type&PT_ROT) genrotpos<T>(o, d, p->size, ts, p->gravity, vs, (p->flags>>2)&0x1F);
         else genpos<T>(o, d, p->size, ts, p->gravity, vs);
@@ -787,9 +780,9 @@ struct varenderer : partrenderer
     {   
         if(!tex) tex = textureload(texname, texclamp);
         glBindTexture(GL_TEXTURE_2D, tex->id);
-        glVertexPointer(3, GL_FLOAT, sizeof(partvert), &verts->pos);
-        glTexCoordPointer(2, GL_FLOAT, sizeof(partvert), &verts->u);
-        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(partvert), &verts->color);
+        glVertexPointer(3, GL_FLOAT, sizeof(partvert), verts->pos.v);
+        glTexCoordPointer(2, GL_FLOAT, sizeof(partvert), verts->tc.v);
+        glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(partvert), verts->color.v);
         glDrawArrays(GL_QUADS, 0, numparts*4);
     }
 };
@@ -952,7 +945,7 @@ void renderparticles(bool mainpass)
             if(type&PT_FLIP) concatstring(info, "f,");
             if(parts[i]->collide) concatstring(info, "c,");
             if(info[0]) info[strlen(info)-1] = '\0';
-            defformatstring(ds)("%d\t%s(%s) %s", parts[i]->count(), partnames[type&0xFF], info, title ? title : "");
+            defformatstring(ds, "%d\t%s(%s) %s", parts[i]->count(), partnames[type&0xFF], info, title ? title : "");
             draw_text(ds, FONTH, (i+n/2)*FONTH);
         }
         glDisable(GL_BLEND);
@@ -991,8 +984,8 @@ void renderparticles(bool mainpass)
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);             
 
-            if(glaring) setenvparamf("colorscale", SHPARAM_VERTEX, 4, particleglare, particleglare, particleglare, 1);
-            else setenvparamf("colorscale", SHPARAM_VERTEX, 4, 1, 1, 1, 1);
+            if(glaring) GLOBALPARAMF(colorscale, particleglare, particleglare, particleglare, 1);
+            else GLOBALPARAMF(colorscale, 1, 1, 1, 1);
 
             particleshader->set();
             glGetFloatv(GL_FOG_COLOR, oldfogc);
@@ -1419,25 +1412,25 @@ static void makeparticles(entity &e)
         default:
             if(!editmode)
             {
-                defformatstring(ds)("particles %d?", e.attr1);
+                defformatstring(ds, "particles %d?", e.attr1);
                 particle_textcopy(e.o, ds, PART_TEXT, 1, 0x6496FF, 2.0f);
             }
             break;
     }
 }
 
-bool printparticles(extentity &e, char *buf)
+bool printparticles(extentity &e, char *buf, int len)
 {
     switch(e.attr1)
     {
         case 0: case 4: case 7: case 8: case 9: case 10: case 11: case 12: case 13: 
-            formatstring(buf)("%s %d %d %d 0x%.3hX %d", entities::entname(e.type), e.attr1, e.attr2, e.attr3, e.attr4, e.attr5);
+            nformatstring(buf, len, "%s %d %d %d 0x%.3hX %d", entities::entname(e.type), e.attr1, e.attr2, e.attr3, e.attr4, e.attr5);
             return true;
         case 3:
-            formatstring(buf)("%s %d %d 0x%.3hX %d %d", entities::entname(e.type), e.attr1, e.attr2, e.attr3, e.attr4, e.attr5);
+            nformatstring(buf, len, "%s %d %d 0x%.3hX %d %d", entities::entname(e.type), e.attr1, e.attr2, e.attr3, e.attr4, e.attr5);
             return true;
         case 5: case 6:
-            formatstring(buf)("%s %d %d 0x%.3hX 0x%.3hX %d", entities::entname(e.type), e.attr1, e.attr2, e.attr3, e.attr4, e.attr5);
+            nformatstring(buf, len, "%s %d %d 0x%.3hX 0x%.3hX %d", entities::entname(e.type), e.attr1, e.attr2, e.attr3, e.attr4, e.attr5);
             return true; 
     }
     return false;

@@ -1,21 +1,19 @@
 struct vertmodel : animmodel
 {
     struct vert { vec pos, norm; };
-    struct vvertff { vec pos; float u, v; };
-    struct vvert : vvertff { vec norm; };
+    struct vvert { vec pos; vec2 tc; vec norm; };
     struct vvertbump : vvert { vec tangent; float bitangent; };
-    struct tcvert { float u, v; };
+    struct tcvert { vec2 tc; };
     struct bumpvert { vec tangent; float bitangent; };
     struct tri { ushort vert[3]; };
 
     struct vbocacheentry
     {
-        uchar *vdata;
         GLuint vbuf;
         animstate as;
         int millis;
  
-        vbocacheentry() : vdata(NULL), vbuf(0) { as.cur.fr1 = as.prev.fr1 = -1; }
+        vbocacheentry() : vbuf(0) { as.cur.fr1 = as.prev.fr1 = -1; }
     };
 
     struct vertmesh : mesh
@@ -65,7 +63,7 @@ struct vertmodel : animmodel
                 mesh::calctangents(&bumpverts[k*numverts], &verts[k*numverts], tcverts, numverts, tris, numtris, areaweight);
         }
 
-        void calcbb(vec &bbmin, vec &bbmax, const matrix3x4 &m)
+        void calcbb(vec &bbmin, vec &bbmax, const matrix4x3 &m)
         {
             loopj(numverts)
             {
@@ -78,7 +76,7 @@ struct vertmodel : animmodel
             }
         }
 
-        void gentris(Texture *tex, vector<BIH::tri> *out, const matrix3x4 &m)
+        void gentris(Texture *tex, vector<BIH::tri> *out, const matrix4x3 &m)
         {
             loopj(numtris)
             {
@@ -90,51 +88,34 @@ struct vertmodel : animmodel
                 tcvert &av = tcverts[tris[j].vert[0]],
                        &bv = tcverts[tris[j].vert[1]],
                        &cv = tcverts[tris[j].vert[2]];
-                t.tc[0] = av.u;
-                t.tc[1] = av.v;
-                t.tc[2] = bv.u;
-                t.tc[3] = bv.v;
-                t.tc[4] = cv.u;
-                t.tc[5] = cv.v;
+                t.tc[0] = av.tc;
+                t.tc[1] = bv.tc;
+                t.tc[2] = cv.tc;
             }
-        }
-
-        static inline bool comparevert(vvertff &w, int j, tcvert &tc, vert &v)
-        {
-            return tc.u==w.u && tc.v==w.v && v.pos==w.pos;
         }
 
         static inline bool comparevert(vvert &w, int j, tcvert &tc, vert &v)
         {
-            return tc.u==w.u && tc.v==w.v && v.pos==w.pos && v.norm==w.norm;
+            return tc.tc==w.tc && v.pos==w.pos && v.norm==w.norm;
         }
 
         inline bool comparevert(vvertbump &w, int j, tcvert &tc, vert &v)
         {
-            return tc.u==w.u && tc.v==w.v && v.pos==w.pos && v.norm==w.norm && (!bumpverts || (bumpverts[j].tangent==w.tangent && bumpverts[j].bitangent==w.bitangent));
-        }
-
-        static inline void assignvert(vvertff &vv, int j, tcvert &tc, vert &v)
-        {
-            vv.pos = v.pos;
-            vv.u = tc.u;
-            vv.v = tc.v;
+            return tc.tc==w.tc && v.pos==w.pos && v.norm==w.norm && (!bumpverts || (bumpverts[j].tangent==w.tangent && bumpverts[j].bitangent==w.bitangent));
         }
 
         static inline void assignvert(vvert &vv, int j, tcvert &tc, vert &v)
         {
             vv.pos = v.pos;
             vv.norm = v.norm;
-            vv.u = tc.u;
-            vv.v = tc.v;
+            vv.tc = tc.tc;
         }
 
         inline void assignvert(vvertbump &vv, int j, tcvert &tc, vert &v)
         {
             vv.pos = v.pos;
             vv.norm = v.norm;
-            vv.u = tc.u;
-            vv.v = tc.v;
+            vv.tc = tc.tc;
             if(bumpverts)
             {
                 vv.tangent = bumpverts[j].tangent;
@@ -188,7 +169,7 @@ struct vertmodel : animmodel
 
         void filltc(uchar *vdata, size_t stride)
         {
-            vdata = (uchar *)&((vvertff *)&vdata[voffset*stride])->u;
+            vdata = (uchar *)((vvert *)&vdata[voffset*stride])->tc.v;
             loopi(numverts)
             {
                 *(tcvert *)vdata = tcverts[i];
@@ -196,7 +177,7 @@ struct vertmodel : animmodel
             }
         }
 
-        void interpverts(const animstate &as, bool norms, bool tangents, void * RESTRICT vdata, skin &s)
+        void interpverts(const animstate &as, bool tangents, void * RESTRICT vdata, skin &s)
         {
             const vert * RESTRICT vert1 = &verts[as.cur.fr1 * numverts],
                        * RESTRICT vert2 = &verts[as.cur.fr2 * numverts],
@@ -221,13 +202,11 @@ struct vertmodel : animmodel
                 if(as.interp<1) iploop(vvertbump, { ipvertp(pos); ipvertp(norm); ipbvertp(tangent); v.bitangent = bvert1[i].bitangent; })
                 else iploop(vvertbump, { ipvert(pos); ipvert(norm); ipbvert(tangent); v.bitangent = bvert1[i].bitangent; })
             }
-            else if(norms)
+            else
             {
                 if(as.interp<1) iploop(vvert, { ipvertp(pos); ipvertp(norm); })
                 else iploop(vvert, { ipvert(pos); ipvert(norm); })
             }
-            else if(as.interp<1) iploop(vvertff, ipvertp(pos))
-            else iploop(vvertff, ipvert(pos))
             #undef iploop
             #undef ipvert
             #undef ipbvert
@@ -239,24 +218,6 @@ struct vertmodel : animmodel
         {
             if(!(as->cur.anim&ANIM_NOSKIN))
             {
-                if(s.multitextured())
-                {
-                    if(!enablemtc || lastmtcbuf!=lastvbuf)
-                    {
-                        glClientActiveTexture_(GL_TEXTURE1_ARB);
-                        if(!enablemtc) glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-                        if(lastmtcbuf!=lastvbuf)
-                        {
-                            vvertff *vverts = hasVBO ? 0 : (vvertff *)vc.vdata;
-                            glTexCoordPointer(2, GL_FLOAT, ((vertmeshgroup *)group)->vertsize, &vverts->u);
-                        }
-                        glClientActiveTexture_(GL_TEXTURE0_ARB);
-                        lastmtcbuf = lastvbuf;
-                        enablemtc = true;
-                    }
-                }
-                else if(enablemtc) disablemtc();
-
                 if(s.tangents())
                 {
                     if(!enabletangents || lastxbuf!=lastvbuf)
@@ -264,7 +225,7 @@ struct vertmodel : animmodel
                         if(!enabletangents) glEnableVertexAttribArray_(1);
                         if(lastxbuf!=lastvbuf)
                         {
-                            vvertbump *vverts = hasVBO ? 0 : (vvertbump *)vc.vdata;
+                            vvertbump *vverts = 0;
                             glVertexAttribPointer_(1, 4, GL_FLOAT, GL_FALSE, ((vertmeshgroup *)group)->vertsize, &vverts->tangent.x);
                         }
                         lastxbuf = lastvbuf;
@@ -272,47 +233,18 @@ struct vertmodel : animmodel
                     }
                 }
                 else if(enabletangents) disabletangents();
-
-                if(renderpath==R_FIXEDFUNCTION && (s.scrollu || s.scrollv))
-                {
-                    glMatrixMode(GL_TEXTURE);
-                    glPushMatrix();
-                    glTranslatef(s.scrollu*lastmillis/1000.0f, s.scrollv*lastmillis/1000.0f, 0);
-
-                    if(s.multitextured())
-                    {
-                        glActiveTexture_(GL_TEXTURE1_ARB);
-                        glPushMatrix();
-                        glTranslatef(s.scrollu*lastmillis/1000.0f, s.scrollv*lastmillis/1000.0f, 0);
-                    }
-                }
             }
 
-            if(hasDRE) glDrawRangeElements_(GL_TRIANGLES, minvert, maxvert, elen, GL_UNSIGNED_SHORT, &((vertmeshgroup *)group)->edata[eoffset]);
-            else glDrawElements(GL_TRIANGLES, elen, GL_UNSIGNED_SHORT, &((vertmeshgroup *)group)->edata[eoffset]);
+            glDrawRangeElements_(GL_TRIANGLES, minvert, maxvert, elen, GL_UNSIGNED_SHORT, &((vertmeshgroup *)group)->edata[eoffset]);
             glde++;
             xtravertsva += numverts;
-
-            if(renderpath==R_FIXEDFUNCTION && !(as->cur.anim&ANIM_NOSKIN) && (s.scrollu || s.scrollv))
-            {
-                if(s.multitextured())
-                {
-                    glPopMatrix();
-                    glActiveTexture_(GL_TEXTURE0_ARB);
-                }
-
-                glPopMatrix();
-                glMatrixMode(GL_MODELVIEW);
-            }
-
-            return;
         }
     };
 
     struct tag
     {
         char *name;
-        matrix3x4 transform;
+        matrix4x3 transform;
 
         tag() : name(NULL) {}
         ~tag() { DELETEA(name); }
@@ -329,11 +261,11 @@ struct vertmodel : animmodel
 
         ushort *edata;
         GLuint ebuf;
-        bool vnorms, vtangents;
+        bool vtangents;
         int vlen, vertsize;
         uchar *vdata;
 
-        vertmeshgroup() : numframes(0), tags(NULL), numtags(0), edata(NULL), ebuf(0), vnorms(false), vtangents(false), vlen(0), vertsize(0), vdata(NULL) 
+        vertmeshgroup() : numframes(0), tags(NULL), numtags(0), edata(NULL), ebuf(0), vtangents(false), vlen(0), vertsize(0), vdata(NULL) 
         {
         }
 
@@ -343,7 +275,6 @@ struct vertmodel : animmodel
             if(ebuf) glDeleteBuffers_(1, &ebuf);
             loopi(MAXVBOCACHE) 
             {
-                DELETEA(vbocache[i].vdata);
                 if(vbocache[i].vbuf) glDeleteBuffers_(1, &vbocache[i].vbuf);
             }
             DELETEA(vdata);
@@ -357,80 +288,63 @@ struct vertmodel : animmodel
 
         int totalframes() const { return numframes; }
 
-        void concattagtransform(part *p, int i, const matrix3x4 &m, matrix3x4 &n)
+        void concattagtransform(part *p, int i, const matrix4x3 &m, matrix4x3 &n)
         {
             n.mul(m, tags[numtags + i].transform);
             n.translate(m.transformnormal(p->translate).mul(p->model->scale));
         }
 
-        void calctagmatrix(part *p, int i, const animstate &as, glmatrixf &matrix)
+        void calctagmatrix(part *p, int i, const animstate &as, matrix4 &matrix)
         {
-            const matrix3x4 &tag1 = tags[as.cur.fr1*numtags + i].transform, 
+            const matrix4x3 &tag1 = tags[as.cur.fr1*numtags + i].transform, 
                             &tag2 = tags[as.cur.fr2*numtags + i].transform;
-            matrix3x4 tag;
+            matrix4x3 tag;
             tag.lerp(tag1, tag2, as.cur.t);
             if(as.interp<1)
             {
-                const matrix3x4 &tag1p = tags[as.prev.fr1*numtags + i].transform, 
+                const matrix4x3 &tag1p = tags[as.prev.fr1*numtags + i].transform, 
                                 &tag2p = tags[as.prev.fr2*numtags + i].transform;
-                matrix3x4 tagp;
+                matrix4x3 tagp;
                 tagp.lerp(tag1p, tag2p, as.prev.t);
                 tag.lerp(tagp, tag, as.interp);
             }
-            matrix = glmatrixf(tag);
-            matrix[12] = (matrix[12] + p->translate.x) * p->model->scale;
-            matrix[13] = (matrix[13] + p->translate.y) * p->model->scale;
-            matrix[14] = (matrix[14] + p->translate.z) * p->model->scale;
+            tag.d.add(p->translate).mul(p->model->scale);
+            matrix = matrix4(tag);
         }
 
-        void genvbo(bool norms, bool tangents, vbocacheentry &vc)
+        void genvbo(bool tangents, vbocacheentry &vc)
         {
-            if(hasVBO) 
-            {
-                if(!vc.vbuf) glGenBuffers_(1, &vc.vbuf);
-                if(ebuf) return;
-            }
-            else if(edata) 
-            {
-                #define ALLOCVDATA(vdata) \
-                    do \
-                    { \
-                        DELETEA(vdata); \
-                        vdata = new uchar[vlen*vertsize]; \
-                        loopv(meshes) ((vertmesh *)meshes[i])->filltc(vdata, vertsize); \
-                    } while(0)
-                if(!vc.vdata) ALLOCVDATA(vc.vdata);
-                return;
-            }
+            if(!vc.vbuf) glGenBuffers_(1, &vc.vbuf);
+            if(ebuf) return;
+                
+            #define ALLOCVDATA(vdata) \
+                do \
+                { \
+                    DELETEA(vdata); \
+                    vdata = new uchar[vlen*vertsize]; \
+                    loopv(meshes) ((vertmesh *)meshes[i])->filltc(vdata, vertsize); \
+                } while(0)
 
             vector<ushort> idxs;
 
-            vnorms = norms;
             vtangents = tangents;
-            vertsize = tangents ? sizeof(vvertbump) : (norms ? sizeof(vvert) : sizeof(vvertff));
+            vertsize = tangents ? sizeof(vvertbump) : sizeof(vvert);
             vlen = 0;
             if(numframes>1)
             {
                 loopv(meshes) vlen += ((vertmesh *)meshes[i])->genvbo(idxs, vlen);
                 DELETEA(vdata);
-                if(hasVBO) ALLOCVDATA(vdata); 
-                else ALLOCVDATA(vc.vdata);
+                ALLOCVDATA(vdata); 
             } 
             else 
             {
-                if(hasVBO) glBindBuffer_(GL_ARRAY_BUFFER_ARB, vc.vbuf);
+                glBindBuffer_(GL_ARRAY_BUFFER, vc.vbuf);
                 #define GENVBO(type) \
                     do \
                     { \
                         vector<type> vverts; \
                         loopv(meshes) vlen += ((vertmesh *)meshes[i])->genvbo(idxs, vlen, vverts, htdata, htlen); \
-                        if(hasVBO) glBufferData_(GL_ARRAY_BUFFER_ARB, vverts.length()*sizeof(type), vverts.getbuf(), GL_STATIC_DRAW_ARB); \
-                        else \
-                        { \
-                            DELETEA(vc.vdata); \
-                            vc.vdata = new uchar[vverts.length()*sizeof(type)]; \
-                            memcpy(vc.vdata, vverts.getbuf(), vverts.length()*sizeof(type)); \
-                        } \
+                        glBufferData_(GL_ARRAY_BUFFER, vverts.length()*sizeof(type), vverts.getbuf(), GL_STATIC_DRAW); \
                     } while(0)
                 int numverts = 0, htlen = 128;
                 loopv(meshes) numverts += ((vertmesh *)meshes[i])->numverts;
@@ -439,42 +353,33 @@ struct vertmodel : animmodel
                 int *htdata = new int[htlen];
                 memset(htdata, -1, htlen*sizeof(int));
                 if(tangents) GENVBO(vvertbump);
-                else if(norms) GENVBO(vvert);
-                else GENVBO(vvertff);
+                else GENVBO(vvert);
                 delete[] htdata;
-                if(hasVBO) glBindBuffer_(GL_ARRAY_BUFFER_ARB, 0);
+                glBindBuffer_(GL_ARRAY_BUFFER, 0);
             }
 
-            if(hasVBO)
-            {
-                glGenBuffers_(1, &ebuf);
-                glBindBuffer_(GL_ELEMENT_ARRAY_BUFFER_ARB, ebuf);
-                glBufferData_(GL_ELEMENT_ARRAY_BUFFER_ARB, idxs.length()*sizeof(ushort), idxs.getbuf(), GL_STATIC_DRAW_ARB);
-                glBindBuffer_(GL_ELEMENT_ARRAY_BUFFER_ARB, 0);
-            }
-            else
-            {
-                edata = new ushort[idxs.length()];
-                memcpy(edata, idxs.getbuf(), idxs.length()*sizeof(ushort));
-            }
+            glGenBuffers_(1, &ebuf);
+            glBindBuffer_(GL_ELEMENT_ARRAY_BUFFER, ebuf);
+            glBufferData_(GL_ELEMENT_ARRAY_BUFFER, idxs.length()*sizeof(ushort), idxs.getbuf(), GL_STATIC_DRAW);
+            glBindBuffer_(GL_ELEMENT_ARRAY_BUFFER, 0);
             #undef GENVBO
             #undef ALLOCVDATA
         }
 
         void bindvbo(const animstate *as, vbocacheentry &vc)
         {
-            vvert *vverts = hasVBO ? 0 : (vvert *)vc.vdata;
-            if(hasVBO && lastebuf!=ebuf)
+            vvert *vverts = 0;
+            if(lastebuf!=ebuf)
             {
-                glBindBuffer_(GL_ELEMENT_ARRAY_BUFFER_ARB, ebuf);
+                glBindBuffer_(GL_ELEMENT_ARRAY_BUFFER, ebuf);
                 lastebuf = ebuf;
             }
-            if(lastvbuf != (hasVBO ? (void *)(size_t)vc.vbuf : vc.vdata))
+            if(lastvbuf != (void *)(size_t)vc.vbuf)
             {
-                if(hasVBO) glBindBuffer_(GL_ARRAY_BUFFER_ARB, vc.vbuf);
+                glBindBuffer_(GL_ARRAY_BUFFER, vc.vbuf);
                 if(!lastvbuf) glEnableClientState(GL_VERTEX_ARRAY);
                 glVertexPointer(3, GL_FLOAT, vertsize, &vverts->pos);
-                lastvbuf = hasVBO ? (void *)(size_t)vc.vbuf : vc.vdata;
+                lastvbuf = (void *)(size_t)vc.vbuf;
             }
             if(as->cur.anim&ANIM_NOSKIN)
             {
@@ -483,20 +388,16 @@ struct vertmodel : animmodel
             }
             else
             {
-                if(vnorms || vtangents)
+                if(!enablenormals)
                 {
-                    if(!enablenormals)
-                    {
-                        glEnableClientState(GL_NORMAL_ARRAY);
-                        enablenormals = true;
-                    }
-                    if(lastnbuf!=lastvbuf)
-                    {
-                        glNormalPointer(GL_FLOAT, vertsize, &vverts->norm);
-                        lastnbuf = lastvbuf;
-                    }
+                    glEnableClientState(GL_NORMAL_ARRAY);
+                    enablenormals = true;
                 }
-                else if(enablenormals) disablenormals();
+                if(lastnbuf!=lastvbuf)
+                {
+                    glNormalPointer(GL_FLOAT, vertsize, vverts->norm.v);
+                    lastnbuf = lastvbuf;
+                }
 
                 if(!enabletc)
                 {
@@ -505,7 +406,7 @@ struct vertmodel : animmodel
                 }
                 if(lasttcbuf!=lastvbuf)
                 {
-                    glTexCoordPointer(2, GL_FLOAT, vertsize, &vverts->u);
+                    glTexCoordPointer(2, GL_FLOAT, vertsize, vverts->tc.v);
                     lasttcbuf = lastvbuf;
                 }
             }
@@ -518,24 +419,18 @@ struct vertmodel : animmodel
             {
                 vbocacheentry &c = vbocache[i];
                 if(c.vbuf) { glDeleteBuffers_(1, &c.vbuf); c.vbuf = 0; }
-                DELETEA(c.vdata);
                 c.as.cur.fr1 = -1;
             }
-            if(hasVBO) { if(ebuf) { glDeleteBuffers_(1, &ebuf); ebuf = 0; } }
-            else DELETEA(vdata);
+            if(ebuf) { glDeleteBuffers_(1, &ebuf); ebuf = 0; }
         }
 
         void preload(part *p)
         {
             if(numframes > 1) return;
-            bool norms = false, tangents = false;
-            loopv(p->skins)
-            {
-                if(p->skins[i].normals()) norms = true;
-                if(p->skins[i].tangents()) tangents = true;
-            }
-            if(norms!=vnorms || tangents!=vtangents) cleanup();
-            if(hasVBO ? !vbocache->vbuf : !vbocache->vdata) genvbo(norms, tangents, *vbocache);
+            bool tangents = false;
+            loopv(p->skins) if(p->skins[i].tangents()) tangents = true;
+            if(tangents!=vtangents) cleanup();
+            if(!vbocache->vbuf) genvbo(tangents, *vbocache);
         }
 
         void render(const animstate *as, float pitch, const vec &axis, const vec &forward, dynent *d, part *p)
@@ -546,13 +441,9 @@ struct vertmodel : animmodel
                 return;
             }
 
-            bool norms = false, tangents = false;
-            loopv(p->skins) 
-            {
-                if(p->skins[i].normals()) norms = true;
-                if(p->skins[i].tangents()) tangents = true;
-            }
-            if(norms!=vnorms || tangents!=vtangents) { cleanup(); disablevbo(); }
+            bool tangents = false;
+            loopv(p->skins) if(p->skins[i].tangents()) tangents = true;
+            if(tangents!=vtangents) { cleanup(); disablevbo(); }
             vbocacheentry *vc = NULL;
             if(numframes<=1) vc = vbocache;
             else
@@ -560,12 +451,12 @@ struct vertmodel : animmodel
                 loopi(MAXVBOCACHE)
                 {
                     vbocacheentry &c = vbocache[i];
-                    if(hasVBO ? !c.vbuf : !c.vdata) continue;
+                    if(!c.vbuf) continue;
                     if(c.as==*as) { vc = &c; break; }
                 }
-                if(!vc) loopi(MAXVBOCACHE) { vc = &vbocache[i]; if((hasVBO ? !vc->vbuf : !vc->vdata) || vc->millis < lastmillis) break; }
+                if(!vc) loopi(MAXVBOCACHE) { vc = &vbocache[i]; if(!vc->vbuf || vc->millis < lastmillis) break; }
             }
-            if(hasVBO ? !vc->vbuf : !vc->vdata) genvbo(norms, tangents, *vc);
+            if(!vc->vbuf) genvbo(tangents, *vc);
             if(numframes>1)
             {
                 if(vc->as!=*as)
@@ -575,13 +466,10 @@ struct vertmodel : animmodel
                     loopv(meshes) 
                     {
                         vertmesh &m = *(vertmesh *)meshes[i];
-                        m.interpverts(*as, norms, tangents, (hasVBO ? vdata : vc->vdata) + m.voffset*vertsize, p->skins[i]);
+                        m.interpverts(*as, tangents, vdata + m.voffset*vertsize, p->skins[i]);
                     }
-                    if(hasVBO)
-                    {
-                        glBindBuffer_(GL_ARRAY_BUFFER_ARB, vc->vbuf);
-                        glBufferData_(GL_ARRAY_BUFFER_ARB, vlen*vertsize, vdata, GL_STREAM_DRAW_ARB);    
-                    }
+                    glBindBuffer_(GL_ARRAY_BUFFER, vc->vbuf);
+                    glBufferData_(GL_ARRAY_BUFFER, vlen*vertsize, vdata, GL_STREAM_DRAW);    
                 }
                 vc->millis = lastmillis;
             }
@@ -615,7 +503,7 @@ template<class MDL> struct vertcommands : modelcommands<MDL, struct MDL::vertmes
     static void loadpart(char *model, float *smooth)
     {
         if(!MDL::loading) { conoutf("not loading an %s", MDL::formatname()); return; }
-        defformatstring(filename)("%s/%s", MDL::dir, model);
+        defformatstring(filename, "%s/%s", MDL::dir, model);
         part &mdl = *new part;
         MDL::loading->parts.add(&mdl);
         mdl.model = MDL::loading;

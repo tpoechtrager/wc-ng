@@ -31,7 +31,7 @@ namespace http
     static inline void gendefaultuseragent()
     {
         static const char *os = getosstring();
-        formatstring(defaultuseragent)("wc-ng/%s (%s)", CLIENTVERSION.str().str(), os);
+        formatstring(defaultuseragent, "wc-ng/%s (%s)", CLIENTVERSION.str().str(), os);
     }
 
     struct http_t;

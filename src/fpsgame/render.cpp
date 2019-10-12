@@ -214,8 +214,8 @@ namespace game
             if(teamskins || m_teammode) team = isteam(player1->team, d->team) ? 1 : 2;
             renderplayer(d, getplayermodelinfo(d), team, 1, mainpass);
             copystring(d->info, colorname(d));
-            if(d->maxhealth>100) { defformatstring(sn)(" +%d", d->maxhealth-100); concatstring(d->info, sn); }
-            if(showteamhealth && team==1) { defformatstring(sn)(" | health: %d", d->health); concatstring(d->info, sn); } //NEW
+            if(d->maxhealth>100) { defformatstring(sn, " +%d", d->maxhealth-100); concatstring(d->info, sn); }
+            if(showteamhealth && team==1) { defformatstring(sn, " | health: %d", d->health); concatstring(d->info, sn); } //NEW
             if(d->state!=CS_DEAD) particle_text(d->abovehead(), d->info, PART_TEXT, 1, team ? (team==1 ? 0x6496FF : 0xFF4B19) : 0x1EC850, playerinfofontsize); //NEW 2.0f -> playerinfofontsizes
         }
         loopv(ragdolls)
@@ -306,7 +306,7 @@ namespace game
         }
 #endif
         const playermodelinfo &mdl = getplayermodelinfo(d);
-        defformatstring(gunname)("%s/%s", hudgunsdir[0] ? hudgunsdir : mdl.hudguns, guns[d->gunselect].file);
+        defformatstring(gunname, "%s/%s", hudgunsdir[0] ? hudgunsdir : mdl.hudguns, guns[d->gunselect].file);
         if((m_teammode || teamskins) && teamhudguns)
             concatstring(gunname, d==player1 || isteam(d->team, player1->team) ? "/blue" : "/red");
         else if(testteam > 1)
@@ -407,15 +407,15 @@ namespace game
             string fname;
             if((m_teammode || teamskins) && teamhudguns)
             {
-                formatstring(fname)("%s/%s/blue", hudgunsdir[0] ? hudgunsdir : mdl.hudguns, file);
+                formatstring(fname, "%s/%s/blue", hudgunsdir[0] ? hudgunsdir : mdl.hudguns, file);
                 preloadmodel(fname);
             }
             else
             {
-                formatstring(fname)("%s/%s", hudgunsdir[0] ? hudgunsdir : mdl.hudguns, file);
+                formatstring(fname, "%s/%s", hudgunsdir[0] ? hudgunsdir : mdl.hudguns, file);
                 preloadmodel(fname);
             }
-            formatstring(fname)("vwep/%s", file);
+            formatstring(fname, "vwep/%s", file);
             preloadmodel(fname);
         }
     }

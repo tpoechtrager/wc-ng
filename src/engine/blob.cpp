@@ -21,9 +21,8 @@ struct blobinfo
 struct blobvert
 {
     vec pos;
-    float u, v;
-    bvec color;
-    uchar alpha;
+    bvec4 color;
+    vec2 tc;
 };
 
 struct blobrenderer
@@ -226,12 +225,13 @@ struct blobrenderer
     {
         blobvert &v = verts[endvert];
         v.pos = pos;
-        v.u = (pos.x - blobmin.x) / (blobmax.x - blobmin.x);
-        v.v = (pos.y - blobmin.y) / (blobmax.y - blobmin.y);
-        v.color = bvec(255, 255, 255);
-        if(pos.z < blobmin.z + blobfadelow) v.alpha = uchar(blobalphalow * (pos.z - blobmin.z));
-        else if(pos.z > blobmax.z - blobfadehigh) v.alpha = uchar(blobalphahigh * (blobmax.z - pos.z));
-        else v.alpha = blobalpha;
+        v.tc = vec2((pos.x - blobmin.x) / (blobmax.x - blobmin.x),
+                    (pos.y - blobmin.y) / (blobmax.y - blobmin.y));
+        uchar alpha;
+        if(pos.z < blobmin.z + blobfadelow) alpha = uchar(blobalphalow * (pos.z - blobmin.z));
+        else if(pos.z > blobmax.z - blobfadehigh) alpha = uchar(blobalphahigh * (blobmax.z - pos.z));
+        else alpha = blobalpha;
+        v.color = bvec4(255, 255, 255, alpha);
         return endvert++;
     }
 
@@ -298,7 +298,7 @@ struct blobrenderer
         {
             vertinfo *verts = cu.ext->verts() + cu.ext->surfaces[orient].verts;
             ivec vo = ivec(o).mask(~0xFFF).shl(3);
-            loopj(numverts) pos[j] = verts[j].getxyz().add(vo).tovec().mul(1/8.0f);
+            loopj(numverts) pos[j] = vec(verts[j].getxyz().add(vo)).mul(1/8.0f);
             if(numverts >= 4 && !(cu.merged&(1<<orient)) && !flataxisface(cu, orient) && faceconvexity(verts, numverts, size)) numplanes++;
             else flat = dim;
         }
@@ -308,11 +308,11 @@ struct blobrenderer
             ivec v[4];
             genfaceverts(cu, orient, v);
             int vis = 3, convex = faceconvexity(v, vis), order = convex < 0 ? 1 : 0;
-            vec vo = o.tovec();
-            pos[numverts++] = v[order].tovec().mul(size/8.0f).add(vo);
-            if(vis&1) pos[numverts++] = v[order+1].tovec().mul(size/8.0f).add(vo);
-            pos[numverts++] = v[order+2].tovec().mul(size/8.0f).add(vo);
-            if(vis&2) pos[numverts++] = v[(order+3)&3].tovec().mul(size/8.0f).add(vo);
+            vec vo(o);
+            pos[numverts++] = vec(v[order]).mul(size/8.0f).add(vo);
+            if(vis&1) pos[numverts++] = vec(v[order+1]).mul(size/8.0f).add(vo);
+            pos[numverts++] = vec(v[order+2]).mul(size/8.0f).add(vo);
+            if(vis&2) pos[numverts++] = vec(v[(order+3)&3]).mul(size/8.0f).add(vo);
             if(convex) numplanes++;
             else flat = dim;
         }
@@ -506,9 +506,9 @@ struct blobrenderer
             if(b->endvert - b->startvert >= 3) for(blobvert *v = &verts[b->startvert], *end = &verts[b->endvert]; v < end; v++)
             {
                 float z = v->pos.z;
-                if(z < minz + blobfadelow) v->alpha = uchar(scalelow * (z - minz));
-                else if(z > maxz - blobfadehigh) v->alpha = uchar(scalehigh * (maxz - z));
-                else v->alpha = alpha;
+                if(z < minz + blobfadelow) v->color.a = uchar(scalelow * (z - minz));
+                else if(z > maxz - blobfadehigh) v->color.a = uchar(scalehigh * (maxz - z));
+                else v->color.a = alpha;
             }
             int offset = b - &blobs[0] + 1;
             if(offset >= maxblobs) offset = 0;
@@ -527,9 +527,9 @@ struct blobrenderer
 
                 setuprenderstate();
             }
-            glVertexPointer(3, GL_FLOAT, sizeof(blobvert), &verts->pos);
-            glTexCoordPointer(2, GL_FLOAT, sizeof(blobvert), &verts->u);
-            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(blobvert), &verts->color);
+            glVertexPointer(3, GL_FLOAT, sizeof(blobvert), verts->pos.v);
+            glTexCoordPointer(2, GL_FLOAT, sizeof(blobvert), verts->tc.v);
+            glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(blobvert), verts->color.v);
             if(!lastrender || lastrender->tex != tex) glBindTexture(GL_TEXTURE_2D, tex->id);
             lastrender = this;
         }
@@ -550,8 +550,7 @@ struct blobrenderer
         {
             if(b->endvert - b->startvert >= 3)
             {
-                if(hasDRE) glDrawRangeElements_(GL_TRIANGLES, b->startvert, b->endvert-1, b->endindex - b->startindex, GL_UNSIGNED_SHORT, &indexes[b->startindex]);
-                else glDrawElements(GL_TRIANGLES, b->endindex - b->startindex, GL_UNSIGNED_SHORT, &indexes[b->startindex]);
+                glDrawRangeElements_(GL_TRIANGLES, b->startvert, b->endvert-1, b->endindex - b->startindex, GL_UNSIGNED_SHORT, &indexes[b->startindex]);
                 xtravertsva += b->endvert - b->startvert;
             }
             int offset = b - &blobs[0] + 1;

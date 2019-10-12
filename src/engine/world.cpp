@@ -422,7 +422,7 @@ vec getselpos()
     vector<extentity *> &ents = entities::getents();
     if(entgroup.length() && ents.inrange(entgroup[0])) return ents[entgroup[0]]->o;
     if(ents.inrange(enthover)) return ents[enthover]->o;
-    return sel.o.tovec();
+    return vec(sel.o);
 }
 
 undoblock *copyundoents(undoblock *u)
@@ -856,7 +856,7 @@ bool dropentity(entity &e, int drop = -1)
             cx = (sel.cx ? 1 : -1) * sel.grid / 2;
             cy = (sel.cy ? 1 : -1) * sel.grid / 2;
         }
-        e.o = sel.o.tovec();
+        e.o = vec(sel.o);
         int d = dimension(sel.orient), dc = dimcoord(sel.orient);
         e.o[R[d]] += sel.grid / 2 + cx;
         e.o[C[d]] += sel.grid / 2 + cy;
@@ -958,7 +958,7 @@ void entcopy()
     entcopygrid = sel.grid;
     entcopybuf.shrink(0);
     loopv(entgroup) 
-        entfocus(entgroup[i], entcopybuf.add(e).o.sub(sel.o.tovec()));
+        entfocus(entgroup[i], entcopybuf.add(e).o.sub(vec(sel.o)));
 }
 
 void entpaste()
@@ -971,7 +971,7 @@ void entpaste()
     {
         entity &c = entcopybuf[i];
         vec o(c.o);
-        o.mul(m).add(sel.o.tovec());
+        o.mul(m).add(vec(sel.o));
         int idx;
         extentity *e = newentity(true, o, ET_EMPTY, c.attr1, c.attr2, c.attr3, c.attr4, c.attr5, idx);
         if(!e) continue;
@@ -1002,19 +1002,19 @@ void entset(char *what, int *a1, int *a2, int *a3, int *a4, int *a5)
                   e.attr5=*a5);
 }
 
-void printent(extentity &e, char *buf)
+void printent(extentity &e, char *buf, int len)
 {
     switch(e.type)
     {
         case ET_PARTICLES:
-            if(printparticles(e, buf)) return; 
+            if(printparticles(e, buf, len)) return; 
             break;
  
         default:
-            if(e.type >= ET_GAMESPECIFIC && entities::printent(e, buf)) return;
+            if(e.type >= ET_GAMESPECIFIC && entities::printent(e, buf, len)) return;
             break;
     }
-    formatstring(buf)("%s %d %d %d %d %d", entities::entname(e.type), e.attr1, e.attr2, e.attr3, e.attr4, e.attr5);
+    nformatstring(buf, len, "%s %d %d %d %d %d", entities::entname(e.type), e.attr1, e.attr2, e.attr3, e.attr4, e.attr5);
 }
 
 void nearestent()
@@ -1041,7 +1041,7 @@ ICOMMAND(enthavesel,"",  (), addimplicit(intret(entgroup.length())));
 ICOMMAND(entselect, "e", (uint *body), if(!noentedit()) addgroup(e.type != ET_EMPTY && entgroup.find(n)<0 && executebool(body)));
 ICOMMAND(entloop,   "e", (uint *body), if(!noentedit()) addimplicit(groupeditloop(((void)e, execute(body)))));
 ICOMMAND(insel,     "",  (), entfocus(efocus, intret(pointinsel(sel, e.o))));
-ICOMMAND(entget,    "",  (), entfocus(efocus, string s; printent(e, s); result(s)));
+ICOMMAND(entget,    "",  (), entfocus(efocus, string s; printent(e, s, sizeof(s)); result(s)));
 ICOMMAND(entindex,  "",  (), intret(efocus));
 COMMAND(entset, "siiiii");
 COMMAND(nearestent, "");
@@ -1281,7 +1281,7 @@ void shrinkmap()
 
     ivec offset(octant, 0, 0, 0, worldsize);
     vector<extentity *> &ents = entities::getents();
-    loopv(ents) ents[i]->o.sub(offset.tovec());
+    loopv(ents) ents[i]->o.sub(vec(offset));
 
     shrinkblendmap(octant);
  

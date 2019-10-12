@@ -30,7 +30,7 @@ namespace mpr
 
         SolidCube(float x, float y, float z, int size) : o(x, y, z), size(size) {}
         SolidCube(const vec &o, int size) : o(o), size(size) {}
-        SolidCube(const ivec &o, int size) : o(o.tovec()), size(size) {}
+        SolidCube(const ivec &o, int size) : o(o), size(size) {}
 
         vec center() const { return vec(o).add(size/2); }
 
@@ -55,7 +55,7 @@ namespace mpr
 
     struct EntOBB : Ent
     {
-        matrix3x3 orient;
+        matrix3 orient;
         float zmargin;
 
         EntOBB(physent *ent, float zmargin = 0) : Ent(ent), zmargin(zmargin)
@@ -192,7 +192,7 @@ namespace mpr
     struct Model
     {
         vec o, radius;
-        matrix3x3 orient;
+        matrix3 orient;
 
         Model(const vec &ent, const vec &center, const vec &radius, int yaw) : o(ent), radius(radius)
         {

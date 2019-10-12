@@ -327,9 +327,9 @@ void guiimage(char *path, char *action, float *scale, int *overlaid, char *alt)
 
 void guicolor(int *color)
 {
-    if(cgui)
-    {
-        defformatstring(desc)("0x%06X", *color);
+    if(cgui) 
+    {   
+        defformatstring(desc, "0x%06X", *color);
         cgui->text(desc, *color, NULL);
     }
 }

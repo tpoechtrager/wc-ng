@@ -164,31 +164,60 @@ constexpr T clamp(T a, U b, U c) //NEW constexpr instead of static inline
 #define MAXSTRLEN 260
 typedef char string[MAXSTRLEN];
 
-inline void vformatstring(char *d, const char *fmt, va_list v, int len = MAXSTRLEN) { _vsnprintf(d, len, fmt, v); d[len-1] = 0; }
-inline char *copystring(char *d, const char *s, size_t len = MAXSTRLEN)
+inline void vformatstring(char *d, const char *fmt, va_list v, int len) { _vsnprintf(d, len, fmt, v); d[len-1] = 0; }
+template<size_t N> inline void vformatstring(char (&d)[N], const char *fmt, va_list v) { vformatstring(d, fmt, v, N); }
+
+inline char *copystring(char *d, const char *s, size_t len)
 {
-    size_t slen = min(strlen(s)+1, len);
+    size_t slen = min(strlen(s), len-1);
     memcpy(d, s, slen);
-    d[slen-1] = 0;
+    d[slen] = 0;
     return d;
 }
-inline char *concatstring(char *d, const char *s, size_t len = MAXSTRLEN) { size_t used = strlen(d); return used < len ? copystring(d+used, s, len-used) : d; }
+template<size_t N> inline char *copystring(char (&d)[N], const char *s) { return copystring(d, s, N); }
 
-struct stringformatter
+inline char *concatstring(char *d, const char *s, size_t len) { size_t used = strlen(d); return used < len ? copystring(d+used, s, len-used) : d; }
+template<size_t N> inline char *concatstring(char (&d)[N], const char *s) { return concatstring(d, s, N); }
+
+inline char *prependstring(char *d, const char *s, size_t len)
 {
-    char *buf;
-    stringformatter(char *buf): buf((char *)buf) {}
-    void operator()(const char *fmt, ...) PRINTFARGS(2, 3)
-    {
-        va_list v;
-        va_start(v, fmt);
-        vformatstring(buf, fmt, v);
-        va_end(v);
-    }
-};
+    size_t slen = min(strlen(s), len);
+    memmove(&d[slen], d, min(len - slen, strlen(d) + 1));
+    memcpy(d, s, slen);
+    d[len-1] = 0;
+    return d;
+}
+template<size_t N> inline char *prependstring(char (&d)[N], const char *s) { return prependstring(d, s, N); }
 
-#define formatstring(d) stringformatter((char *)d)
-#define defformatstring(d) string d; formatstring(d)
+inline void nformatstring(char *d, int len, const char *fmt, ...) PRINTFARGS(3, 4);
+inline void nformatstring(char *d, int len, const char *fmt, ...)
+{
+    va_list v;
+    va_start(v, fmt);
+    vformatstring(d, fmt, v, len);
+    va_end(v);
+}
+
+template<size_t N> inline void formatstring(char (&d)[N], const char *fmt, ...) PRINTFARGS(2, 3);
+template<size_t N> inline void formatstring(char (&d)[N], const char *fmt, ...)
+{
+    va_list v;
+    va_start(v, fmt);
+    vformatstring(d, fmt, v, int(N));
+    va_end(v);
+}
+
+template<size_t N> inline void concformatstring(char (&d)[N], const char *fmt, ...) PRINTFARGS(2, 3);
+template<size_t N> inline void concformatstring(char (&d)[N], const char *fmt, ...)
+{
+    va_list v;
+    va_start(v, fmt);
+    int len = strlen(d);
+    vformatstring(d + len, fmt, v, int(N) - len);
+    va_end(v);
+}
+
+#define defformatstring(d,...) string d; formatstring(d, __VA_ARGS__)
 #define defvformatstring(d,last,fmt) string d; { va_list ap; va_start(ap, last); vformatstring(d, fmt, ap); va_end(ap); }
 
 template<size_t N> inline bool matchstring(const char *s, size_t len, const char (&d)[N])
@@ -450,6 +479,47 @@ static inline uint hthash(const char *key)
 static inline bool htcmp(const char *x, const char *y)
 {
     return !strcmp(x, y);
+}
+
+struct stringslice
+{
+    const char *str;
+    int len;
+    stringslice() {}
+    stringslice(const char *str, int len) : str(str), len(len) {}
+    stringslice(const char *str, const char *end) : str(str), len(int(end-str)) {}
+
+    const char *end() const { return &str[len]; }
+};
+
+inline char *newstring(const stringslice &s) { return newstring(s.str, s.len); }
+inline const char *stringptr(const char *s) { return s; }
+inline const char *stringptr(const stringslice &s) { return s.str; }
+inline int stringlen(const char *s) { return int(strlen(s)); }
+inline int stringlen(const stringslice &s) { return s.len; }
+
+inline char *copystring(char *d, const stringslice &s, size_t len)
+{
+    size_t slen = min(size_t(s.len), len-1);
+    memcpy(d, s.str, slen);
+    d[slen] = 0;
+    return d;
+}
+template<size_t N> inline char *copystring(char (&d)[N], const stringslice &s) { return copystring(d, s, N); }
+
+static inline uint memhash(const void *ptr, int len)
+{
+    const uchar *data = (const uchar *)ptr;
+    uint h = 5381;
+    loopi(len) h = ((h<<5)+h)^data[i];
+    return h;
+}
+
+static inline uint hthash(const stringslice &s) { return memhash(s.str, s.len); }
+
+static inline bool htcmp(const stringslice &x, const char *y)
+{
+    return x.len == (int)strlen(y) && !memcmp(x.str, y, x.len);
 }
 
 static inline uint hthash(int key)
@@ -806,14 +876,15 @@ template <class T, bool GLOBAL=false> struct vector //NEW  bool GLOBAL=false
     }
 };
 
-template<class T> struct hashset
+template<class H, class E, class K, class T> struct hashbase
 {
-    typedef T elem;
-    typedef const T const_elem;
+    typedef E elemtype;
+    typedef K keytype;
+    typedef T datatype;
 
     enum { CHUNKSIZE = 64 };
 
-    struct chain { T elem; chain *next; };
+    struct chain { E elem; chain *next; };
     struct chainchunk { chain chains[CHUNKSIZE]; chainchunk *next; };
 
     int size;
@@ -823,17 +894,19 @@ template<class T> struct hashset
     chainchunk *chunks;
     chain *unused;
 
-    hashset(int size = 1<<10)
+    enum { DEFAULTSIZE = 1<<10 };
+
+    hashbase(int size = DEFAULTSIZE)
       : size(size)
     {
         numelems = 0;
         chunks = NULL;
         unused = NULL;
         chains = new chain *[size];
-        loopi(size) chains[i] = NULL;
+        memset(chains, 0, size*sizeof(chain *));
     }
 
-    ~hashset()
+    ~hashbase()
     {
         DELETEA(chains);
         deletechunks();
@@ -858,47 +931,62 @@ template<class T> struct hashset
         return c;
     }
 
-    #define HTFIND(key, success, fail) \
+    template<class U>
+    T &insert(uint h, const U &key)
+    {
+        chain *c = insert(h);
+        H::setkey(c->elem, key);
+        return H::getdata(c->elem);
+    }
+
+    #define HTFIND(success, fail) \
         uint h = hthash(key)&(this->size-1); \
         for(chain *c = this->chains[h]; c; c = c->next) \
         { \
-            if(htcmp(key, c->elem)) return (success); \
+            if(htcmp(key, H::getkey(c->elem))) return success H::getdata(c->elem); \
         } \
         return (fail);
 
-    template<class K>
-    T *access(const K &key)
+    template<class U>
+    T *access(const U &key)
     {
-        HTFIND(key, &c->elem, NULL);
+        HTFIND(&, NULL);
     }
 
-    template<class K, class E>
-    T &access(const K &key, const E &elem)
+    template<class U, class V>
+    T &access(const U &key, const V &elem)
     {
-        HTFIND(key, c->elem, insert(h)->elem = elem);
+        HTFIND( , insert(h, key) = elem);
     }
 
-    template<class K>
-    T &operator[](const K &key)
+    template<class V>
+    T &add(const V &elem)
     {
-        HTFIND(key, c->elem, insert(h)->elem);
+        const K &key = H::getkey(elem);
+        HTFIND( , insert(h, key) = elem);
     }
 
-    template<class K>
-    T &find(const K &key, T &notfound)
+    template<class U>
+    T &operator[](const U &key)
     {
-        HTFIND(key, c->elem, notfound);
+        HTFIND( , insert(h, key));
     }
 
-    template<class K>
-    const T &find(const K &key, const T &notfound)
+    template<class U>
+    T &find(const U &key, T &notfound)
     {
-        HTFIND(key, c->elem, notfound);
+        HTFIND( , notfound);
+    }
+
+    template<class U>
+    const T &find(const U &key, const T &notfound)
+    {
+        HTFIND( , notfound);
     }
 
     //NEW
-    template<class K>
-    bool exists(const K &key)
+    template<class U>
+    bool exists(const U &key)
     {
         uint h = hthash(key)&(size-1);
         for(chain *c = chains[h]; c; c = c->next)
@@ -910,17 +998,17 @@ template<class T> struct hashset
     }
     //NEW END
 
-    template<class K>
-    bool remove(const K &key)
+    template<class U>
+    bool remove(const U &key)
     {
         uint h = hthash(key)&(size-1);
         for(chain **p = &chains[h], *c = chains[h]; c; p = &c->next, c = c->next)
         {
-            if(htcmp(key, c->elem))
+            if(htcmp(key, H::getkey(c->elem)))
             {
                 *p = c->next;
-                c->elem.~T();
-                new (&c->elem) T;
+                c->elem.~E();
+                new (&c->elem) E;
                 c->next = unused;
                 unused = c;
                 numelems--;
@@ -942,86 +1030,60 @@ template<class T> struct hashset
     void clear()
     {
         if(!numelems) return;
-        loopi(size) chains[i] = NULL;
+        memset(chains, 0, size*sizeof(chain *));
         numelems = 0;
         unused = NULL;
         deletechunks();
     }
 
-    static inline chain *getnext(void *i) { return ((chain *)i)->next; }
-    static inline T &getdata(void *i) { return ((chain *)i)->elem; }
+    static inline chain *enumnext(void *i) { return ((chain *)i)->next; }
+    static inline K &enumkey(void *i) { return H::getkey(((chain *)i)->elem); }
+    static inline T &enumdata(void *i) { return H::getdata(((chain *)i)->elem); }
+};
+
+template<class T> struct hashset : hashbase<hashset<T>, T, T, T>
+{
+    typedef hashbase<hashset<T>, T, T, T> basetype;
+
+    hashset(int size = basetype::DEFAULTSIZE) : basetype(size) {}
+
+    static inline const T &getkey(const T &elem) { return elem; }
+    static inline T &getdata(T &elem) { return elem; }
+    template<class K> static inline void setkey(T &elem, const K &key) {}
+};
+
+template<class T> struct hashnameset : hashbase<hashnameset<T>, T, const char *, T>
+{
+    typedef hashbase<hashnameset<T>, T, const char *, T> basetype;
+
+    hashnameset(int size = basetype::DEFAULTSIZE) : basetype(size) {}
+
+    template<class U> static inline const char *getkey(const U &elem) { return elem.name; }
+    template<class U> static inline const char *getkey(U *elem) { return elem->name; }
+    static inline T &getdata(T &elem) { return elem; }
+    template<class K> static inline void setkey(T &elem, const K &key) {}
 };
 
 template<class K, class T> struct hashtableentry
 {
     K key;
     T data;
-
-    hashtableentry() {}
-    hashtableentry(const K &key, const T &data) : key(key), data(data) {}
 };
 
-template<class U, class K, class T>
-static inline bool htcmp(const U *x, const hashtableentry<K, T> &y)
+template<class K, class T> struct hashtable : hashbase<hashtable<K, T>, hashtableentry<K, T>, K, T>
 {
-    return htcmp(x, y.key);
-}
+    typedef hashbase<hashtable<K, T>, hashtableentry<K, T>, K, T> basetype;
+    typedef typename basetype::elemtype elemtype;
 
-template<class U, class K, class T>
-static inline bool htcmp(const U &x, const hashtableentry<K, T> &y)
-{
-    return htcmp(x, y.key);
-}
+    hashtable(int size = basetype::DEFAULTSIZE) : basetype(size) {}
 
-template<class K, class T> struct hashtable : hashset<hashtableentry<K, T> >
-{
-    typedef hashtableentry<K, T> entry;
-    typedef struct hashset<entry>::chain chain;
-    typedef K key;
-    typedef T value;
-
-    hashtable(int size = 1<<10) : hashset<entry>(size) {}
-
-    entry &insert(const K &key, uint h)
-    {
-        chain *c = hashset<entry>::insert(h);
-        c->elem.key = key;
-        return c->elem;
-    }
-
-    T *access(const K &key)
-    {
-        HTFIND(key, &c->elem.data, NULL);
-    }
-
-    T &access(const K &key, const T &data)
-    {
-        HTFIND(key, c->elem.data, insert(key, h).data = data);
-    }
-
-    T &operator[](const K &key)
-    {
-        HTFIND(key, c->elem.data, insert(key, h).data);
-    }
-
-    T &find(const K &key, T &notfound)
-    {
-        HTFIND(key, c->elem.data, notfound);
-    }
-
-    const T &find(const K &key, const T &notfound)
-    {
-        HTFIND(key, c->elem.data, notfound);
-    }   
-
-    static inline chain *getnext(void *i) { return ((chain *)i)->next; }
-    static inline K &getkey(void *i) { return ((chain *)i)->elem.key; }
-    static inline T &getdata(void *i) { return ((chain *)i)->elem.data; }
+    static inline K &getkey(elemtype &elem) { return elem.key; }
+    static inline T &getdata(elemtype &elem) { return elem.data; }
+    template<class U> static inline void setkey(elemtype &elem, const U &key) { elem.key = key; }
 };
 
-#define enumerates(ht,t,e,b)      loopi((ht).size)  for(hashset<t>::chain *enumc = (ht).chains[i]; enumc;) { t &e = enumc->elem; enumc = enumc->next; b; }
-#define enumeratekt(ht,k,e,t,f,b) loopi((ht).size)  for(hashtable<k,t>::chain *enumc = (ht).chains[i]; enumc;) { const hashtable<k,t>::key &e = enumc->elem.key; t &f = enumc->elem.data; enumc = enumc->next; b; }
-#define enumerate(ht,t,e,b)       loopi((ht).size) for(void *enumc = (ht).chains[i]; enumc;) { t &e = (ht).getdata(enumc); enumc = (ht).getnext(enumc); b; }
+#define enumeratekt(ht,k,e,t,f,b) loopi((ht).size) for(void *ec = (ht).chains[i]; ec;) { k &e = (ht).enumkey(ec); t &f = (ht).enumdata(ec); ec = (ht).enumnext(ec); b; }
+#define enumerate(ht,t,e,b)       loopi((ht).size) for(void *ec = (ht).chains[i]; ec;) { t &e = (ht).enumdata(ec); ec = (ht).enumnext(ec); b; }
 
 struct unionfind
 {
@@ -1328,24 +1390,22 @@ extern void putfloat(ucharbuf &p, float f);
 extern void putfloat(packetbuf &p, float f);
 extern void putfloat(vector<uchar> &p, float f);
 extern float getfloat(ucharbuf &p);
-extern void sendstring(const char *t, ucharbuf &p);
-extern void sendstring(const char *t, packetbuf &p);
+
 extern void sendstring(const char *t, vector<uchar> &p);
+extern void getstring(char *t, ucharbuf &p, size_t len);
+template<size_t N> static inline void getstring(char (&t)[N], ucharbuf &p) { getstring(t, p, N); }
+extern void filtertext(char *dst, const char *src, bool whitespace, bool forcespace, size_t len);
+template<size_t N> static inline void filtertext(char (&dst)[N], const char *src, bool whitespace = true, bool forcespace = false) { filtertext(dst, src, whitespace, forcespace, N-1); }
+
 //NEW
 extern void sendstring(const mod::strtool &text, ucharbuf &p);
 extern void sendstring(const mod::strtool &text, packetbuf &p);
 extern void sendstring(const mod::strtool &text, vector<uchar> &p);
-//NEW END
-extern void getstring(char *t, ucharbuf &p, size_t len);
-//NEW
 extern void getstring(mod::strtool &text, ucharbuf &p, size_t maxlen = -1, bool secret = false);
-//NEW END
-template<size_t N> static inline void getstring(char (&t)[N], ucharbuf &p) { getstring(t, p, N); }
-extern void filtertext(char *dst, const char *src, bool whitespace = true, bool forcespace = false, size_t len = sizeof(string)-1);
-//NEW
 extern void filtertext(mod::strtool &text, bool whitespace = true, bool secret = false);
 extern void getfilteredstring(mod::strtool &text, ucharbuf &p, bool whitespace = true, size_t maxlen = -1, bool secret = false);
 //NEW END
+
 
 struct ipmask
 {

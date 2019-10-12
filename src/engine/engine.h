@@ -120,14 +120,14 @@ static inline bool pvsoccluded(const ivec &bborigin, int size)
 }
 
 // rendergl
-extern bool hasVBO, hasDRE, hasOQ, hasTR, hasFBO, hasDS, hasTF, hasBE, hasBC, hasCM, hasNP2, hasTC, hasS3TC, hasFXT1, hasTE, hasMT, hasD3, hasAF, hasVP2, hasVP3, hasPP, hasMDA, hasTE3, hasTE4, hasVP, hasFP, hasGLSL, hasGM, hasNVFB, hasSGIDT, hasSGISH, hasDT, hasSH, hasNVPCF, hasRN, hasPBO, hasFBB, hasUBO, hasBUE, hasMBR, hasFC, hasTEX;
+extern bool hasTR, hasFBO, hasDS, hasTF, hasTRG, hasS3TC, hasFXT1, hasAF, hasNVFB, hasFBB, hasUBO, hasMBR;
 extern int hasstencil;
 extern int glversion, glslversion;
 
 extern float curfov, fovy, aspect, forceaspect;
 extern bool envmapping, minimapping, renderedgame, modelpreviewing;
-extern const glmatrixf viewmatrix;
-extern glmatrixf mvmatrix, projmatrix, mvpmatrix, invmvmatrix, invmvpmatrix, fogmatrix, invfogmatrix, envmatrix;
+extern const matrix4 viewmatrix;
+extern matrix4 mvmatrix, projmatrix, mvpmatrix, invmvmatrix, invmvpmatrix, fogmatrix, invfogmatrix, envmatrix;
 extern bvec fogcolor;
 
 extern void gl_checkextensions();
@@ -237,7 +237,7 @@ extern void allchanged(bool load = false);
 extern void clearvas(cube *c);
 extern vtxarray *newva(int x, int y, int z, int size);
 extern void destroyva(vtxarray *va, bool reparent = true);
-extern bool readva(vtxarray *va, ushort *&edata, uchar *&vdata);
+extern bool readva(vtxarray *va, ushort *&edata, vertex *&vdata);
 extern void updatevabb(vtxarray *va, bool force = false);
 extern void updatevabbs(bool force = false);
 
@@ -263,13 +263,10 @@ extern void resetqueries();
 extern int getnumqueries();
 extern void drawbb(const ivec &bo, const ivec &br, const vec &camera = camera1->o);
 
-#define startquery(query) { glBeginQuery_(GL_SAMPLES_PASSED_ARB, ((occludequery *)(query))->id); }
-#define endquery(query) \
-    { \
-        glEndQuery_(GL_SAMPLES_PASSED_ARB); \
-        extern int ati_oq_bug; \
-        if(ati_oq_bug) glFlush(); \
-    }
+extern int oqfrags;
+
+#define startquery(query) do { glBeginQuery_(GL_SAMPLES_PASSED, ((occludequery *)(query))->id); } while(0)
+#define endquery(query) do { glEndQuery_(GL_SAMPLES_PASSED); } while(0)
 
 // dynlight
 
@@ -387,8 +384,8 @@ extern void writehistory(const char *file = ""); //NEW
 extern void conoutf(const char *s, ...) PRINTFARGS(1, 2);
 extern void conoutf(int type, const char *s, ...) PRINTFARGS(2, 3);
 extern void resetcomplete();
-extern void complete(char *s, const char *cmdprefix);
 extern void completename(char *s);
+extern void complete(char *s, int maxlen, const char *cmdprefix);
 const char *getkeyname(int code);
 extern const char *addreleaseaction(char *s);
 extern void writebinds(stream *f);
@@ -482,7 +479,7 @@ extern void clearparticleemitters();
 extern void seedparticles();
 extern void updateparticles();
 extern void renderparticles(bool mainpass = false);
-extern bool printparticles(extentity &e, char *buf);
+extern bool printparticles(extentity &e, char *buf, int len);
 
 // decal
 extern void initdecals();

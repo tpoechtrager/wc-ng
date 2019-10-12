@@ -10,7 +10,7 @@ struct md3frame
 struct md3tag
 {
     char name[64];
-    vec pos;
+    float translation[3];
     float rotation[3][3];
 };
 
@@ -101,7 +101,7 @@ struct md3 : vertmodel, vertloader<md3>
                 m.tcverts = new tcvert[m.numverts];
                 f->seek(mesh_offset + mheader.ofs_uv , SEEK_SET); 
                 f->read(m.tcverts, m.numverts*2*sizeof(float)); // read the UV data
-                lilswap(&m.tcverts[0].u, 2*m.numverts);
+                lilswap(&m.tcverts[0].tc.x, 2*m.numverts);
                 
                 m.verts = new vert[numframes*m.numverts];
                 f->seek(mesh_offset + mheader.ofs_vertices, SEEK_SET); 
@@ -135,31 +135,18 @@ struct md3 : vertmodel, vertloader<md3>
                 loopi(header.numframes*header.numtags)
                 {
                     f->read(&tag, sizeof(md3tag));
-                    lilswap(&tag.pos.x, 12);
+                    lilswap(tag.translation, 12);
                     if(tag.name[0] && i<header.numtags) tags[i].name = newstring(tag.name);
-                    matrix3x4 &m = tags[i].transform;
-                    tag.pos.y *= -1;
+                    matrix4x3 &m = tags[i].transform;
+                    tag.translation[1] *= -1;
                     // undo the -y
                     loopj(3) tag.rotation[1][j] *= -1;
                     // then restore it
                     loopj(3) tag.rotation[j][1] *= -1;
-                    m.a.w = tag.pos.x;
-                    m.b.w = tag.pos.y;
-                    m.c.w = tag.pos.z;
-                    loopj(3)
-                    {
-                        m.a[j] = tag.rotation[j][0];
-                        m.b[j] = tag.rotation[j][1];
-                        m.c[j] = tag.rotation[j][2];
-                    }
-#if 0
-                    tags[i].pos = vec(tag.pos.x, -tag.pos.y, tag.pos.z);
-                    memcpy(tags[i].transform, tag.rotation, sizeof(tag.rotation));
-                    // undo the -y
-                    loopj(3) tags[i].transform[1][j] *= -1;
-                    // then restore it
-                    loopj(3) tags[i].transform[j][1] *= -1;
-#endif
+                    m.a = vec(tag.rotation[0]);
+                    m.b = vec(tag.rotation[1]);
+                    m.c = vec(tag.rotation[2]);
+                    m.d = vec(tag.translation);
                 }
             }
 
@@ -177,21 +164,21 @@ struct md3 : vertmodel, vertloader<md3>
 
     bool loaddefaultparts()
     {
-        const char *pname = parentdir(loadname);
+        const char *pname = parentdir(name);
         part &mdl = *new part;
         parts.add(&mdl);
         mdl.model = this;
         mdl.index = 0;
-        defformatstring(name1)("packages/models/%s/tris.md3", loadname);
+        defformatstring(name1, "packages/models/%s/tris.md3", name);
         mdl.meshes = sharemeshes(path(name1));
         if(!mdl.meshes)
         {
-            defformatstring(name2)("packages/models/%s/tris.md3", pname);    // try md3 in parent folder (vert sharing)
+            defformatstring(name2, "packages/models/%s/tris.md3", pname);    // try md3 in parent folder (vert sharing)
             mdl.meshes = sharemeshes(path(name2));
             if(!mdl.meshes) return false;
         }
         Texture *tex, *masks;
-        loadskin(loadname, pname, tex, masks);
+        loadskin(name, pname, tex, masks);
         mdl.initskins(tex, masks);
         if(tex==notexture) conoutf("could not load model skin for %s", name1);
         return true;
@@ -199,9 +186,8 @@ struct md3 : vertmodel, vertloader<md3>
 
     bool load()
     {
-        if(loaded) return true;
-        formatstring(dir)("packages/models/%s", loadname);
-        defformatstring(cfgname)("packages/models/%s/md3.cfg", loadname);
+        formatstring(dir, "packages/models/%s", name);
+        defformatstring(cfgname, "packages/models/%s/md3.cfg", name);
 
         loading = this;
         identflags &= ~IDF_PERSIST;
@@ -217,11 +203,9 @@ struct md3 : vertmodel, vertloader<md3>
             loading = NULL;
             if(!loaddefaultparts()) return false;
         }
-        scale /= 4;
         translate.y = -translate.y;
-        parts[0]->translate = translate;
-        loopv(parts) parts[i]->meshes->shared++;
-        return loaded = true;
+        loaded();
+        return true;
     }
 };
 

@@ -298,7 +298,7 @@ namespace geoip
 
         int percentdl = downloaded == totalsize ? 100 : (100.0f/totalsize)*downloaded;
 
-        defformatstring(code)("if (! (=s (getalias \"geoip_download_status_update\") \"\")) [ geoip_download_status_update %d %d %d %d ]",
+        defformatstring(code, "if (! (=s (getalias \"geoip_download_status_update\") \"\")) [ geoip_download_status_update %d %d %d %d ]",
                               (int)totalsize, (int)downloaded, percentdl, (int)mselapsed);
         execute_r(code);
 

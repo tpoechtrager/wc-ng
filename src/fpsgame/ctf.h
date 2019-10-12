@@ -296,7 +296,7 @@ struct ctfclientmode : clientmode
             {
                 ivec o(vec(ci->state.o).mul(DMF));
                 sendf(-1, 1, "ri7", N_DROPFLAG, ci->clientnum, i, ++f.version, o.x, o.y, o.z);
-                dropflag(i, o.tovec().div(DMF), lastmillis, dropper ? dropper->clientnum : ci->clientnum, dropper && dropper!=ci);
+                dropflag(i, vec(o).div(DMF), lastmillis, dropper ? dropper->clientnum : ci->clientnum, dropper && dropper!=ci);
             }
         }
     }
@@ -877,7 +877,7 @@ struct ctfclientmode : clientmode
         }
         if(d!=player1)
         {
-            defformatstring(ds)("%d", score);
+            defformatstring(ds, "%d", score);
             particle_textcopy(d->abovehead(), ds, PART_TEXT, 2000, 0x32FF64, 4.0f, -8);
         }
         d->flags = dflags;

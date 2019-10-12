@@ -119,10 +119,8 @@ void writeinitcfg()
     f->printf("stencilbits %d\n", stencilbits);
     f->printf("fsaa %d\n", fsaa);
     f->printf("vsync %d\n", vsync);
-    extern int useshaders, shaderprecision, forceglsl;
-    f->printf("shaders %d\n", useshaders);
+    extern int shaderprecision;
     f->printf("shaderprecision %d\n", shaderprecision);
-    f->printf("forceglsl %d\n", forceglsl);
     extern int soundchans, soundfreq, soundbufferlen;
     f->printf("soundchans %d\n", soundchans);
     f->printf("soundfreq %d\n", soundfreq);
@@ -164,14 +162,6 @@ void renderbackground(const char *caption, Texture *mapshot, const char *mapname
     getbackgroundres(w, h);
     gettextres(w, h);
 
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(0, w, h, 0, -1, 1);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    defaultshader->set();
-    glEnable(GL_TEXTURE_2D);
 
     static int lastupdate = -1, lastw = -1, lasth = -1;
     static float backgroundu = 0, backgroundv = 0, detailu = 0, detailv = 0;
@@ -200,6 +190,14 @@ void renderbackground(const char *caption, Texture *mapshot, const char *mapname
 
     loopi(restore ? 1 : 3)
     {
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0, w, h, 0, -1, 1);
+        glMatrixMode(GL_MODELVIEW);
+        glLoadIdentity();
+
+        defaultshader->set();
+
         glColor3f(1, 1, 1);
         settexture("data/background.png", 0);
         float bu = w*0.67f/256.0f + backgroundu, bv = h*0.67f/256.0f + backgroundv;
@@ -314,7 +312,6 @@ void renderbackground(const char *caption, Texture *mapshot, const char *mapname
         glDisable(GL_BLEND);
         if(!restore) swapbuffers(false);
     }
-    glDisable(GL_TEXTURE_2D);
 
     if(!restore)
     {
@@ -358,7 +355,6 @@ void renderprogress(float bar, const char *text, GLuint tex, bool background)   
     glPushMatrix();
     glLoadIdentity();
 
-    glEnable(GL_TEXTURE_2D);
     defaultshader->set();
     glColor3f(1, 1, 1);
 
@@ -442,8 +438,6 @@ void renderprogress(float bar, const char *text, GLuint tex, bool background)   
         glEnd();
         glDisable(GL_BLEND);
     }
-
-    glDisable(GL_TEXTURE_2D);
 
     glMatrixMode(GL_PROJECTION);
     glPopMatrix();
@@ -535,7 +529,7 @@ static const char *filtersysvar(char *p)
 
 static int changegamma(float red, float green, float blue)
 {
-    defformatstring(cmd)("which xrandr >/dev/null && xrandr --output %s --gamma %f:%f:%f 2>/dev/null", filtersysvar(monitor), red, green, blue);
+    defformatstring(cmd, "which xrandr >/dev/null && xrandr --output %s --gamma %f:%f:%f 2>/dev/null", filtersysvar(monitor), red, green, blue);
     if(system(cmd)) return SDL_SetGamma(red, green, blue);
     return 0;
 }
@@ -1025,7 +1019,7 @@ void stackdumper(unsigned int type, EXCEPTION_POINTERS *ep)
     EXCEPTION_RECORD *er = ep->ExceptionRecord;
     CONTEXT *context = ep->ContextRecord;
     string out, t;
-    formatstring(out)("Cube 2: Sauerbraten Win32 Exception: 0x%x [0x%x]\n\n", er->ExceptionCode, er->ExceptionCode==EXCEPTION_ACCESS_VIOLATION ? er->ExceptionInformation[1] : -1);
+    formatstring(out, "Cube 2: Sauerbraten Win32 Exception: 0x%x [0x%x]\n\n", er->ExceptionCode, er->ExceptionCode==EXCEPTION_ACCESS_VIOLATION ? er->ExceptionInformation[1] : -1);
     SymInitialize(GetCurrentProcess(), NULL, TRUE);
 #ifdef _AMD64_
 	STACKFRAME64 sf = {{context->Rip, 0, AddrModeFlat}, {}, {context->Rbp, 0, AddrModeFlat}, {context->Rsp, 0, AddrModeFlat}, 0};
@@ -1053,7 +1047,7 @@ void stackdumper(unsigned int type, EXCEPTION_POINTERS *ep)
 #endif
         {
             char *del = strrchr(line.FileName, '\\');
-            formatstring(t)("%s - %s [%d]\n", sym.Name, del ? del + 1 : line.FileName, line.LineNumber);
+            formatstring(t, "%s - %s [%d]\n", sym.Name, del ? del + 1 : line.FileName, line.LineNumber);
             concatstring(out, t);
         }
     }
@@ -1248,17 +1242,14 @@ int main(int argc, char **argv)
             case 's': stencilbits = atoi(&argv[i][2]); break;
             case 'f': 
             {
-                extern int useshaders, shaderprecision, forceglsl;
-                int sh = -1, prec = shaderprecision;
+                extern int shaderprecision;
+                int prec = shaderprecision;
                 for(int j = 2; argv[i][j]; j++) switch(argv[i][j])
                 {
-                    case 'a': case 'A': forceglsl = 0; sh = 1; break;
-                    case 'g': case 'G': forceglsl = 1; sh = 1; break;
-                    case 'f': case 'F': case '0': sh = 0; break;
-                    case '1': case '2': case '3': if(sh < 0) sh = 1; prec = argv[i][j] - '1'; break;
+                    case '0': prec = 0; break;
+                    case '1': case '2': case '3': prec = argv[i][j] - '1'; break;
                     default: break;
                 }
-                useshaders = sh > 0 ? 1 : 0;
                 shaderprecision = prec;
                 break;
             }

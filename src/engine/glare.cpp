@@ -33,7 +33,7 @@ bool glaring = false;
 
 void drawglaretex()
 {
-    if(!glare || renderpath==R_FIXEDFUNCTION) return;
+    if(!glare) return;
 
     glaretex.render(1<<glaresize, 1<<glaresize, blurglare, blurglaresigma/100.0f);
 }
@@ -42,7 +42,7 @@ FVARP(glarescale, 0, 1, 8);
 
 void addglare()
 {
-    if(!glare || renderpath==R_FIXEDFUNCTION) return;
+    if(!glare) return;
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_ONE, GL_ONE);
@@ -51,7 +51,7 @@ void addglare()
 
     glBindTexture(GL_TEXTURE_2D, glaretex.rendertex);
 
-    setlocalparamf("glarescale", SHPARAM_PIXEL, 0, glarescale, glarescale, glarescale);
+    LOCALPARAMF(glarescale, glarescale);
 
     glBegin(GL_TRIANGLE_STRIP);
     glTexCoord2f(0, 0); glVertex3f(-1, -1, 0);

@@ -178,11 +178,11 @@ struct smd : skelmodel, skelloader<smd>
                     } while(skipcomment(curbuf));
                     smdvertkey key(curmesh);     
                     int parent = -1, numlinks = 0, len = 0;
-                    if(sscanf(curbuf, " %d %f %f %f %f %f %f %f %f %d%n", &parent, &key.pos.x, &key.pos.y, &key.pos.z, &key.norm.x, &key.norm.y, &key.norm.z, &key.u, &key.v, &numlinks, &len) < 9) goto endsection;    
+                    if(sscanf(curbuf, " %d %f %f %f %f %f %f %f %f %d%n", &parent, &key.pos.x, &key.pos.y, &key.pos.z, &key.norm.x, &key.norm.y, &key.norm.z, &key.tc.x, &key.tc.y, &numlinks, &len) < 9) goto endsection;    
                     curbuf += len;
                     key.pos.y = -key.pos.y;
                     key.norm.y = -key.norm.y;
-                    key.v = 1 - key.v;
+                    key.tc.y = 1 - key.tc.y;
                     blendcombo c;
                     int sorted = 0;
                     float pweight = 0, tweight = 0;
@@ -422,10 +422,10 @@ struct smd : skelmodel, skelloader<smd>
         mdl.index = 0;
         mdl.pitchscale = mdl.pitchoffset = mdl.pitchmin = mdl.pitchmax = 0;
         adjustments.setsize(0);
-        const char *fname = loadname + strlen(loadname);
-        do --fname; while(fname >= loadname && *fname!='/' && *fname!='\\');
+        const char *fname = name + strlen(name);
+        do --fname; while(fname >= name && *fname!='/' && *fname!='\\');
         fname++;
-        defformatstring(meshname)("packages/models/%s/%s.smd", loadname, fname);
+        defformatstring(meshname, "packages/models/%s/%s.smd", name, fname);
         mdl.meshes = sharemeshes(path(meshname), NULL);
         if(!mdl.meshes) return false;
         mdl.initanimparts();
@@ -435,9 +435,8 @@ struct smd : skelmodel, skelloader<smd>
 
     bool load()
     {
-        if(loaded) return true;
-        formatstring(dir)("packages/models/%s", loadname);
-        defformatstring(cfgname)("packages/models/%s/smd.cfg", loadname);
+        formatstring(dir, "packages/models/%s", name);
+        defformatstring(cfgname, "packages/models/%s/smd.cfg", name);
 
         loading = this;
         identflags &= ~IDF_PERSIST;
@@ -457,15 +456,8 @@ struct smd : skelmodel, skelloader<smd>
             }
             loading = NULL;
         }
-        scale /= 4;
-        parts[0]->translate = translate;
-        loopv(parts) 
-        {
-            skelpart *p = (skelpart *)parts[i];
-            p->endanimparts();
-            p->meshes->shared++;
-        }
-        return loaded = true;
+        loaded();
+        return true;
     }
 };
 
@@ -478,7 +470,7 @@ static inline bool htcmp(const smd::smdmeshgroup::smdvertkey &k, int index)
 {
     if(!k.mesh->verts.inrange(index)) return false;
     const smd::vert &v = k.mesh->verts[index];
-    return k.pos == v.pos && k.norm == v.norm && k.u == v.u && k.v == v.v && k.blend == v.blend;
+    return k.pos == v.pos && k.norm == v.norm && k.tc == v.tc && k.blend == v.blend;
 }
 
 skelcommands<smd> smdcommands;

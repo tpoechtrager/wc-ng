@@ -1338,7 +1338,7 @@ static void wcchatgoto(const char *client)
 
     string ipbuf;
     resolve(s->addr.host, ipbuf);
-    defformatstring(connect)("connect %s %d", ipbuf, s->addr.port);
+    defformatstring(connect, "connect %s %d", ipbuf, s->addr.port);
     execute(connect);
 }
 
@@ -1668,7 +1668,7 @@ void setupbinds()
 
     auto setupbind = [&](int key)
     {
-        defformatstring(buf)("bind %c [ %s ];", key, action);
+        defformatstring(buf, "bind %c [ %s ];", key, action);
         execute(buf);
     };
 

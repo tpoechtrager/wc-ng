@@ -198,7 +198,7 @@ namespace searchdemo
 
     struct parsedemo_t
     {
-        const char *demo;
+        char *demo;
         const extinfo::playerv2 *fp;
         vector<extinfo::playerv2*> *result;
         demorecorder::demoinfo_t *demoinfo;

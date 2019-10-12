@@ -212,7 +212,7 @@ static bool initidents()
     initedidents = true;
     for(int i = 0; i < MAXARGS; i++)
     {
-        defformatstring(argname)("arg%d", i+1);
+        defformatstring(argname, "arg%d", i+1);
         newident(argname, IDF_ARG);
     }
     dummyident = newident("//dummy", IDF_UNKNOWN);
@@ -239,8 +239,8 @@ static const char *debugline(const char *p, const char *fmt)
         if(p >= line && p <= end)
         {
             static string buf;
-            if(sourcefile) formatstring(buf)("%s:%d: %s", sourcefile, num, fmt);
-            else formatstring(buf)("%d: %s", num, fmt);
+            if(sourcefile) formatstring(buf, "%s:%d: %s", sourcefile, num, fmt);
+            else formatstring(buf, "%d: %s", num, fmt);
             return buf;
         }
         if(!*end) break;
@@ -2424,7 +2424,7 @@ const char *intstr(int v)
 const char *hexstr(int v, bool iscolor)
 {
     retidx = (retidx + 1)%4;
-    hexformat(retbuf[retidx], v, iscolor);
+    hexformat(retbuf[retidx], v, sizeof(retbuf[retidx]), iscolor);
     return retbuf[retidx];
 }
 //NEW END
@@ -3113,11 +3113,11 @@ static void roundf_(float *a, int *b)
 #ifdef WIN32
     _itoa(ndec, decbuf, 10);
 #else
-    formatstring(decbuf)("%d", ndec);
+    formatstring(decbuf, "%d", ndec);
 #endif
     fmt += decbuf;
     fmt += 'f';
-    formatstring(buf)(fmt.getbuf(), *a);
+    formatstring(buf, fmt.getbuf(), *a);
     result(buf);
 }
 COMMANDN(roundf, roundf_, "fi");

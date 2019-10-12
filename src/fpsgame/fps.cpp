@@ -630,7 +630,7 @@ namespace game
 
         if(m_sp)
         {
-            defformatstring(scorename)("bestscore_%s", getclientmap());
+            defformatstring(scorename, "bestscore_%s", getclientmap());
             const char *best = getalias(scorename);
             if(*best) conoutf(CON_GAMEINFO, "\f2try to beat your best score so far: %s", best);
         }
@@ -743,8 +743,8 @@ namespace game
         if(dup || prefix[0] || suffix[0])
         {
             cidx = (cidx+1)%3;
-            if(dup) formatstring(cname[cidx])(d->aitype == AI_NONE ? "%s%s \fs\f5(%d)\fr%s" : "%s%s \fs\f5[%d]\fr%s", prefix, name, d->clientnum, suffix);
-            else formatstring(cname[cidx])("%s%s%s", prefix, name, suffix);
+            if(dup) formatstring(cname[cidx], d->aitype == AI_NONE ? "%s%s \fs\f5(%d)\fr%s" : "%s%s \fs\f5[%d]\fr%s", prefix, name, d->clientnum, suffix);
+            else formatstring(cname[cidx], "%s%s%s", prefix, name, suffix);
             return cname[cidx];
         }
         return name;
@@ -762,7 +762,7 @@ namespace game
     {
         if(!teamcolortext || !m_teammode) return sameteam || !alt ? name : alt;
         cidx = (cidx+1)%3;
-        formatstring(cname[cidx])(sameteam ? "\fs\f1%s\fr" : "\fs\f3%s\fr", sameteam || !alt ? name : alt);
+        formatstring(cname[cidx], sameteam ? "\fs\f1%s\fr" : "\fs\f3%s\fr", sameteam || !alt ? name : alt);
         return cname[cidx];
     }    
     
@@ -1008,7 +1008,7 @@ namespace game
             return;
         }
         clientbwstats *bw = (clientbwstats *)curpeer->bandwidthStats.data;
-        defformatstring(bwtext)("%.2f kb/s (%d p/s) // %.2f kb/s (%d p/s)",
+        defformatstring(bwtext, "%.2f kb/s (%d p/s) // %.2f kb/s (%d p/s)",
             bw->curincomingkbs, bw->curincomingpacketssec, bw->curoutgoingkbs, bw->curoutgoingpacketssec);
         int lengthoffset = strlen(bwtext)-39;
         if(lengthoffset>1) lengthoffset /= 2;

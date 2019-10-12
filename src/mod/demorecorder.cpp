@@ -164,7 +164,7 @@ namespace demorecorder
 
         putint(p, N_SERVMSG);
 
-        defformatstring(info)("demo recorded on %s (%s:%u)",
+        defformatstring(info, "demo recorded on %s (%s:%u)",
                               *servinfotmp ? servinfotmp : "<no description>", serverip,
                               curpeer ? curpeer->address.port : 0);
 
@@ -345,7 +345,7 @@ namespace demorecorder
         rdir += PATHDIV;
         rdir += demomode;
 
-        defformatstring(dmo)(fmt, rdir.str(), name && *name ? name :
+        defformatstring(dmo, fmt, rdir.str(), name && *name ? name :
                              genproperdemofilename(demofilename, sizeof(demofilename)));
 
         DELETEA(demofile);
@@ -745,7 +745,7 @@ namespace searchdemo
             if (filebuf) free(filebuf); \
             if (f) delete f; \
             if (pd->result) pd->result->deletecontents(); \
-            if (pd->error) copystring(pd->error, errstr); \
+            if (pd->error) copystring(pd->error, errstr, sizeof(string)); \
             if (pd->packetcount) *pd->packetcount = packetnum; \
             return e; \
         } while(0)
@@ -811,7 +811,7 @@ namespace searchdemo
 
             if (!filebuf)
             {
-                defformatstring(errmsg)("failed to allocate %.2f mb, for reading file into memory", filesize/1024.0f/1024.0f);
+                defformatstring(errmsg, "failed to allocate %.2f mb, for reading file into memory", filesize/1024.0f/1024.0f);
                 RETURN_ERROR(ERROR_INVALID_UNCOMPRESS_SIZE, errmsg);
             }
 
@@ -823,13 +823,13 @@ namespace searchdemo
                 case UNCOMPRESS_OK: break;
                 case UNCOMPRESS_ERROR_OUTPUT_SIZE_TOO_BIG:
                 {
-                    defformatstring(errmsg)("uncompress buffer size is too big (%.2f mb).", ulen/1024.0f/1024.0f);
+                    defformatstring(errmsg, "uncompress buffer size is too big (%.2f mb).", ulen/1024.0f/1024.0f);
                     if (llong(ulen/20) > filesize) concatstring(errmsg, " corrupted file?");
                     RETURN_ERROR(ERROR_INVALID_UNCOMPRESS_SIZE, errmsg);
                 }
                 case UNCOMPRESS_ERROR_FAILED_TO_ALLOCATE_BUFFER:
                 {
-                    defformatstring(errmsg)("failed to allocate %.2f mb, for uncompressing", ulen/1024.0f/1024.0f);
+                    defformatstring(errmsg, "failed to allocate %.2f mb, for uncompressing", ulen/1024.0f/1024.0f);
                     RETURN_ERROR(ERROR_INVALID_UNCOMPRESS_SIZE, errmsg);
                 }
                 case UNCOMPRESS_ERROR_INVALID_BUFFER:
@@ -1327,7 +1327,7 @@ namespace searchdemo
                 sdi.demoinfo = thread->pd.demoinfo;
                 sdi.gamemode = mode;
                 sdi.result = *thread->pd.result;
-                formatstring(matches)(" - matches: %d", thread->pd.result->length());
+                formatstring(matches, " - matches: %d", thread->pd.result->length());
             }
             else
             {
@@ -1356,12 +1356,12 @@ namespace searchdemo
             if (thread->totaltime == ERROR_DEMO_CONTAINS_NO_EXTINFO)
             {
                 noextinfocount++;
-                formatstring(error)("(%s)", thread->pd.error);
+                formatstring(error, "(%s)", thread->pd.error);
                 color = "\f7";
             }
             else
             {
-                formatstring(error)("error: (%s): %s", thread->realdemofile, thread->pd.error);
+                formatstring(error, "error: (%s): %s", thread->realdemofile, thread->pd.error);
                 readerrors++;
                 color = "\f3";
             }
@@ -1450,7 +1450,7 @@ namespace searchdemo
 
             char *demofile = files.remove(i);
 
-            formatstring(thread->pd.demo)("%s/%s.dmo", dir, demofile);
+            nformatstring(thread->pd.demo, sizeof(string), "%s/%s.dmo", dir, demofile);
             thread->realdemofile = demofile;
             thread->pd.demoinfo = new demoinfo_t;
 
@@ -1528,7 +1528,7 @@ namespace searchdemo
             copystring(mode, gamemodes[i].name);
             demorecorder::fixdemofilestring(mode);
 
-            defformatstring(dir)("%s/%s", CLIENT_DEMO_DIRECTORY, mode);
+            defformatstring(dir, "%s/%s", CLIENT_DEMO_DIRECTORY, mode);
 
             vector<char*> files;
 
@@ -1695,7 +1695,7 @@ namespace searchdemo
                         if (enet_address_get_host_ip(&address, serverip, sizeof(string)) < 0)
                             copystring(tmp, "-");
 
-                        formatstring(server)("(%s:%u)", serverip, di->port);
+                        formatstring(server, "(%s:%u)", serverip, di->port);
                     }
                     else
                     {
@@ -1706,17 +1706,17 @@ namespace searchdemo
                     string modename;
                     copystring(modename, m_valid(di->mode) ? gamemodes[di->mode-STARTGAMEMODE].name : "unknown");
 
-                    defformatstring(demoinfostr)("Server: %s Mode: %s Map: %s  (%s)",
+                    defformatstring(demoinfostr, "Server: %s Mode: %s Map: %s  (%s)",
                                                  server, modename, di->map, timebuf);
 
-                    formatstring(tmp)("guibutton %s ", escapecubescriptstring(demoinfostr, escapebuf));
+                    formatstring(tmp, "guibutton %s ", escapecubescriptstring(demoinfostr, escapebuf));
                     PUTSTRING(tmp);
                 }
                 else
                 {
                     timeerror:;
 
-                    formatstring(tmp)("guibutton %s ", escapecubescriptstring(sdi.demo, escapebuf));
+                    formatstring(tmp, "guibutton %s ", escapecubescriptstring(sdi.demo, escapebuf));
                     PUTSTRING(tmp);
                 }
 
@@ -1727,9 +1727,9 @@ namespace searchdemo
                 escapebuf.clear();
 
                 if (!strcmp(mode, "home"))
-                    formatstring(tmp)("\"demo ^\"%s^\"\"\n", escapecubescriptstring(sdi.demo, escapebuf, false));
+                    formatstring(tmp, "\"demo ^\"%s^\"\"\n", escapecubescriptstring(sdi.demo, escapebuf, false));
                 else
-                    formatstring(tmp)("\"demo ^\"%s/%s/%s^\"\"\n", CLIENT_DEMO_DIRECTORY, mode, escapecubescriptstring(sdi.demo, escapebuf, false));
+                    formatstring(tmp, "\"demo ^\"%s/%s/%s^\"\"\n", CLIENT_DEMO_DIRECTORY, mode, escapecubescriptstring(sdi.demo, escapebuf, false));
 
                 PUTSTRING(tmp);
 
@@ -1747,7 +1747,7 @@ namespace searchdemo
 #endif
 
                     PUTSTRING("guitext \"");
-                    formatstring(tmp)(fmt, escapecubescriptstring(p.getname(), escapebuf, false), p.cn, p.frags,
+                    formatstring(tmp, fmt, escapecubescriptstring(p.getname(), escapebuf, false), p.cn, p.frags,
                                       p.deaths, p.acc, p.teamkills, p.ip.ia[0], p.ip.ia[1], p.ip.ia[2]);
                     PUTSTRING(tmp);
 
@@ -1868,8 +1868,8 @@ namespace searchdemo
     {
         llong demofilesize;
 
-        defformatstring(demofile)("%s.dmo", demo);
-        defformatstring(newfile)("%s.tmp", demofile);
+        defformatstring(demofile, "%s.dmo", demo);
+        defformatstring(newfile, "%s.tmp", demofile);
 
         stripdemo_t stripdemo;
         stripdemo.strippedfile = opengzfile(newfile, "wb", NULL, clientdemocompresslevel);
@@ -1925,8 +1925,8 @@ namespace searchdemo
         size_t ulen;
         float diff;
 
-        defformatstring(demofile)("%s.dmo", demo);
-        defformatstring(newfile)("%s.tmp", demofile);
+        defformatstring(demofile, "%s.dmo", demo);
+        defformatstring(newfile, "%s.tmp", demofile);
 
         stream *f = opengzfile(newfile, "wb", NULL, clientdemocompresslevel);
 
@@ -1993,7 +1993,7 @@ namespace searchdemo
 
         loopv(files)
         {
-            defformatstring(demo)("%s/%s", dir, files[i]);
+            defformatstring(demo, "%s/%s", dir, files[i]);
             recompressdemo(demo);
         }
 
@@ -2008,7 +2008,7 @@ namespace searchdemo
         int demomillis;
         uint packetnum;
 
-        defformatstring(demofile)("%s.dmo", demo);
+        defformatstring(demofile, "%s.dmo", demo);
 
         parsedemo_t pd;
 
