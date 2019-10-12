@@ -350,6 +350,7 @@ COMMAND(mmodel, "s");
 COMMANDN(mapmodel, mapmodelcompat, "iiiss");
 COMMAND(mapmodelreset, "i");
 ICOMMAND(mapmodelname, "i", (int *index), { result(mapmodels.inrange(*index) ? mapmodels[*index].name : ""); });
+ICOMMAND(mapmodelloaded, "i", (int *index), { intret(mapmodels.inrange(*index) && mapmodels[*index].m ? 1 : 0); });
 ICOMMAND(nummapmodels, "", (), { intret(mapmodels.length()); });
 
 // model registry

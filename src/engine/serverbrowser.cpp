@@ -662,7 +662,7 @@ void checkpings()
         getstring(text, p);
         filtertext(si->map, text, false);
         getstring(text, p);
-        filtertext(si->sdesc, text);
+        filtertext(si->sdesc, text, true, true);
         //NEW
         extern serverinfo *selectedserver;
         bool isselectedserver = (selectedserver == si);
