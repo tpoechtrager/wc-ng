@@ -150,9 +150,26 @@ Texture *backgroundmapshot = NULL;
 string backgroundmapname = "";
 char *backgroundmapinfo = NULL;
 
-void restorebackground()
+void setbackgroundinfo(const char *caption = NULL, Texture *mapshot = NULL, const char *mapname = NULL, const char *mapinfo = NULL)
 {
-    if(renderedframe) return;
+    renderedframe = false;
+    copystring(backgroundcaption, caption ? caption : "");
+    backgroundmapshot = mapshot;
+    copystring(backgroundmapname, mapname ? mapname : "");
+    if(mapinfo != backgroundmapinfo)
+    {
+        DELETEA(backgroundmapinfo);
+        if(mapinfo) backgroundmapinfo = newstring(mapinfo);
+    }
+}
+
+void restorebackground(bool force = false)
+{
+    if(renderedframe)
+    {
+        if(!force) return;
+        setbackgroundinfo();
+    }
     renderbackground(backgroundcaption[0] ? backgroundcaption : NULL, backgroundmapshot, backgroundmapname[0] ? backgroundmapname : NULL, backgroundmapinfo, true);
 }
 
@@ -170,13 +187,12 @@ void renderbackground(const char *caption, Texture *mapshot, const char *mapname
 {
     if(!inbetweenframes && !force) return;
 
-    stopsounds(); // stop sounds while loading
+    if(!restore || force) stopsounds(); // stop sounds while loading
  
     int w = screenw, h = screenh;
     if(forceaspect) w = int(ceil(h*forceaspect));
     getbackgroundres(w, h);
     gettextres(w, h);
-
 
     static int lastupdate = -1, lastw = -1, lasth = -1;
     static float backgroundu = 0, backgroundv = 0, detailu = 0, detailv = 0;
@@ -306,19 +322,10 @@ void renderbackground(const char *caption, Texture *mapshot, const char *mapname
         if(!restore) swapbuffers(false);
     }
 
-    if(!restore)
-    {
-        renderedframe = false;
-        copystring(backgroundcaption, caption ? caption : "");
-        backgroundmapshot = mapshot;
-        copystring(backgroundmapname, mapname ? mapname : "");
-        if(mapinfo != backgroundmapinfo)
-        {
-            DELETEA(backgroundmapinfo);
-            if(mapinfo) backgroundmapinfo = newstring(mapinfo);
-        }
-    }
+    if(!restore) setbackgroundinfo(caption, mapshot, mapname, mapinfo);
 }
+
+VAR(progressbackground, 0, 0, 1);
 
 float loadprogress = 0;
 
@@ -332,8 +339,9 @@ void renderprogress(float bar, const char *text, GLuint tex, bool background)   
     interceptkey(SDLK_UNKNOWN); // keep the event queue awake to avoid 'beachball' cursor
     #endif
 
-    extern int sdl_backingstore_bug;
-    if(background || sdl_backingstore_bug > 0) restorebackground();
+    extern int mesa_swap_bug, curvsync;
+    bool forcebackground = progressbackground || (mesa_swap_bug && (curvsync || totalmillis==1));
+    if(background || forcebackground) restorebackground(forcebackground);
 
     int w = screenw, h = screenh;
     if(forceaspect) w = int(ceil(h*forceaspect));
@@ -420,6 +428,8 @@ void renderprogress(float bar, const char *text, GLuint tex, bool background)   
 }
 
 int keyrepeatmask = 0, textinputmask = 0;
+Uint32 textinputtime = 0;
+VAR(textinputfilter, 0, 5, 1000);
 
 void keyrepeat(bool on, int mask)
 {
@@ -431,7 +441,11 @@ void textinput(bool on, int mask)
 {
     if(on)
     {
-        if(!textinputmask) SDL_StartTextInput();
+        if(!textinputmask)
+        {
+            SDL_StartTextInput();
+            textinputtime = SDL_GetTicks();
+        }
         textinputmask |= mask;
     }
     else
@@ -562,11 +576,13 @@ void cleargamma()
     if(curgamma != 100 && screen) SDL_SetWindowBrightness(screen, 1.0f);
 }
 
+int curvsync = -1;
 void restorevsync()
 {
     if(initing || !glcontext) return;
     extern int vsync, vsynctear;
-    SDL_GL_SetSwapInterval(vsync ? (vsynctear ? -1 : 1) : 0);
+    if(!SDL_GL_SetSwapInterval(vsync ? (vsynctear ? -1 : 1) : 0))
+        curvsync = vsync;
 }
 
 VARFP(vsync, 0, 0, 1, restorevsync());
@@ -584,13 +600,14 @@ void setupscreen()
         SDL_DestroyWindow(screen);
         screen = NULL;
     }
+    curvsync = -1;
 
-    SDL_DisplayMode desktop;
-    if(SDL_GetDesktopDisplayMode(0, &desktop) < 0) fatal("failed querying desktop display mode: %s", SDL_GetError());
+    SDL_Rect desktop;
+    if(SDL_GetDisplayBounds(0, &desktop) < 0) fatal("failed querying desktop bounds: %s", SDL_GetError());
     desktopw = desktop.w;
     desktoph = desktop.h;
 
-    if(scr_h < 0) scr_h = fullscreen ? desktopw : SCR_DEFAULTH;
+    if(scr_h < 0) scr_h = fullscreen ? desktoph : SCR_DEFAULTH;
     if(scr_w < 0) scr_w = (scr_h*desktopw)/desktoph;
     scr_w = clamp(scr_w, SCR_MINW, SCR_MAXW);
     scr_h = clamp(scr_h, SCR_MINH, SCR_MAXH);
@@ -613,14 +630,9 @@ void setupscreen()
         initwindowpos = true;
     }
 
-    screen = SDL_CreateWindow("Cube 2: Sauerbraten", winx, winy, winw, winh, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_MOUSE_FOCUS | flags);
-    if(!screen) fatal("failed to create OpenGL window: %s", SDL_GetError());
-
-    SDL_SetWindowMinimumSize(screen, SCR_MINW, SCR_MINH);
-    SDL_SetWindowMaximumSize(screen, SCR_MAXW, SCR_MAXH);
-
+    SDL_GL_ResetAttributes();
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    static int configs[] =
+    static const int configs[] =
     {
         0x3, /* try everything */
         0x2, 0x1, /* try disabling one at a time */
@@ -633,34 +645,46 @@ void setupscreen()
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 0);
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 0);
     }
-    static const struct { int major, minor; } glversions[] = { { 3, 3 }, { 3, 2 }, { 3, 1 }, { 3, 0 }, { 2, 1 } };
-    loopj(sizeof(glversions)/sizeof(glversions[0]))
+    loopi(sizeof(configs)/sizeof(configs[0]))
     {
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, glversions[j].major);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, glversions[j].minor);
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, glversions[j].major >= 3 ? SDL_GL_CONTEXT_PROFILE_CORE : 0);
-        loopi(sizeof(configs)/sizeof(configs[0]))
+        config = configs[i];
+        if(!depthbits && config&1) continue;
+        if(fsaa<=0 && config&2) continue;
+        if(depthbits) SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, config&1 ? depthbits : 24);
+        if(fsaa>0)
         {
-            config = configs[i];
-            if(!depthbits && config&1) continue;
-            if(fsaa<=0 && config&2) continue;
-            if(depthbits) SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, config&1 ? depthbits : 24);
-            if(fsaa>0)
-            {
-                SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, config&2 ? 1 : 0);
-                SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, config&2 ? fsaa : 0);
-            }
+            SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, config&2 ? 1 : 0);
+            SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, config&2 ? fsaa : 0);
+        }
+        screen = SDL_CreateWindow("Cube 2: Sauerbraten", winx, winy, winw, winh, SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN | SDL_WINDOW_INPUT_FOCUS | SDL_WINDOW_MOUSE_FOCUS | flags);
+        if(!screen) continue;
+
+    #ifdef __APPLE__
+        static const int glversions[] = { 32, 20 };
+    #else
+        static const int glversions[] = { 33, 32, 31, 30, 20 };
+    #endif
+        loopj(sizeof(glversions)/sizeof(glversions[0]))
+        {
+            glcompat = glversions[j] <= 30 ? 1 : 0;
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, glversions[j] / 10);
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, glversions[j] % 10);
+            SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, glversions[j] >= 32 ? SDL_GL_CONTEXT_PROFILE_CORE : 0);
             glcontext = SDL_GL_CreateContext(screen);
             if(glcontext) break;
         }
         if(glcontext) break;
     }
-    if(!glcontext) fatal("failed to create OpenGL context: %s", SDL_GetError());
+    if(!screen) fatal("failed to create OpenGL window: %s", SDL_GetError());
+    else if(!glcontext) fatal("failed to create OpenGL context: %s", SDL_GetError());
     else
     {
         if(depthbits && (config&1)==0) conoutf(CON_WARN, "%d bit z-buffer not supported - disabling", depthbits);
         if(fsaa>0 && (config&2)==0) conoutf(CON_WARN, "%dx anti-aliasing not supported - disabling", fsaa);
     }
+
+    SDL_SetWindowMinimumSize(screen, SCR_MINW, SCR_MINH);
+    SDL_SetWindowMaximumSize(screen, SCR_MAXW, SCR_MAXH);
 
     SDL_GetWindowSize(screen, &screenw, &screenh);
 }
@@ -687,6 +711,7 @@ void resetgl()
     recorder::cleanup();
     cleanupva();
     cleanupparticles();
+    cleanupdecals();
     cleanupblobs();
     cleanupsky();
     cleanupmodels();
@@ -842,12 +867,13 @@ void checkinput()
                 return;
 
             case SDL_TEXTINPUT:
-            {
-                uchar buf[SDL_TEXTINPUTEVENT_TEXT_SIZE+1];
-                size_t len = decodeutf8(buf, sizeof(buf)-1, (const uchar *)event.text.text, strlen(event.text.text));
-                if(len > 0) { buf[len] = '\0'; processtextinput((const char *)buf, len); }
+                if(textinputmask && int(event.text.timestamp-textinputtime) >= textinputfilter)
+                {
+                    uchar buf[SDL_TEXTINPUTEVENT_TEXT_SIZE+1];
+                    size_t len = decodeutf8(buf, sizeof(buf)-1, (const uchar *)event.text.text, strlen(event.text.text));
+                    if(len > 0) { buf[len] = '\0'; processtextinput((const char *)buf, len); }
+                }
                 break;
-            }
 
             case SDL_KEYDOWN:
             case SDL_KEYUP:
@@ -1236,24 +1262,22 @@ int main(int argc, char **argv)
     char *load = NULL, *initscript = NULL;
 
     initing = INIT_RESET;
-    for(int i = 1; i<argc; i++)
+    // set home dir first
+    for(int i = 1; i<argc; i++) if(argv[i][0]=='-' && argv[i][1] == 'q') { sethomedir(&argv[i][2]); break; }
+    // set log after home dir, but before anything else
+    for(int i = 1; i<argc; i++) if(argv[i][0]=='-' && argv[i][1] == 'g')
     {
-        if(argv[i][0]=='-') switch(argv[i][1])
-        {
-            case 'q': 
-			{
-				const char *dir = sethomedir(&argv[i][2]);
-				if(dir) logoutf("Using home directory: %s", dir);
-				break;
-			}
-        }
+        const char *file = argv[i][2] ? &argv[i][2] : "log.txt";
+        setlogfile(file);
+        logoutf("Setting log file: %s", file);
+        break;
     }
     execfile("init.cfg", false);
     for(int i = 1; i<argc; i++)
     {
         if(argv[i][0]=='-') switch(argv[i][1])
         {
-            case 'q': /* parsed first */ break;
+            case 'q': if(homedir[0]) logoutf("Using home directory: %s", homedir); break;
             case 'r': /* compat, ignore */ break;
             case 'k':
             {
@@ -1261,14 +1285,14 @@ int main(int argc, char **argv)
                 if(dir) logoutf("Adding package directory: %s", dir);
                 break;
             }
-            case 'g': logoutf("Setting log file: %s", &argv[i][2]); setlogfile(&argv[i][2]); break;
+            case 'g': break;
             case 'd': dedicated = atoi(&argv[i][2]); if(dedicated<=0) dedicated = 2; break;
             case 'w': scr_w = clamp(atoi(&argv[i][2]), SCR_MINW, SCR_MAXW); if(!findarg(argc, argv, "-h")) scr_h = -1; break;
             case 'h': scr_h = clamp(atoi(&argv[i][2]), SCR_MINH, SCR_MAXH); if(!findarg(argc, argv, "-w")) scr_w = -1; break;
             case 'z': depthbits = atoi(&argv[i][2]); break;
             case 'b': /* compat, ignore */ break;
             case 'a': fsaa = atoi(&argv[i][2]); break;
-            case 'v': vsync = atoi(&argv[i][2]); if(vsync < 0) { vsynctear = 1; vsync = 1; } else vsynctear = 0; break;
+            case 'v': /* compat, ignore */ break;
             case 't': fullscreen = atoi(&argv[i][2]); break;
             case 's': /* compat, ignore */ break;
             case 'f': /* compat, ignore */ break; 
@@ -1343,12 +1367,12 @@ int main(int argc, char **argv)
     initing = INIT_LOAD;
     execfile("data/keymap.cfg");
     execfile("data/stdedit.cfg");
-    defformatstring(gamecfgname, "data/game_%s.cfg", game::gameident());
-    execfile(gamecfgname);
     execfile("data/sounds.cfg");
     execfile("data/menus.cfg");
     execfile("data/heightmap.cfg");
     execfile("data/blendbrush.cfg");
+    defformatstring(gamecfgname, "data/game_%s.cfg", game::gameident());
+    execfile(gamecfgname);
     if(game::savedservers()) execfile(game::savedservers(), false);
     
     identflags |= IDF_PERSIST;

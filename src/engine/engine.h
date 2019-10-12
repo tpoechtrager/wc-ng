@@ -64,7 +64,7 @@ extern void reloadfonts();
 extern int hwtexsize, hwcubetexsize, hwmaxaniso, maxtexsize;
 
 extern Texture *textureload(const char *name, int clamp = 0, bool mipit = true, bool msg = true);
-extern int texalign(void *data, int w, int bpp);
+extern int texalign(const void *data, int w, int bpp);
 extern void cleanuptexture(Texture *t);
 extern uchar *loadalphamask(Texture *t);
 extern void loadlayermasks();
@@ -127,7 +127,7 @@ static inline bool pvsoccluded(const ivec &bborigin, int size)
 
 // rendergl
 extern bool hasVAO, hasFBO, hasAFBO, hasDS, hasTF, hasTRG, hasTSW, hasS3TC, hasFXT1, hasLATC, hasRGTC, hasAF, hasFBB, hasUBO, hasMBR;
-extern int glversion, glslversion;
+extern int glversion, glslversion, glcompat;
 
 enum { DRAWTEX_NONE = 0, DRAWTEX_ENVMAP, DRAWTEX_MINIMAP, DRAWTEX_MODELPREVIEW };
 
@@ -290,6 +290,8 @@ extern bool isfoggedsphere(float rad, const vec &cv);
 extern int isvisiblesphere(float rad, const vec &cv);
 extern bool bboccluded(const ivec &bo, const ivec &br);
 extern occludequery *newquery(void *owner);
+extern void startquery(occludequery *query);
+extern void endquery(occludequery *query);
 extern bool checkquery(occludequery *query, bool nowait = false);
 extern void resetqueries();
 extern int getnumqueries();
@@ -298,9 +300,6 @@ extern void endbb(bool mask = true);
 extern void drawbb(const ivec &bo, const ivec &br);
 
 extern int oqfrags;
-
-#define startquery(query) do { glBeginQuery_(GL_SAMPLES_PASSED, ((occludequery *)(query))->id); } while(0)
-#define endquery(query) do { glEndQuery_(GL_SAMPLES_PASSED); } while(0)
 
 // dynlight
 

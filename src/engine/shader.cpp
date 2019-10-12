@@ -103,49 +103,9 @@ static void showglslinfo(GLenum type, GLuint obj, const char *name, const char *
     }
 }
 
-static const char *finddecls(const char *line)
-{
-    for(;;)
-    {
-        const char *start = line + strspn(line, " \t\r");
-        switch(*start)
-        {
-            case '\n':
-                line = start + 1;
-                continue;
-            case '#':
-                do
-                {
-                    start = strchr(start + 1, '\n');
-                    if(!start) return NULL;
-                } while(start[-1] == '\\');
-                line = start + 1;
-                continue;
-            case '/':
-                switch(start[1])
-                {
-                    case '/':
-                        start = strchr(start + 2, '\n');
-                        if(!start) return NULL;
-                        line = start + 1;
-                        continue;
-                    case '*':
-                        start = strstr(start + 2, "*/");
-                        if(!start) return NULL;
-                        line = start + 2;
-                        continue;
-                }
-                // fall-through
-            default:
-                return line;
-        }
-    }
-}
-
 static void compileglslshader(GLenum type, GLuint &obj, const char *def, const char *name, bool msg = true) 
 {
     const char *source = def + strspn(def, " \t\r\n");
-    char *modsource = NULL;
     const char *parts[16];
     int numparts = 0;
     static const struct { int version; const char * const header; } glslversions[] =
@@ -168,32 +128,17 @@ static void compileglslshader(GLenum type, GLuint &obj, const char *def, const c
         else if(type == GL_FRAGMENT_SHADER)
         {
             parts[numparts++] = "#define varying in\n";
-            if(glslversion < 150)
-            {
-                const char *decls = finddecls(source);
-                if(decls)
-                {
-                    static const char * const prec = "precision highp float;\n";
-                    if(decls != source)
-                    {
-                        static const int preclen = strlen(prec);
-                        int beforelen = int(decls-source), afterlen = strlen(decls);
-                        modsource = newstring(beforelen + preclen + afterlen);
-                        memcpy(modsource, source, beforelen);
-                        memcpy(&modsource[beforelen], prec, preclen);
-                        memcpy(&modsource[beforelen + preclen], decls, afterlen);
-                        modsource[beforelen + preclen + afterlen] = '\0';
-                    }
-                    else parts[numparts++] = prec;
-                }
-            }
+            if(glslversion < 150) parts[numparts++] = "precision highp float;\n";
+            if(glversion >= 300) parts[numparts++] =
+                "out vec4 cube2_FragColor;\n"
+                "#define gl_FragColor cube2_FragColor\n";
         }
         parts[numparts++] =
             "#define texture2D(sampler, coords) texture(sampler, coords)\n"
             "#define texture2DProj(sampler, coords) textureProj(sampler, coords)\n"
             "#define textureCube(sampler, coords) texture(sampler, coords)\n";
     }
-    parts[numparts++] = modsource ? modsource : source;
+    parts[numparts++] = source;
 
     obj = glCreateShader_(type);
     glShaderSource_(obj, numparts, (const GLchar **)parts, NULL);
@@ -207,8 +152,6 @@ static void compileglslshader(GLenum type, GLuint &obj, const char *def, const c
         obj = 0;
     }
     else if(dbgshader > 1 && msg) showglslinfo(type, obj, name, parts, numparts);
-
-    if(modsource) delete[] modsource;
 }  
 
 VAR(dbgubo, 0, 0, 1);
@@ -254,6 +197,10 @@ static void linkglslprogram(Shader &s, bool msg = true)
             attribs |= 1<<a.loc;
         }
         loopi(gle::MAXATTRIBS) if(!(attribs&(1<<i))) glBindAttribLocation_(s.program, i, gle::attribnames[i]);
+        if(glversion >= 300)
+        {
+            glBindFragDataLocation_(s.program, 0, "cube2_FragColor");
+        }
         glLinkProgram_(s.program);
         glGetProgramiv_(s.program, GL_LINK_STATUS, &success);
     }
@@ -595,13 +542,13 @@ void Shader::cleanup(bool invalid)
 
 static void genattriblocs(Shader &s, const char *vs, const char *ps, Shader *reusevs, Shader *reuseps)
 {
-    static int len = strlen("#pragma CUBE2_attrib");
+    static int len = strlen("//:attrib");
     string name;
     int loc;
     if(reusevs) s.attriblocs = reusevs->attriblocs;
-    else while((vs = strstr(vs, "#pragma CUBE2_attrib")))
+    else while((vs = strstr(vs, "//:attrib")))
     {
-        if(sscanf(vs, "#pragma CUBE2_attrib %100s %d", name, &loc) == 2)
+        if(sscanf(vs, "//:attrib %100s %d", name, &loc) == 2)
             s.attriblocs.add(AttribLoc(getshaderparamname(name), loc));
         vs += len;
     }
@@ -609,13 +556,13 @@ static void genattriblocs(Shader &s, const char *vs, const char *ps, Shader *reu
 
 static void genuniformlocs(Shader &s, const char *vs, const char *ps, Shader *reusevs, Shader *reuseps)
 {
-    static int len = strlen("#pragma CUBE2_uniform");
+    static int len = strlen("//:uniform");
     string name, blockname;
     int binding, stride;
     if(reusevs) s.uniformlocs = reusevs->uniformlocs;
-    else while((vs = strstr(vs, "#pragma CUBE2_uniform")))
+    else while((vs = strstr(vs, "//:uniform")))
     {
-        int numargs = sscanf(vs, "#pragma CUBE2_uniform %100s %100s %d %d", name, blockname, &binding, &stride);
+        int numargs = sscanf(vs, "//:uniform %100s %100s %d %d", name, blockname, &binding, &stride);
         if(numargs >= 3) s.uniformlocs.add(UniformLoc(getshaderparamname(name), getshaderparamname(blockname), binding, numargs >= 4 ? stride : 0));
         else if(numargs >= 1) s.uniformlocs.add(UniformLoc(getshaderparamname(name)));
         vs += len;
@@ -681,8 +628,11 @@ void setupshaders()
     maxvsuniforms = val/4;
     glGetIntegerv(GL_MAX_FRAGMENT_UNIFORM_COMPONENTS, &val);
     maxfsuniforms = val/4;
-    glGetIntegerv(GL_MAX_VARYING_FLOATS, &val);
-    maxvaryings = val;
+    if(glversion < 300)
+    {
+        glGetIntegerv(GL_MAX_VARYING_COMPONENTS, &val);
+        maxvaryings = val;
+    }
 
     standardshaders = true;
     nullshader = newshader(0, "<init>null",
@@ -745,10 +695,10 @@ static void gengenericvariant(Shader &s, const char *sname, const char *vs, cons
     vsv.put(vs, strlen(vs)+1);
     psv.put(ps, strlen(ps)+1);
 
-    static const int len = strlen("#pragma CUBE2_variant"), olen = strlen("override");
+    static const int len = strlen("//:variant"), olen = strlen("override");
     for(char *vspragma = vsv.getbuf();; vschanged = true)
     {
-        vspragma = strstr(vspragma, "#pragma CUBE2_variant");
+        vspragma = strstr(vspragma, "//:variant");
         if(!vspragma) break;
         if(sscanf(vspragma + len, "row %d", &rowoffset) == 1) continue;
         memset(vspragma, ' ', len);
@@ -765,7 +715,7 @@ static void gengenericvariant(Shader &s, const char *sname, const char *vs, cons
     }
     for(char *pspragma = psv.getbuf();; pschanged = true)
     {
-        pspragma = strstr(pspragma, "#pragma CUBE2_variant");
+        pspragma = strstr(pspragma, "//:variant");
         if(!pspragma) break;
         if(sscanf(pspragma + len, "row %d", &rowoffset) == 1) continue;
         memset(pspragma, ' ', len);
@@ -792,7 +742,7 @@ static void gengenericvariant(Shader &s, const char *sname, const char *vs, cons
 
 static bool genwatervariant(Shader &s, const char *sname, const char *vs, const char *ps, int row = 2)
 {
-    if(!strstr(vs, "#pragma CUBE2_water") && !strstr(ps, "#pragma CUBE2_water")) return false;
+    if(!strstr(vs, "//:water") && !strstr(ps, "//:water")) return false;
 
     vector<char> vsw, psw;
 
@@ -821,20 +771,20 @@ static bool genwatervariant(Shader &s, const char *sname, const char *vs, const 
     return variant!=NULL;
 }
 
-bool minimizedynlighttcusage() { return maxvaryings < 48; }
+bool minimizedynlighttcusage() { return glversion < 300 && maxvaryings < 48; }
 
 static void gendynlightvariant(Shader &s, const char *sname, const char *vs, const char *ps, int row = 0)
 {
     int numlights = minimizedynlighttcusage() ? 1 : MAXDYNLIGHTS;
 
-    const char *vspragma = strstr(vs, "#pragma CUBE2_dynlight"), *pspragma = strstr(ps, "#pragma CUBE2_dynlight");
+    const char *vspragma = strstr(vs, "//:dynlight"), *pspragma = strstr(ps, "//:dynlight");
     if(!vspragma || !pspragma) return;
 
     string pslight;
     vspragma += strcspn(vspragma, "\n");
     if(*vspragma) vspragma++;
     
-    if(sscanf(pspragma, "#pragma CUBE2_dynlight %100s", pslight)!=1) return;
+    if(sscanf(pspragma, "//:dynlight %100s", pslight)!=1) return;
 
     pspragma += strcspn(pspragma, "\n"); 
     if(*pspragma) pspragma++;
@@ -895,14 +845,14 @@ static void gendynlightvariant(Shader &s, const char *sname, const char *vs, con
 
 static void genshadowmapvariant(Shader &s, const char *sname, const char *vs, const char *ps, int row = 1)
 {
-    const char *vspragma = strstr(vs, "#pragma CUBE2_shadowmap"), *pspragma = strstr(ps, "#pragma CUBE2_shadowmap");
+    const char *vspragma = strstr(vs, "//:shadowmap"), *pspragma = strstr(ps, "//:shadowmap");
     if(!vspragma || !pspragma) return;
 
     string pslight;
     vspragma += strcspn(vspragma, "\n");
     if(*vspragma) vspragma++;
 
-    if(sscanf(pspragma, "#pragma CUBE2_shadowmap %100s", pslight)!=1) return;
+    if(sscanf(pspragma, "//:shadowmap %100s", pslight)!=1) return;
 
     pspragma += strcspn(pspragma, "\n");
     if(*pspragma) pspragma++;
@@ -956,14 +906,14 @@ static void genshadowmapvariant(Shader &s, const char *sname, const char *vs, co
     if(!variant) return;
     genwatervariant(s, name, vssm.getbuf(), pssm.getbuf(), row+2);
 
-    if(strstr(vs, "#pragma CUBE2_dynlight")) gendynlightvariant(s, name, vssm.getbuf(), pssm.getbuf(), row);
+    if(strstr(vs, "//:dynlight")) gendynlightvariant(s, name, vssm.getbuf(), pssm.getbuf(), row);
 }
 
 static void genfogshader(vector<char> &vsbuf, vector<char> &psbuf, const char *vs, const char *ps)
 {
-    const char *vspragma = strstr(vs, "#pragma CUBE2_fog"), *pspragma = strstr(ps, "#pragma CUBE2_fog");
+    const char *vspragma = strstr(vs, "//:fog"), *pspragma = strstr(ps, "//:fog");
     if(!vspragma && !pspragma) return;
-    static const int pragmalen = strlen("#pragma CUBE2_fog");
+    static const int pragmalen = strlen("//:fog");
     const char *vsmain = findglslmain(vs), *vsend = strrchr(vs, '}');
     if(vsmain && vsend)
     {   
@@ -1137,13 +1087,13 @@ void shader(int *type, char *name, char *vs, char *ps)
         if(psbuf.length()) ps = psbuf.getbuf(); \
     }
     GENSHADER(slotparams.length(), genuniformdefs(vsbuf, psbuf, vs, ps));
-    GENSHADER(strstr(vs, "#pragma CUBE2_fog") || strstr(ps, "#pragma CUBE2_fog"), genfogshader(vsbuf, psbuf, vs, ps)); 
+    GENSHADER(strstr(vs, "//:fog") || strstr(ps, "//:fog"), genfogshader(vsbuf, psbuf, vs, ps)); 
     Shader *s = newshader(*type, name, vs, ps);
     if(s)
     {
-        if(strstr(vs, "#pragma CUBE2_water")) genwatervariant(*s, s->name, vs, ps);
-        if(strstr(vs, "#pragma CUBE2_shadowmap")) genshadowmapvariant(*s, s->name, vs, ps);
-        if(strstr(vs, "#pragma CUBE2_dynlight")) gendynlightvariant(*s, s->name, vs, ps);
+        if(strstr(vs, "//:water")) genwatervariant(*s, s->name, vs, ps);
+        if(strstr(vs, "//:shadowmap")) genshadowmapvariant(*s, s->name, vs, ps);
+        if(strstr(vs, "//:dynlight")) gendynlightvariant(*s, s->name, vs, ps);
     }
     slotparams.shrink(0);
 }
@@ -1165,12 +1115,12 @@ void variantshader(int *type, char *name, int *row, char *vs, char *ps)
     //renderprogress(loadprogress, info);
     vector<char> vsbuf, psbuf, vsbak, psbak;
     GENSHADER(s->defaultparams.length(), genuniformdefs(vsbuf, psbuf, vs, ps, s));
-    GENSHADER(strstr(vs, "#pragma CUBE2_fog") || strstr(ps, "#pragma CUBE2_fog"), genfogshader(vsbuf, psbuf, vs, ps));
+    GENSHADER(strstr(vs, "//:fog") || strstr(ps, "//:fog"), genfogshader(vsbuf, psbuf, vs, ps));
     Shader *v = newshader(*type, varname, vs, ps, s, *row);
     if(v)
     {
-        if(strstr(vs, "#pragma CUBE2_dynlight")) gendynlightvariant(*s, varname, vs, ps, *row);
-        if(strstr(ps, "#pragma CUBE2_variant") || strstr(vs, "#pragma CUBE2_variant")) gengenericvariant(*s, varname, vs, ps, *row);
+        if(strstr(vs, "//:dynlight")) gendynlightvariant(*s, varname, vs, ps, *row);
+        if(strstr(ps, "//:variant") || strstr(vs, "//:variant")) gengenericvariant(*s, varname, vs, ps, *row);
     }
 }
 

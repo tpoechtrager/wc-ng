@@ -377,6 +377,9 @@ COMMAND(altsound, "si");
 void altmapsound(char *name, int *vol) { mapsounds.addalt(name, *vol); }
 COMMAND(altmapsound, "si");
 
+ICOMMAND(numsounds, "", (), intret(gamesounds.configs.length()));
+ICOMMAND(nummapsounds, "", (), intret(mapsounds.configs.length()));
+
 void soundreset()
 {
     gamesounds.reset();

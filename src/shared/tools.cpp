@@ -11,14 +11,14 @@
 
 //NEW WEAK & throw()
 
-WEAK void *operator new(size_t size) throw()
+WEAK void *operator new(size_t size)
 {
     void *p = malloc(size);
     if(!p) abort();
     return p;
 }
 
-WEAK void *operator new[](size_t size) throw()
+WEAK void *operator new[](size_t size)
 {
     void *p = malloc(size);
     if(!p) abort();
@@ -31,6 +31,20 @@ WEAK void operator delete(void *p, size_t) throw() { if(p) free(p); }   //NEW
 WEAK void operator delete[](void *p) throw() { if(p) free(p); }
 WEAK void operator delete[](void *p, size_t) throw() { if(p) free(p); } //NEW
 #endif //!USE_STD_NEW
+
+void *operator new(size_t size, bool err) throw()
+{
+    void *p = malloc(size);
+    if(!p && err) abort();
+    return p;
+}
+
+void *operator new[](size_t size, bool err) throw()
+{
+    void *p = malloc(size);
+    if(!p && err) abort();
+    return p;
+}
 
 ////////////////////////// rnd numbers ////////////////////////////////////////
 

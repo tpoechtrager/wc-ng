@@ -984,7 +984,7 @@ static inline void compileval(vector<uint> &code, int wordtype, char *word, int 
             code.add(CODE_BLOCK);
             code.add(CODE_OFFSET|((start+2)<<8));
             const char *p = word;
-            compilestatements(code, p, VAL_ANY);
+            if(p) compilestatements(code, p, VAL_ANY);
             code.add(CODE_EXIT|RET_STR);
             code[start] |= uint(code.length() - (start + 1))<<8;
             break;
@@ -1092,15 +1092,24 @@ static bool compileblockstr(vector<uint> &code, const char *str, const char *end
             case '\r': str++; break;
             case '\"':
             {
-                const char *start = str; 
+                const char *start = str;
                 str = parsestring(str+1);
                 if(*str=='\"') str++;
                 memcpy(&buf[len], start, str-start);
                 len += str-start;
                 break;
             }
-            case '/': 
-                if(str[1] == '/') str += strcspn(str, "\n\0");
+            case '/':
+                if(str[1] == '/')
+                {
+                    size_t comment = strcspn(str, "\n\0");
+                    if (iscubepunct(str[2]))
+                    {
+                        memcpy(&buf[len], str, comment);
+                        len += comment;
+                    }
+                    str += comment;
+                }
                 else buf[len++] = *str++;
                 break;
             case '@':
@@ -2597,6 +2606,27 @@ void concatword(tagval *v, int n)
     commandret->setstr(conc(v, n, false));
 }   
 COMMAND(concatword, "V");
+
+void append(ident *id, tagval *v, bool space)
+{
+    if(id->type != ID_ALIAS || v->type == VAL_NULL) return;
+    if(id->valtype == VAL_NULL)
+    {
+    noprefix:
+        if(id->index < MAXARGS) setarg(*id, *v); else setalias(*id, *v);
+        v->type = VAL_NULL;
+    }
+    else
+    {
+        const char *prefix = id->getstr();
+        if(!prefix[0]) goto noprefix;
+        tagval r;
+        r.setstr(conc(v, 1, space, prefix));
+        if(id->index < MAXARGS) setarg(*id, r); else setalias(*id, r);
+    }
+}
+ICOMMAND(append, "rt", (ident *id, tagval *v), append(id, v, true));
+ICOMMAND(appendword, "rt", (ident *id, tagval *v), append(id, v, false));
 
 void result(tagval &v)
 {

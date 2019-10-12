@@ -6,6 +6,7 @@ bool hasVAO = false, hasFBO = false, hasAFBO = false, hasDS = false, hasTF = fal
 
 VAR(glversion, 1, 0, 0);
 VAR(glslversion, 1, 0, 0);
+VAR(glcompat, 1, 0, 0);
 
 // OpenGL 1.3
 #ifdef WIN32
@@ -29,7 +30,7 @@ PFNGLGETCOMPRESSEDTEXIMAGEPROC   glGetCompressedTexImage_   = NULL;
 PFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements_ = NULL;
 #endif
 
-// OpenGL 2.1
+// OpenGL 2.0
 #ifndef __APPLE__
 PFNGLMULTIDRAWARRAYSPROC   glMultiDrawArrays_   = NULL;
 PFNGLMULTIDRAWELEMENTSPROC glMultiDrawElements_ = NULL;
@@ -124,18 +125,12 @@ PFNGLVERTEXATTRIB4NUIVPROC        glVertexAttrib4Nuiv_        = NULL;
 PFNGLVERTEXATTRIB4NUSVPROC        glVertexAttrib4Nusv_        = NULL;
 PFNGLVERTEXATTRIBPOINTERPROC      glVertexAttribPointer_      = NULL;
 
-PFNGLUNIFORMMATRIX2X3FVPROC       glUniformMatrix2x3fv_       = NULL;
-PFNGLUNIFORMMATRIX3X2FVPROC       glUniformMatrix3x2fv_       = NULL;
-PFNGLUNIFORMMATRIX2X4FVPROC       glUniformMatrix2x4fv_       = NULL;
-PFNGLUNIFORMMATRIX4X2FVPROC       glUniformMatrix4x2fv_       = NULL;
-PFNGLUNIFORMMATRIX3X4FVPROC       glUniformMatrix3x4fv_       = NULL;
-PFNGLUNIFORMMATRIX4X3FVPROC       glUniformMatrix4x3fv_       = NULL;
-
 PFNGLDRAWBUFFERSPROC glDrawBuffers_ = NULL;
 #endif
 
 // OpenGL 3.0
-PFNGLGETSTRINGIPROC glGetStringi_ = NULL;
+PFNGLGETSTRINGIPROC           glGetStringi_           = NULL;
+PFNGLBINDFRAGDATALOCATIONPROC glBindFragDataLocation_ = NULL;
 
 // GL_EXT_framebuffer_object
 PFNGLBINDRENDERBUFFERPROC        glBindRenderbuffer_        = NULL;
@@ -182,7 +177,7 @@ VAR(ati_minmax_bug, 0, 0, 1);
 VAR(ati_cubemap_bug, 0, 0, 1);
 VAR(intel_vertexarray_bug, 0, 0, 1);
 VAR(intel_mapbufferrange_bug, 0, 0, 1);
-VAR(sdl_backingstore_bug, -1, 0, 1);
+VAR(mesa_swap_bug, 0, 0, 1);
 VAR(minimizetcusage, 1, 0, 0);
 VAR(useubo, 1, 0, 0);
 VAR(usetexcompress, 1, 0, 0);
@@ -233,12 +228,6 @@ void gl_checkextensions()
     conoutf(CON_INIT, "Renderer: %s (%s)", renderer, vendor);
     conoutf(CON_INIT, "Driver: %s", version);
 
-#ifdef __APPLE__
-    extern int mac_osversion();
-    int osversion = mac_osversion();  /* 0x0A0500 = 10.5 (Leopard) */
-    sdl_backingstore_bug = -1;
-#endif
-
     bool mesa = false, intel = false, ati = false, nvidia = false;
     if(strstr(renderer, "Mesa") || strstr(version, "Mesa"))
     {
@@ -256,7 +245,7 @@ void gl_checkextensions()
     if(sscanf(version, " %u.%u", &glmajorversion, &glminorversion) != 2) glversion = 100;
     else glversion = glmajorversion*100 + glminorversion*10;
 
-    if(glversion < 210) fatal("OpenGL 2.1 or greater is required!");
+    if(glversion < 200) fatal("OpenGL 2.0 or greater is required!");
 
 #ifdef WIN32
     glActiveTexture_ =            (PFNGLACTIVETEXTUREPROC)            getprocaddress("glActiveTexture");
@@ -373,19 +362,13 @@ void gl_checkextensions()
     glVertexAttrib4Nusv_ =        (PFNGLVERTEXATTRIB4NUSVPROC)        getprocaddress("glVertexAttrib4Nusv");
     glVertexAttribPointer_ =      (PFNGLVERTEXATTRIBPOINTERPROC)      getprocaddress("glVertexAttribPointer");
 
-    glUniformMatrix2x3fv_ =       (PFNGLUNIFORMMATRIX2X3FVPROC)       getprocaddress("glUniformMatrix2x3fv");
-    glUniformMatrix3x2fv_ =       (PFNGLUNIFORMMATRIX3X2FVPROC)       getprocaddress("glUniformMatrix3x2fv");
-    glUniformMatrix2x4fv_ =       (PFNGLUNIFORMMATRIX2X4FVPROC)       getprocaddress("glUniformMatrix2x4fv");
-    glUniformMatrix4x2fv_ =       (PFNGLUNIFORMMATRIX4X2FVPROC)       getprocaddress("glUniformMatrix4x2fv");
-    glUniformMatrix3x4fv_ =       (PFNGLUNIFORMMATRIX3X4FVPROC)       getprocaddress("glUniformMatrix3x4fv");
-    glUniformMatrix4x3fv_ =       (PFNGLUNIFORMMATRIX4X3FVPROC)       getprocaddress("glUniformMatrix4x3fv");
-
     glDrawBuffers_ =              (PFNGLDRAWBUFFERSPROC)              getprocaddress("glDrawBuffers");
 #endif
 
     if(glversion >= 300)
     {
         glGetStringi_ =            (PFNGLGETSTRINGIPROC)          getprocaddress("glGetStringi");
+        glBindFragDataLocation_ =  (PFNGLBINDFRAGDATALOCATIONPROC)getprocaddress("glBindFragDataLocation");
     }
 
     const char *glslstr = (const char *)glGetString(GL_SHADING_LANGUAGE_VERSION);
@@ -496,6 +479,8 @@ void gl_checkextensions()
         }
 
         reservevpparams = 20;
+
+        if(mesa) mesa_swap_bug = 1;
     }
 
     if(glversion >= 300 || hasext("GL_ARB_map_buffer_range"))
@@ -624,20 +609,6 @@ void gl_init()
     glFrontFace(GL_CW);
     glCullFace(GL_BACK);
     glDisable(GL_CULL_FACE);
-
-#ifdef __APPLE__
-    if(sdl_backingstore_bug)
-    {
-        int fsaa = 0;
-        if(!SDL_GL_GetAttribute(SDL_GL_MULTISAMPLE_BUFFERS, &fsaa) && fsaa)
-        {
-            sdl_backingstore_bug = 1;
-            // since SDL doesn't add kCGLPFABackingStore to the pixelformat and so it isn't guaranteed to be preserved - only manifests when using fsaa?
-            //conoutf(CON_WARN, "WARNING: Using SDL backingstore workaround. (use \"/sdl_backingstore_bug 0\" to disable if unnecessary)");
-        }
-        else sdl_backingstore_bug = -1;
-    }
-#endif
 
     gle::setup();
 
@@ -1909,7 +1880,7 @@ void gl_drawframe()
     {
         float blend = abovemat==MAT_AIR ? fogblend : 1.0f;
         fovy += blend*sinf(lastmillis/1000.0)*2.0f;
-        aspect += blend*sinf(lastmillis/1000.0+PI)*0.1f;
+        aspect += blend*sinf(lastmillis/1000.0+M_PI)*0.1f;
     }
 
     farplane = worldsize*2;
