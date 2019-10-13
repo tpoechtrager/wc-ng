@@ -28,7 +28,6 @@ extern void writeinitcfg();
 
 void quit(int *i = NULL)                     // normal exit     //NEW added int i
 {
-
     mod::deinit(); //NEW
     writeinitcfg();
     writeservercfg();
