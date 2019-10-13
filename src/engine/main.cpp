@@ -755,6 +755,7 @@ void resetgl()
     renderbackground("initializing...");
     restoregamma();
     restorevsync();
+    reloadshaders();
     reloadtextures();
     initlights();
     allchanged(true);
