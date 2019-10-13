@@ -11,10 +11,10 @@ TOOLCHAIN=""
 PLATFORMNATIVE="`uname -s`"
 
 if [ "$type" != "${type/32/}" ]; then
-    [ $PLATFORMNATIVE != "FreeBSD" ] && TOOLCHAIN="i386-pc-freebsd10.1-"
+    [ $PLATFORMNATIVE != "FreeBSD" ] && TOOLCHAIN="i386-pc-freebsd13.0-"
     export ARCH="i386"
 else
-    [ $PLATFORMNATIVE != "FreeBSD" ] && TOOLCHAIN="amd64-pc-freebsd10.1-"
+    [ $PLATFORMNATIVE != "FreeBSD" ] && TOOLCHAIN="amd64-pc-freebsd13.0-"
     export ARCH="amd64"
 fi
 
