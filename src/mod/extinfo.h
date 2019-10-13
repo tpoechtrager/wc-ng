@@ -173,7 +173,7 @@ namespace extinfo
             lilswap(&ip.ui32);
         }
 
-        playerv2() { memset(this, 0, sizeof(*this)); }
+        playerv2() { memset((void*)this, 0, sizeof(*this)); }
 
         playerv2(const playerv1 &v1)
         {

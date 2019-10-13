@@ -414,9 +414,9 @@ public:
         // this way avoids running the ctors
         checkreference();
         char tmp[sizeof(strtool)];
-        memcpy(tmp, &in, sizeof(strtool));
-        memcpy(&in, this, sizeof(strtool));
-        memcpy(this, tmp, sizeof(strtool));
+        memcpy((void*)tmp, &in, sizeof(strtool));
+        memcpy((void*)&in, this, sizeof(strtool));
+        memcpy((void*)this, tmp, sizeof(strtool));
     }
 
     const char *find(const char *find, const char *last = NULL)
@@ -620,7 +620,7 @@ public:
             in.incrementreferencecounter();
 
             this->~strtool();
-            memcpy(this, &in, sizeof(strtool));
+            memcpy((void*)this, &in, sizeof(strtool));
 
             return *this;
         }
@@ -697,7 +697,7 @@ public:
         if (str.autostorage)
         {
             str.incrementreferencecounter();
-            memcpy(this, &str, sizeof(strtool));
+            memcpy((void*)this, &str, sizeof(strtool));
             return;
         }
 #endif //STRTOOL_USE_REF_COUNTER
@@ -714,7 +714,7 @@ public:
         {
             // we don't write to the buffer, so it doesn't matter
             ((strtool&)str).incrementreferencecounter();
-            memcpy(this, (strtool*)&str, sizeof(strtool));
+            memcpy((void*)this, (strtool*)&str, sizeof(strtool));
             return;
         }
 #endif //STRTOOL_USE_CONST_REF

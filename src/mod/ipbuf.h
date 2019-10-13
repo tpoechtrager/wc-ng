@@ -231,7 +231,7 @@ public:
         memcpy(this, tmp, sizeof(*this));
     }
 
-    ipbuf() { if (!GLOBAL) memset(this, 0, sizeof(*this)); }
+    ipbuf() { if (!GLOBAL) memset((void*)this, 0, sizeof(*this)); }
     ~ipbuf() { clear(); }
 
 private:

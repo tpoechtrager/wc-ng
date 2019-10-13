@@ -104,7 +104,7 @@ ifeq (,$(findstring mingw,$(PLATFORM)))
   ifeq (1,$(USESTATICLIBS))
     CHATSERV_LIBS+= $(STATIC_LIB_DIR)/libssl.a $(STATIC_LIB_DIR)/libcrypto.a
   else
-    CHATSERV_LIBS+= -lssl -lcrypto
+    CHATSERV_LIBS+= -lssl -lcrypto -lcrypt32
   endif
 
   ifeq (1,$(USESTATICLIBS))
@@ -209,17 +209,17 @@ ifneq (,$(findstring mingw,$(PLATFORM)))
   SDL_DEP_LIBS+= -limm32 -lversion -loleaut32
 
   SERVER_LIBS= $(SUBSYSTEM) -L$(WINLIB) -Wl,-Bstatic -lz -Wl,-Bdynamic -lws2_32 -lwinmm
-  CHATSERV_LIBS+= -L$(WINLIB)/openssl -Wl,-Bstatic -lssl -lcrypto -Wl,-Bdynamic
-  CHATSERV_LIBS+= -mconsole -Wl,-Bstatic -lSDL -lpthread -Wl,-Bdynamic -lws2_32 $(SDL_DEP_LIBS)
+  CHATSERV_LIBS+= -L$(WINLIB)/openssl -Wl,-Bstatic -lssl -lcrypto -lcrypt32 -Wl,-Bdynamic
+  CHATSERV_LIBS+= -mconsole -Wl,-Bstatic -lSDL2 -lpthread -Wl,-Bdynamic -lws2_32 $(SDL_DEP_LIBS)
   MASTER_LIBS= -L$(WINLIB) -Wl,-Bstatic -lz -Wl,-Bdynamic -lws2_32 -lwinmm
 
   CLIENT_LIBS+= $(SUBSYSTEM) -L$(WINLIB)
-  CLIENT_LIBS+= -Wl,-Bstatic -lGeoIP -lcurl -lssl -lcrypto -ldl -Wl,-Bdynamic
+  CLIENT_LIBS+= -Wl,-Bstatic -lGeoIP -lcurl -lssl -lcrypto -lcrypt32 -ldl -Wl,-Bdynamic
   CLIENT_LIBS+= -lgdi32
 
   CLIENT_LIBS+= -Wl,-Bstatic
-  CLIENT_LIBS+= -lSDL_mixer -lvorbisfile -lvorbis -logg
-  CLIENT_LIBS+= -lSDL -lSDL_image -lpng16 -ljpeg -lz
+  CLIENT_LIBS+= -lSDL2_mixer -lvorbisfile -lvorbis -logg
+  CLIENT_LIBS+= -lSDL2 -lSDL2_image -lpng16 -ljpeg -lz
   CLIENT_LIBS+= -Wl,-Bdynamic
   CLIENT_LIBS+= -lopengl32 -lws2_32 $(SDL_DEP_LIBS)
   CLIENT_LIBS+= -Wl,-Bstatic
@@ -227,7 +227,7 @@ ifneq (,$(findstring mingw,$(PLATFORM)))
   CLIENT_LIBS+= -Wl,-Bdynamic
 
   PLUGIN_INCLUDES= $(CLIENT_INCLUDES) -DPLUGIN
-  PLUGIN_LIBS+= -L$(WINLIB) -Wl,-Bstatic -lz -lSDL -Wl,-Bdynamic
+  PLUGIN_LIBS+= -L$(WINLIB) -Wl,-Bstatic -lz -lSDL2 -lstdc++ -lpthread -Wl,-Bdynamic
   PLUGIN_LIBS+= -lws2_32 $(SDL_DEP_LIBS)
 
   # Old MinGW-w64-crt doesn't have strtok_r.
@@ -457,21 +457,21 @@ else
     override SDL_CONFIG= -Ilib/include
   else
     ifeq ($(PLATFORM),$(PLATFORMNATIVE))
-      override SDL_CONFIG= `sdl-config --cflags`
-      override SDL_CONFIG_LIB= `sdl-config --libs`
+      override SDL_CONFIG= `sdl2-config --cflags`
+      override SDL_CONFIG_LIB= `sdl2-config --libs`
     else
       override NATIVE_LIB_PATH=
       override NATIVE_INCLUDES=
       override SDL_CONFIG_LIB=
       ifeq ($(PLATFORM),freebsd)
-        override SDL_CONFIG_LIB= -lSDL -pthread
+        override SDL_CONFIG_LIB= -lSDL2 -pthread
         override SDL_CONFIG= $(shell ./build/quirks/fbsd-cross-sdl-cpath.sh $(CXX))
       endif
    endif
 
    CHATSERV_INCLUDES+= $(SDL_CONFIG)
    CHATSERV_LIBS+= $(SDL_CONFIG_LIB)
-   CLIENT_LIBS+= $(NATIVE_LIB_PATH) -lX11 $(SDL_CONFIG_LIB) -lSDL_image -lSDL_mixer -lGL
+   CLIENT_LIBS+= $(NATIVE_LIB_PATH) -lX11 $(SDL_CONFIG_LIB) -lSDL2_image -lSDL2_mixer -lGL
   endif
 
   CLIENT_INCLUDES:= $(INCLUDES) $(NATIVE_INCLUDES) $(SDL_CONFIG) $(CLIENT_INCLUDES)

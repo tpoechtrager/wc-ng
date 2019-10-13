@@ -206,7 +206,7 @@ int loadplugins()
 {
     int loaded = 0;
     vector<char*> files;
-    distinctlistfiles(PLUGINDIR, PLUGINEXT+1, files);
+    distinctlistfiles(PLUGINDIR, &PLUGINEXT[1], files);
     loopv(files)
     {
         const char *plugin = files[i];

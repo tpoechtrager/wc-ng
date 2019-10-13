@@ -127,7 +127,7 @@ namespace g15lcd
 
     static bool command(const char *cmd, const char *val)
     {
-        #define cmdcmp(p, cmd) !strcmp(p, cmd+1)
+        #define cmdcmp(p, cmd) !strcmp(p, &cmd[1])
 
         switch (*cmd++)
         {
