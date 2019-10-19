@@ -21,6 +21,7 @@ function checklto()
         check -flto=$JOBS
         check -flto
     elif [[ $str == *clang* ]] || [[ $str == *LLVM* ]]; then
+        check -flto=thin
         check -flto
     elif [[ $str == *ICC* ]]; then
         check -ipo -wd11021

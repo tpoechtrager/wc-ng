@@ -278,7 +278,7 @@ else
 ifeq (darwin,$(PLATFORM))
   ################ OS X ################
 
-  OSXVERSIONMIN ?= 10.5
+  OSXVERSIONMIN ?= 10.6
   HAVECROSSCOMPILER ?= 0
   UNIVERSAL ?= 0
   TARGETS ?=
@@ -318,7 +318,8 @@ ifeq (darwin,$(PLATFORM))
   override LDFLAGS+= $(OSXMINFLAGS)
 
   SDL_DEP_LIBS= -framework CoreAudio -framework AudioUnit -framework Cocoa 
-  SDL_DEP_LIBS+= -framework IOKit -framework Carbon -liconv
+  SDL_DEP_LIBS+= -framework IOKit -framework Carbon -framework CoreVideo
+  SDL_DEP_LIBS+= -framework AudioToolbox -liconv
 
   CHATSERV_LIBS+= $(SDL_DEP_LIBS)
 
@@ -554,7 +555,7 @@ ifeq ($(LTO),1)
 
   ifneq (,$(LTOFLAGS))
   ifneq (,$(findstring clang,$(CXX)))
-    override LIBDIR=llvm-lto
+    #override LIBDIR=llvm-lto
     ifneq (,$(findstring mingw,$(PLATFORM)))
       # clang with MinGW target
       override LDFLAGS+= -Wl,-plugin-opt=mtriple=$(ARCH)-w64-mingw32

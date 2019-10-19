@@ -1,11 +1,16 @@
 // sound.cpp: basic positional sound using sdl_mixer
 
 #include "engine.h"
+
+#if 0 //NEW commented
 #ifdef __APPLE__
   #include "SDL2_mixer/SDL_mixer.h"
 #else
   #include "SDL_mixer.h"
 #endif
+#endif
+
+#include <SDL_mixer.h>
 
 bool nosound = true;
 

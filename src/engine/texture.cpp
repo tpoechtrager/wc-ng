@@ -2,11 +2,15 @@
 
 #include "engine.h"
 
+#if 0 //NEW commented
 #ifdef __APPLE__
   #include "SDL2_image/SDL_image.h"
 #else
   #include "SDL_image.h"
 #endif
+#endif
+
+#include <SDL_image.h>
 
 template<int BPP> static void halvetexture(uchar * RESTRICT src, uint sw, uint sh, uint stride, uchar * RESTRICT dst)
 {
