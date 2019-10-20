@@ -125,11 +125,11 @@ ifeq (,$(findstring mingw,$(PLATFORM)))
     endif
 
     CHATSERV_INCLUDES+= -Ilib/include/SDL1
-    CLIENT_INCLUDES+= -Ilib/include -Ilib/include/SDL1 -Ilib/include/GeoIP
-    CLIENT_LIBS+= $(STATIC_LIB_DIR)/libcurl.a $(STATIC_LIB_DIR)/libGeoIP.a
+    CLIENT_INCLUDES+= -Ilib/include -Ilib/include/SDL1
+    CLIENT_LIBS+= $(STATIC_LIB_DIR)/libcurl.a $(STATIC_LIB_DIR)/libmaxminddb.a
     CLIENT_LIBS+= $(STATIC_LIB_DIR)/libssl.a $(STATIC_LIB_DIR)/libcrypto.a
   else
-    CLIENT_LIBS+= -lcurl -lssl -lcrypto -lGeoIP
+    CLIENT_LIBS+= -lcurl -lssl -lcrypto -lmaxminddb
   endif
 
   MASTER_LIBS= $(SERVER_LIBS)
@@ -202,7 +202,7 @@ ifneq (,$(findstring mingw,$(PLATFORM)))
   override CFLAGS:= $(PLATFORMFLAG) $(CFLAGS)
   override LDFLAGS:= $(PLATFORMFLAG) $(LDFLAGS)
 
-  CLIENT_INCLUDES= $(INCLUDES) -Ilib/include -Ilib/include/SDL1 -Ilib/include/GeoIP
+  CLIENT_INCLUDES= $(INCLUDES) -Ilib/include -Ilib/include/SDL1
   SERVER_INCLUDES= -DSTANDALONE $(INCLUDES) -Ilib/include -Ilib/include/SDL1
 
   SDL_DEP_LIBS= -lgdi32 -ldxguid -lole32 -lwinmm
@@ -214,7 +214,7 @@ ifneq (,$(findstring mingw,$(PLATFORM)))
   MASTER_LIBS= -L$(WINLIB) -Wl,-Bstatic -lz -Wl,-Bdynamic -lws2_32 -lwinmm
 
   CLIENT_LIBS+= $(SUBSYSTEM) -L$(WINLIB)
-  CLIENT_LIBS+= -Wl,-Bstatic -lGeoIP -lcurl -lssl -lcrypto -ldl -Wl,-Bdynamic
+  CLIENT_LIBS+= -Wl,-Bstatic -lmaxminddb -lcurl -lssl -lcrypto -ldl -Wl,-Bdynamic
   CLIENT_LIBS+= -lgdi32
 
   CLIENT_LIBS+= -Wl,-Bstatic
@@ -337,9 +337,9 @@ ifeq (darwin,$(PLATFORM))
   CLIENT_LIBS+= $(STATIC_LIB_DIR)/libpng16.a
   CLIENT_LIBS+= $(STATIC_LIB_DIR)/libjpeg.a
   CLIENT_LIBS+= $(STATIC_LIB_DIR)/libz.a
-  CLIENT_LIBS+= $(STATIC_LIB_DIR)/libGeoIP.a
+  CLIENT_LIBS+= $(STATIC_LIB_DIR)/libmaxminddb.a
 
-  PLUGIN_INCLUDES= $(CLIENT_INCLUDES) -fPIC -DPLUGIN -Ilib/include/GeoIP -Ilib/include/osx-cpu-temp
+  PLUGIN_INCLUDES= $(CLIENT_INCLUDES) -fPIC -DPLUGIN -Ilib/include/osx-cpu-temp
   CLIENT_OBJS+= xcode/macutils.o xcode/main.o xcode/Launcher.o
 
   HWTEMP_LIBS= $(STATIC_LIB_DIR)/smc.a

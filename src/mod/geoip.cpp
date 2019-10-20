@@ -1,6 +1,6 @@
 /***********************************************************************
  *  WC-NG - Cube 2: Sauerbraten Modification                           *
- *  Copyright (C) 2014, 2015 by Thomas Poechtrager                     *
+ *  Copyright (C) 2014, 2015, 2019 by Thomas Poechtrager               *
  *  t.poechtrager@gmail.com                                            *
  *                                                                     *
  *  This program is free software; you can redistribute it and/or      *
@@ -20,15 +20,42 @@
  ***********************************************************************/
 
 #include "game.h"
-#include LIB_GEOIP_HEADER
+#include <maxminddb.h>
+
+/*
+ * Compatibility stuff.
+ * It's not possible to get rid of it at the moment.
+ * It would require lots of changes in this client
+ * and server mods too.
+ */
+extern const char *GeoIP_country_name[256];
+extern const char *GeoIP_country_code[256];
 
 namespace mod {
 namespace geoip
 {
-    static const int GEOIP_CHARSET = GEOIP_CHARSET_ISO_8859_1;
+    struct country_t
+    {
+        char *name;
+        char *code;
 
-    static const char *GEOIP_DB = "data/GeoIP.dat";
-    static const char *GEOIP_UPDATE_TMP = "data/GeoIP.update.dat";
+        bool operator==(const strtool &name)
+        {
+            return name == this->name;
+        }
+    };
+
+    static vector<country_t> countries;
+
+    static country_t getoraddcountry(const strtool &name, const strtool &code)
+    {
+        loopv(countries) if (countries[i] == name) return countries[i];
+        return countries.add({newstring(name.getrawbuf(), name.length()),
+                              newstring(code.getrawbuf(), code.length())});
+    }
+
+    static const char *GEOIP_DB = "data/GeoLite2-Country.mmdb";
+    static const char *GEOIP_UPDATE_TMP = "data/GeoLite2-Country.update.mmdb";
 
     static void checkcfgfile(const char *var, int& varval, int& prevarval)
     {
@@ -54,24 +81,31 @@ namespace geoip
 
     static const char *const DB_MIRRORS[] =
     {
-        "http://geolite.maxmind.com/download/geoip/database/GeoLiteCountry/GeoIP.dat.gz"
+        "https://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.mmdb.gz"
     };
 
     static const int UPDATE_CHECK_INTERVAL = 1*60*60*24;
 
-    static GeoIP *geoip = NULL;
+    static MMDB_s mmdb;
+    static bool mmdb_opened = false;
+
     static sdlmutex geoipmutex;
 
     bool loaddatabase(const char *db)
     {
         SDL_Mutex_Locker m(geoipmutex);
 
-        if (geoip) GeoIP_delete(geoip);
-        geoip = GeoIP_open(db, GEOIP_MEMORY_CACHE);
-
-        if (geoip)
+        if (mmdb_opened)
         {
-            geoip->charset = GEOIP_CHARSET;
+            MMDB_close(&mmdb);
+            mmdb_opened = false;
+        }
+
+        int status = MMDB_open(db, MMDB_MODE_MMAP, &mmdb);
+
+        if (status == MMDB_SUCCESS)
+        {
+            mmdb_opened = true;
             return true;
         }
 
@@ -81,26 +115,51 @@ namespace geoip
     void closedatabase()
     {
         SDL_Mutex_Locker m(geoipmutex);
-        if (geoip) GeoIP_delete(geoip);
-        geoip = NULL;
+        if (!mmdb_opened) return;
+        MMDB_close(&mmdb);
+        mmdb_opened = false;
     }
 
     bool country(uint ip, const char **country, const char **countrycode)
     {
+        if (country) *country = NULL;
+        if (countrycode) *countrycode = NULL;
+
         SDL_Mutex_Locker m(geoipmutex);
-        if (!geoip) return false;
-        int id = GeoIP_id_by_ipnum(geoip, ENET_NET_TO_HOST_32(ip));
-        if (id < 0)
-        {
-            ignore:;
-            if (country) *country = NULL;
-            if (countrycode) *countrycode = NULL;
-            return false;
-        }
-        const char *cc = GeoIP_country_code[id];
-        if (cc[0] == '-') goto ignore;
-        if (country) *country = GeoIP_country_name[id];
-        if (countrycode) *countrycode = cc;
+        if (!mmdb_opened) return false;
+
+        struct sockaddr saddr;
+        struct sockaddr_in *saddr_in = (struct sockaddr_in *)&saddr;
+        memset(&saddr, 0, sizeof(saddr));
+        saddr_in->sin_family = AF_INET;
+        saddr_in->sin_addr = *(struct in_addr *)&ip;
+
+        int error;
+        MMDB_lookup_result_s result = MMDB_lookup_sockaddr(&mmdb, &saddr, &error);
+        if (error != MMDB_SUCCESS || !result.found_entry) return false;
+
+        MMDB_entry_data_s entry_data;
+
+        error = MMDB_get_value(&result.entry, &entry_data, "country", "names", "en", NULL);
+        if (error != MMDB_SUCCESS || !entry_data.has_data) return false;
+        if (entry_data.type != MMDB_DATA_TYPE_UTF8_STRING) return false;
+
+        strtool nametmp;
+        strtool codetmp;
+
+        nametmp.append(entry_data.utf8_string, entry_data.data_size);
+
+        error = MMDB_get_value(&result.entry, &entry_data, "country", "iso_code", NULL);
+        if (error != MMDB_SUCCESS || !entry_data.has_data) return false;
+        if (entry_data.type != MMDB_DATA_TYPE_UTF8_STRING) return false;
+
+        codetmp.append(entry_data.utf8_string, entry_data.data_size);
+
+        country_t c = getoraddcountry(nametmp, codetmp);
+
+        if (country) *country = c.name;
+        if (countrycode) *countrycode = c.code;
+
         return true;
     }
 

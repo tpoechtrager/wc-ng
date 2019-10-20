@@ -47,17 +47,13 @@ struct ipaddr
     T data;
 };
 
-// ATTENTION: GLOBAL must be set to false when this class
-// is not declared as a static or global symbol
-
 template<uint8_t NODESIZE = 2, int MAXNODEENTRIES = -1,
-         class DATATYPE = char, bool MUSTFREEDATA = false,
-         bool GLOBAL = true>
+         class DATATYPE = char, bool MUSTFREEDATA = false>
 class ipbuf
 {
 public:
     typedef ipaddr<DATATYPE> ipaddress;
-    typedef vector<ipaddress, GLOBAL> ipaddressvec;
+    typedef vector<ipaddress> ipaddressvec;
     typedef vector<ipaddress*> ipaddresspvec;
 
     // types for parsetext() and parsebin()
@@ -231,7 +227,7 @@ public:
         memcpy(this, tmp, sizeof(*this));
     }
 
-    ipbuf() { if (!GLOBAL) memset(this, 0, sizeof(*this)); }
+    ipbuf() { memset((void*)this, 0, sizeof(*this)); }
     ~ipbuf() { clear(); }
 
 private:
