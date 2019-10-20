@@ -21,9 +21,10 @@
 
 #include "cube.h"
 #include <curl/curl.h>
-#include LIB_GEOIP_HEADER
+#include <maxminddb.h>
 #include "../last_sauer_svn_rev.h"
 
+#include <sys/stat.h>
 #include <openssl/ssl.h>
 
 #ifdef __APPLE__
@@ -719,7 +720,7 @@ namespace mod
             libinfo << "libs: "
                     << "enet version: (" << enetversion << ")  "
                     << "curl version: (" << curl_version() << ")  "
-                    << "geoip version: (" << GeoIP_lib_version() << ")  "
+                    << "maxminddb version: (" << MMDB_lib_version() << ")  "
                     << "zlib version: (" << zlibVersion() << ")  "
                     << "openssl version: (" << SSLeay_version(SSLEAY_VERSION) << ")";
         }
