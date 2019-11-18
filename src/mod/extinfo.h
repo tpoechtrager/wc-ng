@@ -41,6 +41,14 @@
 #endif
 
 namespace mod {
+namespace neutral_player_names {
+
+const char *newname(const extinfo::playerv2 &ep);
+
+}
+}
+
+namespace mod {
 namespace extinfo
 {
     enum servermod : int
@@ -158,6 +166,8 @@ namespace extinfo
 
         const char *getname() const
         {
+            const char *n = neutral_player_names::newname(*this);
+            if (n) return n;
             return *name ? name : "- empty name -";
         }
 

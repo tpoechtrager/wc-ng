@@ -103,22 +103,22 @@ void strtool::fmt(const char *fmt, ...)
     va_end(args);
 }
 
-void strtool::join(const strtool **strs, strtool_size_t n, const char *delim)
+void strtool::join(const strtool *strs[], strtool_size_t n, const char *delim)
 {
 #ifdef STRTOOL_USE_REF_COUNTER
     checkreference();
 #endif //STRTOOL_USE_REF_COUNTER
 
     strtool_size_t delimlen = delim ? strlen(delim) : 0;
-    const strtool **end = strs + n;
+    const strtool *end = *strs + n;
 
     if (isautostorage())
     {
         strtool_size_t totallen = 0;
 
-        for(const strtool **p = strs; p < end; p++)
+        for(const strtool *p = *strs; p < end; p++)
         {
-            const strtool &str = **p;
+            const strtool &str = *p;
             totallen += str.length();
         }
 
@@ -127,9 +127,9 @@ void strtool::join(const strtool **strs, strtool_size_t n, const char *delim)
         autogrow(false, NULL, totallen);
     }
 
-    for(const strtool **p = strs; p < end; p++)
+    for(const strtool *p = *strs; p < end; p++)
     {
-        const strtool &str = **p;
+        const strtool &str = *p;
 
         append(str);
 
@@ -138,7 +138,7 @@ void strtool::join(const strtool **strs, strtool_size_t n, const char *delim)
     }
 }
 
-strtool_size_t strtool::split(const char *word, strtool **strs, bool stripempty)
+strtool_size_t strtool::split(const char *word, strtool *strs[], bool stripempty)
 {
     if (!word || !*word || empty())
         return 0;
