@@ -459,6 +459,7 @@ struct checkcalldepth
 #include "events.h"
 #include "thread.h"
 #include "proxy-detection.h"
+#include "neutral-player-names.h"
 
 #endif //STANDALONE
 #endif //__MOD_H__
