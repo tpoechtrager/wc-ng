@@ -576,17 +576,6 @@ namespace gamemod
     }
     COMMAND(getgamestatefmt, "is");
 
-    int guiplayerprivcolor(int priv)
-    {
-        switch(priv)
-        {
-            case PRIV_MASTER: return COLOR_MASTER;
-            case PRIV_AUTH:   return COLOR_AUTH;
-            case PRIV_ADMIN:  return COLOR_ADMIN;
-        }
-        return COLOR_NORMAL;
-    }
-
     MODHVARP(proxybgcolor, 0, 0x000000, 0xFFFFFF);
 #ifdef ENABLE_IPS
     MODHVARP(ipignorebgcolor, 0, 0xC4C420, 0xFFFFFF);
@@ -619,7 +608,7 @@ namespace gamemod
     }
 
     ICOMMAND(guiplayerbgcolor, "s", (char *ip), intret(guiplayerbgcolor(ipmask(ip).ip, {})));
-    ICOMMAND(guiplayerprivcolor, "i", (int *priv), intret(guiplayerprivcolor(*priv)));
+    ICOMMAND(guiplayerprivcolor, "i", (int *priv), intret(statuscolor(*priv, 10000, COLOR_NORMAL)));
 
     int getgamemodenum(const char *gamemode)
     {

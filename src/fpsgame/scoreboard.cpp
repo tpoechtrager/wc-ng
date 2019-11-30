@@ -286,14 +286,28 @@ namespace game
     }
     //NEW END
 
+    int statuscolor(int privilege, int state, int color) //NEW
+    {
+        if(privilege)
+        {
+            color = privilege>=PRIV_ADMIN ? 0xFF8000 : (privilege>=PRIV_AUTH ? 0xC040C0 : 0x40FF80);
+            if(state==CS_DEAD) color = (color>>1)&0x7F7F7F;
+        }
+        else if(state==CS_DEAD) color = 0x606060;
+        return color;
+    }
+
     int statuscolor(fpsent *d, int color)
     {
+#if 0
         if(d->privilege)
         {
             color = d->privilege>=PRIV_ADMIN ? 0xFF8000 : (d->privilege>=PRIV_AUTH ? 0xC040C0 : 0x40FF80);
             if(d->state==CS_DEAD) color = (color>>1)&0x7F7F7F;
         } else if(d->state==CS_DEAD) color = 0x606060;
         return color;
+#endif
+        return statuscolor(d->privilege, d->state, color); //NEW
     }
 
     void renderscoreboard(g3d_gui &g, bool firstpass)

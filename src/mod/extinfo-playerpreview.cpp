@@ -309,7 +309,7 @@ void renderplayerpreview(g3d_gui& g, strtool& command, const ENetAddress& eaddr,
                 g.pushlist();
                 g.background(bgcolor, 3);
             }
-            g.text(ep.getname(), guiplayerprivcolor(ep.priv), NULL);
+            g.text(ep.getname(), statuscolor(ep.priv, ep.state, COLOR_NORMAL), NULL);
             if (bgcolor > -1) g.poplist();
         });
         g.poplist();
