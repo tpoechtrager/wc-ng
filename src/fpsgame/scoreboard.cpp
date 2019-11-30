@@ -8,7 +8,7 @@ namespace game
     VARP(showservinfo, 0, 1, 1);
     VARP(showclientnum, 0, 0, 2); //NEW 1 -> 2
     VARP(showpj, 0, 0, 1);
-    VARP(showping, 0, 1, 1);
+    VARP(showping, 0, 1, 2);
     VARP(showspectators, 0, 1, 1);
     VARP(showspectatorping, 0, 0, 1);
     VARP(highlightscore, 0, 1, 1);
@@ -304,7 +304,8 @@ namespace game
         {
             color = d->privilege>=PRIV_ADMIN ? 0xFF8000 : (d->privilege>=PRIV_AUTH ? 0xC040C0 : 0x40FF80);
             if(d->state==CS_DEAD) color = (color>>1)&0x7F7F7F;
-        } else if(d->state==CS_DEAD) color = 0x606060;
+        }
+        else if(d->state==CS_DEAD) color = 0x606060;
         return color;
 #endif
         return statuscolor(d->privilege, d->state, color); //NEW
@@ -602,7 +603,7 @@ namespace game
 
             if(multiplayer(false) || demoplayback)
             {
-                if(showpj)
+                if(showpj && showping <= 1)
                 {
                     g.pushlist();
                     g.strut(6);
@@ -615,7 +616,37 @@ namespace game
                     g.poplist();
                 }
 
-                if(showping)
+                if(showping > 1)
+                {
+                    g.pushlist();
+                    g.strut(6);
+
+                    g.pushlist();
+                    g.text("ping", fgcolor);
+                    g.space(1);
+                    g.spring();
+                    g.text("pj", fgcolor);
+                    g.poplist();
+
+                    loopscoregroup(o,
+                    {
+                        fpsent *p = o->ownernum >= 0 ? getclient(o->ownernum) : o;
+                        if(!p) p = o;
+                        g.pushlist();
+                        if(p->state==CS_LAGGED) g.text("LAG", 0xFFFFDD);
+                        else
+                        {
+                            g.textf("%d", 0xFFFFDD, NULL, p->ping);
+                            g.space(1);
+                            g.spring();
+                            g.textf("%d", 0xFFFFDD, NULL, o->plag);
+                        }
+                        g.poplist();
+
+                    });
+                    g.poplist();
+                }
+                else if(showping)
                 {
                     g.pushlist();
                     g.text("ping", fgcolor);
