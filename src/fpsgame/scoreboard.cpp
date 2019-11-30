@@ -286,6 +286,16 @@ namespace game
     }
     //NEW END
 
+    int statuscolor(fpsent *d, int color)
+    {
+        if(d->privilege)
+        {
+            color = d->privilege>=PRIV_ADMIN ? 0xFF8000 : (d->privilege>=PRIV_AUTH ? 0xC040C0 : 0x40FF80);
+            if(d->state==CS_DEAD) color = (color>>1)&0x7F7F7F;
+        } else if(d->state==CS_DEAD) color = 0x606060;
+        return color;
+    }
+
     void renderscoreboard(g3d_gui &g, bool firstpass)
     {
         bool havecountrynames = displayextinfo(showcountry) && mod::extinfo::havecountrynames(mod::extinfo::EXTINFO_COUNTRY_NAMES_SCOREBOARD); //NEW
@@ -477,13 +487,7 @@ namespace game
             g.strut(13);
             loopscoregroup(o,
             {
-                int status = o->state!=CS_DEAD ? scoreboardtextcolor : 0x606060;
-                if(o->privilege)
-                {
-                    status = gamemod::guiplayerprivcolor(o->privilege);                     //NEW replaced "o->privilege>=PRIV_ADMIN ? 0xFF8000 : 0x40FF80" with "gamemod::guiplayerprivcolor(o->privilege)"
-                    if(o->state==CS_DEAD) status = (status>>1)&0x7F7F7F;
-                }
-                g.textf("%s ", status, NULL, colorname(o));
+                g.textf("%s ", statuscolor(o, scoreboardtextcolor), NULL, colorname(o));           //NEW scoreboardtextcolor   instead of   0xFFFFDD)
             });
             g.poplist();
 
@@ -660,16 +664,14 @@ namespace game
                 loopv(spectators)
                 {
                     fpsent *o = spectators[i];
-                    int status = scoreboardtextcolor;
-                    int bgcolor = gamemod::guiplayerbgcolor(o, getserveraddress());       //NEW
-                    if(o->privilege) status = gamemod::guiplayerprivcolor(o->privilege);  //NEW replaced "o->privilege>=PRIV_ADMIN ? 0xFF8000 : 0x40FF80" with "gamemod::guiplayerprivcolor(o->privilege)"
-                    if((o==player1 && highlightscore) || bgcolor > -1)                    //NEW || bgcolor > -1
+                    int bgcolor = gamemod::guiplayerbgcolor(o, getserveraddress());          //NEW
+                    if((o==player1 && highlightscore) || bgcolor > -1)                       //NEW || bgcolor > -1
                     {
                         g.pushlist();
-                        g.background(bgcolor > -1 ? bgcolor : 0x808080, 3);               //NEW bgcolor > -1 ? bgcolor :
+                        g.background(bgcolor > -1 ? bgcolor : 0x808080, 3);                  //NEW bgcolor > -1 ? bgcolor :
                     }
-                    g.text(colorname(o), status, "spectator");
-                    if((o==player1 && highlightscore) || bgcolor > -1) g.poplist();       //NEW || bgcolor > -1
+                    g.text(colorname(o), statuscolor(o, scoreboardtextcolor), "spectator");  //NEW scoreboardtextcolor   instead of   0xFFFFDD
+                    if((o==player1 && highlightscore) || bgcolor > -1) g.poplist();          //NEW || bgcolor > -1
                 }
                 g.poplist();
 
@@ -725,16 +727,15 @@ namespace game
                     }
                     fpsent *o = spectators[i];
                     int status = scoreboardtextcolor;
-                    int bgcolor = gamemod::guiplayerbgcolor(o, getserveraddress());      //NEW
-                    if(bgcolor > -1) status = bgcolor;                                   //NEW
-                    if(o->privilege) status = gamemod::guiplayerprivcolor(o->privilege); //NEW replaced "o->privilege>=PRIV_ADMIN ? 0xFF8000 : 0x40FF80" with "gamemod::guiplayerprivcolor(o->privilege)"
-                    if((o==player1 && highlightscore) || bgcolor > -1)                   //NEW || bgcolor > -1
+                    int bgcolor = gamemod::guiplayerbgcolor(o, getserveraddress());                                  //NEW
+                    if(bgcolor > -1) status = bgcolor;                                                               //NEW
+                    if((o==player1 && highlightscore) || bgcolor > -1)                                               //NEW || bgcolor > -1
                     {
                         g.pushlist();
-                        g.background(bgcolor > -1 ? bgcolor : 0x808080);                           //NEW bgcolor > -1 ? bgcolor :
+                        g.background(bgcolor > -1 ? bgcolor : 0x808080);                                             //NEW bgcolor > -1 ? bgcolor :
                     }
-                    g.text(colorname(o), status, countryflag(o->extinfo ? o->countrycode : NULL)); //NEW countryflag() instead "spectator"
-                    if((o==player1 && highlightscore) || bgcolor > -1) g.poplist();                //NEW || bgcolor > -1
+                    g.text(colorname(o), statuscolor(o, status), countryflag(o->extinfo ? o->countrycode : NULL));   //NEW countryflag()   and    status   instead of   0xFFFFDD
+                    if((o==player1 && highlightscore) || bgcolor > -1) g.poplist();                                  //NEW || bgcolor > -1) g.poplist();
                     if(i+1<spectators.length() && (i+1)%3) g.space(1);
                     else g.poplist();
                 }

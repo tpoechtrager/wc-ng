@@ -858,6 +858,7 @@ namespace game
     extern void getbestteams(vector<const char *> &best);
     extern void clearteaminfo();
     extern void setteaminfo(const char *team, int frags);
+    extern int statuscolor(fpsent *d, int color);
     extern teaminfo *getteaminfo(const char *team); //NEW
     extern void rendercountry(g3d_gui &g, const char *code, const char *name, int mode, bool *clicked = NULL, int scoreboard = 0); //NEW
 

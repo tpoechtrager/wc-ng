@@ -987,12 +987,7 @@ namespace game
             draw_text("SPECTATOR", w*1800/h - tw - pw, 1650 - th - fh);
             if(f) 
             {
-                int color = f->state!=CS_DEAD ? 0xFFFFFF : 0x606060;
-                if(f->privilege)
-                {
-                    color = f->privilege>=PRIV_ADMIN ? 0xFF8000 : f->privilege==PRIV_AUTH ? gamemod::COLOR_AUTH : 0x40FF80; //NEW o->privilege==PRIV_AUTH ? gamemod::AUTH_COLOR :
-                    if(f->state==CS_DEAD) color = (color>>1)&0x7F7F7F;
-                }
+                int color = statuscolor(f, 0xFFFFFF);
                 draw_text(colorname(f), w*1800/h - fw - pw, 1650 - fh, (color>>16)&0xFF, (color>>8)&0xFF, color&0xFF);
             }
         }
