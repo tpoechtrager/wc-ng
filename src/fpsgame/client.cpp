@@ -1037,19 +1037,21 @@ namespace game
         //NEW END
     }
 
+    VARP(teamcolorchat, 0, 1, 1);
+    const char *chatcolorname(fpsent *d) { return teamcolorchat ? teamcolorname(d, NULL) : colorname(d); }
+
     void toserver(char *text) 
     { 
-        conoutf(CON_CHAT, "%s:\f0 %s", chatcolorname(player1), text); //NEW colorname -> chatcolorname
+        conoutf(CON_CHAT, "%s:\f0 %s", chatcolorname(player1), text);
         extern void sendmessages();                     //NEW
         if(mod::bouncerserverhost.host) sendmessages(); //NEW
         addmsg(N_TEXT, "rcs", player1, text);
         if(mod::bouncerserverhost.host) sendmessages(); //NEW
         if(mod::demorecorder::demorecord) mod::demorecorder::self::text(text); //NEW
     }
-
     COMMANDN(say, toserver, "C");
 
-    void sayteam(char *text) { conoutf(CON_TEAMCHAT, "%s:\f1 %s", chatcolorname(player1), text); addmsg(N_SAYTEAM, "rcs", player1, text); } //NEW colorname -> chatcolorname
+    void sayteam(char *text) { conoutf(CON_TEAMCHAT, "[team] %s: %s", chatcolorname(player1), text); addmsg(N_SAYTEAM, "rcs", player1, text); }
     COMMAND(sayteam, "C");
 
     ICOMMAND(servcmd, "C", (char *cmd), addmsg(N_SERVCMD, "rs", cmd));
@@ -1481,7 +1483,7 @@ namespace game
                 if(t->state!=CS_DEAD && t->state!=CS_SPECTATOR)
                     particle_textcopy(t->abovehead(), text, PART_TEXT, 2000, 0x6496FF, 4.0f, -8);
                 if(mod::event::run(mod::event::PLAYER_TEAM_TEXT, "dss", t->clientnum, t->name, text) <= 0) //NEW
-                    conoutf(CON_TEAMCHAT, "%s:\f1 %s", chatcolorname(t), text); //NEW colorname -> chatcolorname
+                    conoutf(CON_TEAMCHAT, "%s:\f1 %s", chatcolorname(t), text);
                 break;
             }
 

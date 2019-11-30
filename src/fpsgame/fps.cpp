@@ -318,19 +318,24 @@ namespace game
             }
         }
     }
+    COMMAND(respawn, "");
 
     // inputs
+
+    VARP(attackspawn, 0, 1, 1);
 
     void doattack(bool on)
     {
         if(!connected || intermission) return;
-        if((player1->attacking = on)) respawn();
+        if((player1->attacking = on) && attackspawn) respawn();
     }
+
+    VARP(jumpspawn, 0, 1, 1);
 
     bool canjump()
     {
         if(!connected || intermission) return false;
-        respawn();
+        if(jumpspawn) respawn();
         return player1->state!=CS_DEAD;
     }
 
@@ -764,7 +769,7 @@ namespace game
 
     const char *teamcolorname(fpsent *d, const char *alt)
     {
-        if(!teamcolortext || !m_teammode) return colorname(d, NULL, "", "", alt);
+        if(!teamcolortext || !m_teammode || d->state==CS_SPECTATOR) return colorname(d, NULL, "", "", alt);
         return colorname(d, NULL, isteam(d->team, player1->team) ? "\fs\f1" : "\fs\f3", "\fr", alt); 
     }
 
@@ -780,15 +785,6 @@ namespace game
     {
         return teamcolor(name, team && isteam(team, player1->team), alt);
     }
-
-    //NEW
-    MODVARP(chatcolors, 0, 0, 1);
-    const char *chatcolorname(fpsent *d)
-    {
-        if(!chatcolors || !m_teammode || d->state == CS_SPECTATOR) return colorname(d);
-        return colorname(d, NULL, isteam(d->team, player1->team) ? "\fs\f1" : "\fs\f3", "\fr");
-    }
-    //NEW END
 
     VARP(teamsounds, 0, 1, 1);
 
