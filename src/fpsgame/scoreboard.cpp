@@ -10,6 +10,7 @@ namespace game
     VARP(showpj, 0, 0, 1);
     VARP(showping, 0, 1, 1);
     VARP(showspectators, 0, 1, 1);
+    VARP(showspectatorping, 0, 0, 1);
     VARP(highlightscore, 0, 1, 1);
     VARP(showconnecting, 0, 0, 1);
     VARP(hidefrags, 0, 1, 1);
@@ -29,7 +30,6 @@ namespace game
     MODVARP(showservermod, 0, 0, 1);
     MODVARP(oldscoreboard, 0, 0, 1);
     MODVARP(showdemotime, 0, 1, 1);
-    MODVARP(showspectatorping, 0, 0, 1);
 #ifdef ENABLE_IPS
     MODVARP(showip, 0, 0, 1);
     MODVARP(showspectatorip, 0, 0, 1);
@@ -675,7 +675,8 @@ namespace game
 
                 g.pushlist();
                 g.text("spectator", scoreboardtextcolorhead, " ");
-                loopv(spectators)
+                //g.strut(13); //NEW commented
+                loopv(spectators) 
                 {
                     fpsent *o = spectators[i];
                     int bgcolor = gamemod::guiplayerbgcolor(o, getserveraddress());          //NEW
@@ -688,6 +689,25 @@ namespace game
                     if((o==player1 && highlightscore) || bgcolor > -1) g.poplist();          //NEW || bgcolor > -1
                 }
                 g.poplist();
+
+#if 0 //NEW commented
+                if((multiplayer(false) || demoplayback) && showspectatorping)
+                {
+                    g.space(1);
+                    g.pushlist();
+                    g.text("ping", 0xFFFF80);
+                    g.strut(6);
+                    loopv(spectators)
+                    {
+                        fpsent *o = spectators[i];
+                        fpsent *p = o->ownernum >= 0 ? getclient(o->ownernum) : o;
+                        if(!p) p = o;
+                        if(p->state==CS_LAGGED) g.text("LAG", 0xFFFFDD);
+                        else g.textf("%d", 0xFFFFDD, NULL, p->ping);
+                    }
+                    g.poplist();
+                }
+#endif
 
                 if(showclientnum==1) //NEW
                 {
