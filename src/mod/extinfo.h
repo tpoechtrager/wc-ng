@@ -166,8 +166,11 @@ namespace extinfo
 
         const char *getname() const
         {
-            const char *n = neutral_player_names::newname(*this);
-            if (n) return n;
+            if (cn < 128)
+            {
+                const char *n = neutral_player_names::newname(*this);
+                if (n) return n;
+            }
             return *name ? name : "- empty name -";
         }
 

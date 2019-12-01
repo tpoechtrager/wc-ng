@@ -34,7 +34,7 @@ void onchange()
         loopv(game::clients)
         {
             fpsent *d = game::clients[i];
-            if (!d || !d->origname[0]) continue;
+            if (!d || d->clientnum >= 128 || !d->origname[0]) continue;
             copystring(d->origname, d->origname);
             newname(d->name, MAXNAMELEN);
         }
@@ -44,7 +44,7 @@ void onchange()
         loopv(game::clients)
         {
             fpsent *d = game::clients[i];
-            if (!d || !d->origname[0]) continue;
+            if (!d || d->clientnum >= 128 || !d->origname[0]) continue;
             copystring(d->name, d->origname);
         }
     }

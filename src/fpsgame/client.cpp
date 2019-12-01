@@ -1479,8 +1479,11 @@ namespace game
                 filtertext(d->team, d->team, false, false, MAXTEAMLEN);
                 d->playermodel = getint(p);
                 //NEW END
-                copystring(d->origname, text, MAXNAMELEN+1);  //NEW
-                mod::neutral_player_names::newname(text);     //NEW
+                if(cn<128)                                            //NEW
+                {
+                    copystring(d->origname, text, MAXNAMELEN+1);      //NEW
+                    mod::neutral_player_names::newname(text);         //NEW
+                }
                 if(d->name[0])          // already connected
                 {
                     if(strcmp(d->name, text) && !mod::ipignore::isignored(d->clientnum)) //NEW replaced !isignored(d->clientnum) with !mod::ipignore::isignored(d->clientnum, NULL)
