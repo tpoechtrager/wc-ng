@@ -497,6 +497,7 @@ namespace game
             if(oldscoreboard) goto next; //NEW
             name:; //NEW
 
+            if(oldscoreboard) g.space(6); //NEW
             g.pushlist();
             g.text("name", fgcolor);
             g.strut(12);
