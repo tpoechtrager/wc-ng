@@ -1051,7 +1051,7 @@ namespace game
     }
     COMMANDN(say, toserver, "C");
 
-    void sayteam(char *text) { conoutf(CON_TEAMCHAT, "[team] %s: %s", chatcolorname(player1), text); addmsg(N_SAYTEAM, "rcs", player1, text); }
+    void sayteam(char *text) { conoutf(CON_TEAMCHAT, "\fs\f8[team]\fr %s: \f8%s", chatcolorname(player1), text); addmsg(N_SAYTEAM, "rcs", player1, text); }
     COMMAND(sayteam, "C");
 
     ICOMMAND(servcmd, "C", (char *cmd), addmsg(N_SERVCMD, "rs", cmd));
@@ -1483,7 +1483,7 @@ namespace game
                 if(t->state!=CS_DEAD && t->state!=CS_SPECTATOR)
                     particle_textcopy(t->abovehead(), text, PART_TEXT, 2000, 0x6496FF, 4.0f, -8);
                 if(mod::event::run(mod::event::PLAYER_TEAM_TEXT, "dss", t->clientnum, t->name, text) <= 0) //NEW
-                    conoutf(CON_TEAMCHAT, "%s:\f1 %s", chatcolorname(t), text);
+                    conoutf(CON_TEAMCHAT, "\fs\f8[team]\fr %s: \f8%s", chatcolorname(t), text);
                 break;
             }
 

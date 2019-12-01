@@ -499,8 +499,8 @@ namespace game
 
             g.pushlist();
             g.text("name", fgcolor);
-            g.strut(13);
-            loopscoregroup(o,
+            g.strut(12);
+            loopscoregroup(o, 
             {
                 g.textf("%s ", statuscolor(o, scoreboardtextcolor), NULL, colorname(o));           //NEW scoreboardtextcolor   instead of   0xFFFFDD)
             });
@@ -603,6 +603,8 @@ namespace game
 
             if(multiplayer(false) || demoplayback)
             {
+                if(showpj || showping) g.space(1);
+
                 if(showpj && showping <= 1)
                 {
                     g.pushlist();
@@ -706,7 +708,7 @@ namespace game
 
                 g.pushlist();
                 g.text("spectator", scoreboardtextcolorhead, " ");
-                //g.strut(13); //NEW commented
+                //g.strut(12); //NEW commented
                 loopv(spectators) 
                 {
                     fpsent *o = spectators[i];
@@ -724,6 +726,7 @@ namespace game
 #if 0 //NEW commented
                 if((multiplayer(false) || demoplayback) && showspectatorping)
                 {
+                    g.space(1);
                     g.pushlist();
                     g.text("ping", 0xFFFF80);
                     g.strut(6);
