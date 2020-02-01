@@ -1310,7 +1310,7 @@ template<class T> inline void bigswap(T *buf, size_t len) { if(*(const uchar *)&
 struct stream
 {
 #ifdef WIN32
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__MINGW32__)
     typedef off64_t offset;
 #else
     typedef __int64 offset;

@@ -10,7 +10,7 @@ namespace game
     VARP(ragdollfade, 0, 1000, 300000);
     VARFP(playermodel, 0, 0, 4, changedplayermodel());
     VARP(forceplayermodels, 0, 0, 1);
-    VARP(hidedead, 0, 0, 1);
+    VARP(hidedead, 0, 0, 2);
 
     vector<fpsent *> ragdolls;
 
@@ -228,7 +228,7 @@ namespace game
                 fade -= clamp(float(lastmillis - (d->lastupdate + max(ragdollmillis - ragdollfade, 0)))/min(ragdollmillis, ragdollfade), 0.0f, 1.0f);
             renderplayer(d, getplayermodelinfo(d), team, fade, mainpass);
         } 
-        if(isthirdperson() && !followingplayer() && (player1->state!=CS_DEAD || !hidedead)) renderplayer(player1, getplayermodelinfo(player1), teamskins || m_teammode ? 1 : 0, 1, mainpass);
+        if(isthirdperson() && !followingplayer() && (player1->state!=CS_DEAD || hidedead != 1)) renderplayer(player1, getplayermodelinfo(player1), teamskins || m_teammode ? 1 : 0, 1, mainpass);
         rendermonsters();
         rendermovables();
         entities::renderentities();
