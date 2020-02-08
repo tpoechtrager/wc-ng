@@ -752,7 +752,7 @@ namespace game
 
     const char *colorname(fpsent *d, const char *name, const char *prefix, const char *suffix, const char *alt)
     {
-        if(!name) name = alt && d == player1 ? alt : d->name; 
+        if(!name) name = alt && d == player1 ? alt : d->name;
         extern int showclientnum; //NEW
         bool dup = showclientnum == 2 || !name[0] || duplicatename(d, name, alt) || d->aitype != AI_NONE; //NEW showclientnum == 2 ||
         if(dup || prefix[0] || suffix[0])
@@ -770,7 +770,7 @@ namespace game
     const char *teamcolorname(fpsent *d, const char *alt)
     {
         if(!teamcolortext || !m_teammode || d->state==CS_SPECTATOR) return colorname(d, NULL, "", "", alt);
-        return colorname(d, NULL, isteam(d->team, player1->team) ? "\fs\f1" : "\fs\f3", "\fr", alt); 
+        return colorname(d, NULL, isteam(d->team, player1->team) ? "\fs\f1" : "\fs\f3", "\fr", alt);
     }
 
     const char *teamcolor(const char *name, bool sameteam, const char *alt)
@@ -779,8 +779,8 @@ namespace game
         cidx = (cidx+1)%3;
         formatstring(cname[cidx], sameteam ? "\fs\f1%s\fr" : "\fs\f3%s\fr", sameteam || !alt ? name : alt);
         return cname[cidx];
-    }    
-    
+    }
+
     const char *teamcolor(const char *name, const char *team, const char *alt)
     {
         return teamcolor(name, team && isteam(team, player1->team), alt);
@@ -934,13 +934,13 @@ namespace game
     bool disableradar = false; // NEW
 
     VARP(gameclock, 0, 0, 1);
-    FVARP(gameclockscale, 1e-3f, 0.5f, 1e3f);
+    FVARP(gameclockscale, 1e-3f, 0.7f, 1e3f);
     HVARP(gameclockcolour, 0, 0xFFFFFF, 0xFFFFFF);
     VARP(gameclockalpha, 0, 255, 255);
     HVARP(gameclocklowcolour, 0, 0xFFC040, 0xFFFFFF);
-    VARP(gameclockalign, -1, 1, 1);
-    FVARP(gameclockx, 0, 0.765f, 1);
-    FVARP(gameclocky, 0, 0.015f, 1);
+    VARP(gameclockalign, -1, 0, 1);
+    FVARP(gameclockx, 0, 0.500f, 1);
+    FVARP(gameclocky, 0, 0.023f, 1);
 
     void drawgameclock(int w, int h)
     {
@@ -1056,7 +1056,7 @@ namespace game
             text_bounds(f ? colorname(f) : " ", fw, fh);
             fh = max(fh, ph);
             draw_text("SPECTATOR", w*1800/h - tw - pw, 1650 - th - fh);
-            if(f) 
+            if(f)
             {
                 int color = statuscolor(f, 0xFFFFFF);
                 draw_text(colorname(f), w*1800/h - fw - pw, 1650 - fh, (color>>16)&0xFF, (color>>8)&0xFF, color&0xFF);
