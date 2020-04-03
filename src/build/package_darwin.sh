@@ -110,9 +110,10 @@ else
     TARGETS="-m64" PKGDIR=$PTMP ./package.sh $BUILDOPTS $@
 
     version=`./get_version.sh`
+    sauer_svn_rev=`./get_sauer_svn_rev.sh`
 
-    X32PKG="${PTMP}/wc-ng-v${version}_darwin_i386${SUFFIX}.tar.bz2"
-    X64PKG="${PTMP}/wc-ng-v${version}_darwin_x86_64${SUFFIX}.tar.bz2"
+    X32PKG="${PTMP}/wc-ng-v${version}-sr${sauer_svn_rev}_darwin_i386${SUFFIX}.tar.bz2"
+    X64PKG="${PTMP}/wc-ng-v${version}-sr${sauer_svn_rev}_darwin_x86_64${SUFFIX}.tar.bz2"
 
     TMP=`mktemp -d /tmp/XXXXXXXXX`
 
@@ -171,7 +172,7 @@ else
     ### TODO: get rid of this duplicate code
 
     test -d "${PKGDIR}" || mkdir -p "${PKGDIR}"
-    PKGNAME="wc-ng-v${version}_${PLATFORM}"
+    PKGNAME="wc-ng-v${version}-sr${sauer_svn_rev}_${PLATFORM}"
     PKGNAME="${PKGNAME}${SUFFIX}${PKGEXT}"
 
     pushd $CTMP &>/dev/null

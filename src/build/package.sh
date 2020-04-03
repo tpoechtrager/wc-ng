@@ -13,6 +13,7 @@ PKGDIR="${PKGDIR:-${PWD}/../..}"
 PKGSUFFIX="${PKGSUFFIX:-""}"
 PKGCOMPRESSOR="${PKGCOMPRESSOR:-""}"
 
+
 ### clean up on exit
 cleanup()
 {
@@ -30,6 +31,7 @@ set -e
 SRCDIR="${PWD}/.."
 
 version=`./get_version.sh`
+sauer_svn_rev=`./get_sauer_svn_rev.sh`
 
 export MAKEFILE=Makefile
 
@@ -150,7 +152,7 @@ fi
 
 test -d "${PKGDIR}" || mkdir -p "${PKGDIR}"
 [ $PLATFORM == "mingw" ] && PLATFORM="windows"
-PKGNAME="wc-ng-v${version}_${PLATFORM}"
+PKGNAME="wc-ng-v${version}-sr${sauer_svn_rev}_${PLATFORM}"
 
 if [ "$PLATFORM" != "darwin" ]; then
     # assume it's not a fat binary
