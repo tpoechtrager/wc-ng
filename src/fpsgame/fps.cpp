@@ -118,19 +118,18 @@ namespace game
         conoutf("follow off");
     }
 
-    fpsent *followingplayer()
+    fpsent *followingplayer(fpsent *fallback)
     {
-        if(player1->state!=CS_SPECTATOR || following<0) return NULL;
+        if(player1->state!=CS_SPECTATOR || following<0) return fallback;
         fpsent *target = getclient(following);
         if(target && target->state!=CS_SPECTATOR) return target;
-        return NULL;
+        return fallback;
     }
 
     fpsent *hudplayer()
     {
         if(thirdperson && allowthirdperson()) return player1;
-        fpsent *target = followingplayer();
-        return target ? target : player1;
+        return followingplayer(player1);
     }
 
     void setupcamera()
@@ -281,10 +280,51 @@ namespace game
         if(player1->clientnum>=0) c2sinfo();   // do this last, to reduce the effective frame lag
     }
 
+    float proximityscore(float x, float lower, float upper)
+    {
+        if(x <= lower) return 1.0f;
+        if(x >= upper) return 0.0f;
+        float a = x - lower, b = x - upper;
+        return (b * b) / (a * a + b * b);
+    }
+
+    static inline float harmonicmean(float a, float b) { return a + b > 0 ? 2 * a * b / (a + b) : 0.0f; }
+
+    // avoid spawning near other players
+    float ratespawn(dynent *d, const extentity &e)
+    {
+        fpsent *p = (fpsent *)d;
+        float maxrange = m_noitems && (!cmode || m_ctf_only) ? 160.0f : 400.0f;
+        float minplayerdist = maxrange;
+        loopv(players)
+        {
+            const fpsent *o = players[i];
+            if(o->state != CS_ALIVE || o == p || isteam(o->team, p->team)) continue;
+
+            vec dir = vec(o->o).sub(e.o);
+            float dist = dir.squaredlen();
+            if(dist >= minplayerdist*minplayerdist) continue;
+            dist = sqrtf(dist);
+            dir.mul(1/dist);
+
+            // scale actual distance if not in line of sight
+            if(raycube(e.o, dir, dist) < dist) dist *= 1.5f;
+            minplayerdist = min(minplayerdist, dist);
+        }
+        float rating = 1.0f - proximityscore(minplayerdist, 80.0f, maxrange);
+        return cmode ? harmonicmean(rating, cmode->ratespawn(p, e)) : rating;
+    }
+
+    void pickgamespawn(fpsent *d)
+    {
+        int ent = m_classicsp && d == player1 && respawnent >= 0 ? respawnent : -1;
+        int tag = cmode ? cmode->getspawngroup(d) : 0;
+        findplayerspawn(d, ent, tag);
+    }
+
     void spawnplayer(fpsent *d)   // place at random spawn
     {
-        if(cmode) cmode->pickspawn(d);
-        else findplayerspawn(d, d==player1 && respawnent>=0 ? respawnent : -1);
+        pickgamespawn(d);
         spawnstate(d);
         if(d==player1)
         {
@@ -416,10 +456,12 @@ namespace game
             return;
         }
         else if((d->state!=CS_ALIVE && d->state != CS_LAGGED && d->state != CS_SPAWNING) || intermission) return;
+
         if(mod::event::run(mod::event::PLAYER_FRAG, "dsdsd", actor->clientnum, actor->name, d->clientnum, d->name, actor->gunselect) <= 0) //NEW
         {
-            fpsent *h = followingplayer();
-            if(!h) h = player1;
+            if(cmode) cmode->died(d, actor);
+
+            fpsent *h = followingplayer(player1);
             int contype = d==h || actor==h ? CON_FRAG_SELF : CON_FRAG_OTHER;
             const char *dname = "", *aname = "";
             if(m_teammode && teamcolorfrags)
@@ -684,6 +726,11 @@ namespace game
         return showmodeinfo && m_valid(gamemode) ? gamemodes[gamemode - STARTGAMEMODE].info : NULL;
     }
 
+    const char *getscreenshotinfo()
+    {
+        return server::modename(gamemode, NULL);
+    }
+
     void physicstrigger(physent *d, bool local, int floorlevel, int waterlevel, int material)
     {
         if(d->type==ENT_INANIMATE) return;
@@ -906,13 +953,17 @@ namespace game
         pophudmatrix();
     }
 
+    VARP(healthcolors, 0, 1, 1);
+
     void drawhudicons(fpsent *d)
     {
         pushhudmatrix();
         hudmatrix.scale(2, 2, 1);
         flushhudmatrix();
 
-        draw_textf("%d", (HICON_X + HICON_SIZE + HICON_SPACE)/2, HICON_TEXTY/2, d->state==CS_DEAD ? 0 : d->health);
+        defformatstring(health, "%d", d->state==CS_DEAD ? 0 : d->health);
+        bvec healthcolor = bvec::hexcolor(healthcolors && !m_insta ? (d->state==CS_DEAD ? 0x808080 : (d->health<=25 ? 0xFF0000 : (d->health<=50 ? 0xFF8000 : 0xFFFFFF))) : 0xFFFFFF);
+        draw_text(health, (HICON_X + HICON_SIZE + HICON_SPACE)/2, HICON_TEXTY/2, healthcolor.r, healthcolor.g, healthcolor.b);
         if(d->state!=CS_DEAD)
         {
             if(d->armour) draw_textf("%d", (HICON_X + HICON_STEP + HICON_SIZE + HICON_SPACE)/2, HICON_TEXTY/2, d->armour);
@@ -920,6 +971,20 @@ namespace game
         }
 
         pophudmatrix();
+
+        if(d->state != CS_DEAD && d->maxhealth > 100)
+        {
+            float scale = 0.66f;
+            pushhudmatrix();
+            hudmatrix.scale(scale, scale, 1);
+            flushhudmatrix();
+
+            float width, height;
+            text_boundsf(health, width, height);
+            draw_textf("/%d", (HICON_X + HICON_SIZE + HICON_SPACE + width*2)/scale, (HICON_TEXTY + height)/scale, d->maxhealth);
+
+            pophudmatrix();
+        }
 
         drawicon(HICON_HEALTH, HICON_X, HICON_Y);
         if(d->state!=CS_DEAD)
@@ -944,7 +1009,7 @@ namespace game
 
     void drawgameclock(int w, int h)
     {
-        int secs = max(maplimit-lastmillis, 0)/1000, mins = secs/60;
+        int secs = max(maplimit-lastmillis + 999, 0)/1000, mins = secs/60;
         secs %= 60;
 
         defformatstring(buf, "%d:%02d", mins, secs);
@@ -1077,7 +1142,7 @@ namespace game
             if(ammobar) drawammobar(w, h, d);
         }
 
-        if(!m_edit)
+        if(!m_edit && !m_sp)
         {
             if(gameclock) drawgameclock(w, h);
             if(hudscore) drawhudscore(w, h);

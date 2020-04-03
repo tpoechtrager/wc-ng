@@ -361,7 +361,7 @@ namespace game
             else
             {
                 extern int scaletimeleft; //NEW
-                int secs = max(maplimit-lastmillis, 0)/1000*100/(scaletimeleft ? gamespeed : 100), mins = secs/60; //NEW 100/(scaletimeleft ? gamespeed : 100)
+                int secs = max(maplimit-lastmillis+999, 0)/1000*100/(scaletimeleft ? gamespeed : 100), mins = secs/60; //NEW 100/(scaletimeleft ? gamespeed : 100)
                 secs %= 60;
                 g.pushlist();
                 g.strut(mins >= 10 ? 4.5f : 3.5f);
@@ -877,23 +877,22 @@ namespace game
         int numgroups = groupplayers();
         if(!numgroups) return;
 
-        fpsent *p = followingplayer();
-        if(!p) p = player1;
         scoregroup *g = groups[0];
         int score = INT_MIN, score2 = INT_MIN;
         bool best = false;
         if(m_teammode)
         {
             score = g->score;
-            best = isteam(p->team, g->team);
+            best = isteam(player1->team, g->team);
             if(numgroups > 1)
             {
                 if(best) score2 = groups[1]->score;
-                else for(int i = 1; i < groups.length(); ++i) if(isteam(p->team, groups[i]->team)) { score2 = groups[i]->score; break; }
+                else for(int i = 1; i < groups.length(); ++i) if(isteam(player1->team, groups[i]->team)) { score2 = groups[i]->score; break; }
             }
         }
         else
         {
+            fpsent *p = followingplayer(player1);
             score = g->players[0]->frags;
             best = p == g->players[0];
             if(g->players.length() > 1)
