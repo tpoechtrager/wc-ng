@@ -211,7 +211,7 @@ namespace game
         if(type==BNC_GRENADE)
         {
             bnc.offset = hudgunorigin(GUN_GL, from, to, owner);
-            if(owner==hudplayer() && !isthirdperson()) bnc.offset.sub(owner->o).rescale(16).add(owner->o);
+            if(owner==followingplayer(player1) && !isthirdperson()) bnc.offset.sub(owner->o).rescale(16).add(owner->o);
         }
         else bnc.offset = from;
         bnc.offset.sub(bnc.o);
@@ -691,18 +691,19 @@ namespace game
         bool looped = false;
         if(d->attacksound >= 0 && d->attacksound != sound) d->stopattacksound();
         if(d->idlesound >= 0) d->stopidlesound();
+        fpsent *h = followingplayer(player1);
         switch(sound)
         {
             case S_CHAINSAW_ATTACK:
                 if(d->attacksound >= 0) looped = true;
                 d->attacksound = sound;
-                d->attackchan = playsound(sound, d==hudplayer() ? NULL : &d->o, NULL, 0, -1, 100, d->attackchan);
+                d->attackchan = playsound(sound, d==h ? NULL : &d->o, NULL, 0, -1, 100, d->attackchan);
                 break;
             default:
-                playsound(sound, d==hudplayer() ? NULL : &d->o);
+                playsound(sound, d==h ? NULL : &d->o);
                 break;
         }
-        if(d->quadmillis && lastmillis-prevaction>200 && !looped) playsound(S_ITEMPUP, d==hudplayer() ? NULL : &d->o);
+        if(d->quadmillis && lastmillis-prevaction>200 && !looped) playsound(S_ITEMPUP, d==h ? NULL : &d->o);
         if(mod::demorecorder::demorecord && (d->ai || d==hudplayer())) mod::demorecorder::self::shoteffect(d, gun, id, from, to); //NEW
     }
 
@@ -728,7 +729,7 @@ namespace game
         fpsent *pl = (fpsent *)owner;
         if(pl->muzzle.x < 0 || pl->lastattackgun != pl->gunselect) return;
         o = pl->muzzle;
-        hud = owner == hudplayer() ? vec(pl->o).add(vec(0, 0, 2)) : pl->muzzle;
+        hud = owner == followingplayer(player1) ? vec(pl->o).add(vec(0, 0, 2)) : pl->muzzle;
     }
 
     float intersectdist = 1e16f;
