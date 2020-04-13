@@ -1122,7 +1122,6 @@ bool updatedservers = false;
 void parsemasterreply(const char *reply, const char *mastername)
 {
     // This may not be the fastest way but it does its job
-    benchmark b("m");
     int servercount = 0;
     mod::strtool input = reply;
     mod::strtool *lines;
