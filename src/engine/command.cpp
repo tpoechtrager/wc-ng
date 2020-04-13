@@ -2124,7 +2124,7 @@ ident *getcsident(int i)
 ident *addcsident(const char *name)
 {
     ident id;
-    memset(&id, 0, sizeof(ident));
+    memset((void*)&id, 0, sizeof(ident));
     id.name = newstring(name);
     return addident(id);
 }

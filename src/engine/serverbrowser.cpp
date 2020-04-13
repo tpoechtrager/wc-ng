@@ -1119,25 +1119,39 @@ void retrieveservers(const char *master, vector<char> &data) //NEW master
 bool updatedservers = false;
 
 //NEW
-MODVARP(allowmasterserverscripts, 0, 0, 1);
 void parsemasterreply(const char *reply, const char *mastername)
 {
-    int serverport, servercount = 0;
-    string cmd, serverip;
-    while(true)
+    // This may not be the fastest way but it does its job
+    benchmark b("m");
+    int servercount = 0;
+    mod::strtool input = reply;
+    mod::strtool *lines;
+    mod::strtool_size_t count = mod::strtool(reply).split("\n", &lines, true);
+    loopai(count)
     {
-        if(sscanf(reply, "%50s %100s %d", cmd, serverip, &serverport) < 3) goto invalidcommand;
-        if(strcmp(cmd, "addserver")) goto invalidcommand;
-        addserver(serverip, serverport);
-        servercount++;
-        reply = strchr(reply, '\n');
-        if(!reply || !*++reply) break;
+        mod::strtool &line = lines[i];
+        mod::strtool *words;
+        mod::strtool_size_t wordcount = line.split(" ", &words, true);
+        if (wordcount < 2) goto next;
+        if (words[0] == "addserver")
+        {
+            if (wordcount < 3) goto next;
+            const char *ip = words[1].str();
+            int port = words[2].tonumber(INT_MAX, 0, 0xFFFF);
+            if (port == INT_MAX) goto next;
+            addserver(ip, port);
+            servercount++;
+        }
+        else if (words[0] == "echo")
+        {
+            const char *msg = line.str() + 5;
+            conoutf("\f1%s", msg);
+        }
+        next:;
+        delete[] words;
     }
+    delete[] lines;
     conoutf("received %d server%s from master server%s", servercount, mod::plural(servercount), mastername);
-    return;
-    invalidcommand:
-    mod::erroroutf_r("master server%s sent an invalid command - executing scripts from master server is disabled in WC-NG for security reasons", mastername);
-    conoutf("if you want to enable them anyway, type '/allowmasterserverscripts 1' - but be warned, the master server owner can control your client");
 }
 
 static const int MAXMASTERSERVERS = 100;
@@ -1303,8 +1317,7 @@ void updatefrommaster()
                 clearservers();
                 haveresponse = true;
             }
-            if(!allowmasterserverscripts) parsemasterreply(data.getbuf(), mastername.str());
-            else execute(data.getbuf());
+            parsemasterreply(data.getbuf(), mastername.str());
         }
     }
     masterservers.pop(); //pop std master
@@ -1317,8 +1330,26 @@ void updatefrommaster()
     else
     {
         clearservers();
-        if(!allowmasterserverscripts) parsemasterreply(data.getbuf()); //NEW
-        else execute(data.getbuf());
+        char *line = data.getbuf();
+        while(char *end = (char *)memchr(line, '\n', data.length() - (line - data.getbuf())))
+        {
+            *end = '\0';
+
+            const char *args = line;
+            while(args < end && !iscubespace(*args)) args++;
+            int cmdlen = args - line;
+            while(args < end && iscubespace(*args)) args++;
+
+            if(matchstring(line, cmdlen, "addserver"))
+            {
+                string ip;
+                int port;
+                if(sscanf(args, "%100s %d", ip, &port) == 2) addserver(ip, port);
+            }
+            else if(matchstring(line, cmdlen, "echo")) conoutf("\f1%s", args);
+
+            line = end + 1;
+        }
     }
 #endif
     refreshservers();
