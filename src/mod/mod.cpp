@@ -39,7 +39,7 @@ static struct
     const char *const CACERT;
 } UPDATE_CHECK_URLS[] =
 {
-    { "https://wc-ng.sauerworld.org/checkversion.php", "data/CA/wc-ng-ca.crt" }
+    { "https://wc-ng.mooo.com/version.php", "__BUILTIN_WC_NG_CERT__" }
 };
 
 // engine
@@ -508,7 +508,7 @@ namespace mod
             if (cbdata[0] /* user request */)
             {
                 if (responsecode == http::SSL_ERROR) erroroutf_r("update check: can't verify ssl certificate");
-                else erroroutf_r("update check server unreachable");
+                else erroroutf_r("update check server not responding");
             }
 
             goto fail;

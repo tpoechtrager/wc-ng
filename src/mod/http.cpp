@@ -233,8 +233,18 @@ namespace http
 
         if (req->cacert)
         {
-            setopt(CURLOPT_CAPATH, "/dev/null");
-            setopt(CURLOPT_CAINFO, req->cacert.str());
+            if (req->cacert == "__BUILTIN_WC_NG_CERT__")
+            {
+                setopt(CURLOPT_CAINFO, NULL);
+                setopt(CURLOPT_CAPATH, NULL);
+                extern CURLcode handlebuiltincert(CURL *curl, void *sslctx, void *parm);
+                setopt(CURLOPT_SSL_CTX_FUNCTION, *handlebuiltincert);
+            }
+            else
+            {
+                setopt(CURLOPT_CAPATH, NULL);
+                setopt(CURLOPT_CAINFO, req->cacert.str());
+            }
         }
 
         if (req->statuscallback)
@@ -417,7 +427,7 @@ namespace http
 
         strtool cacert = findfile(path(request->cacert.str(), true), "rb");
 
-        if (!fileexists(cacert.str(), "rb"))
+        if (cacert != "__BUILTIN_WC_NG_CERT__" && !fileexists(cacert.str(), "rb"))
         {
             erroroutf_r("%s(): '%s' does not exist", __func__, cacert.str());
             request->cacert.clear();
