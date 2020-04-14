@@ -41,7 +41,7 @@ sed -i "s/SAUERSVNREV $oldrev/SAUERSVNREV $newrev/g" src/last_sauer_svn_rev.h
 
 if [ $SUCCESS -eq 1 ]; then
     echo "committing changes..."
-    git commit -a -m "sync with sauer svn (r$newrev)"
+    git commit -a -m "Merge with sauer svn (r$newrev)"
 
     if [ $HAVE_CHANGES -eq 1 ]; then
         echo "restoring local changes"
