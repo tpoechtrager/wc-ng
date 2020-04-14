@@ -79,12 +79,19 @@ namespace geoip
     RO_GEOIP_VAR(wcgeoipdblastupdatecheck, 0, 0, 0x7FFFFFFF);
     MODVARP(wcgeoipautoupdatecheck, 0, 1, 1);
 
-    static const char *const DB_MIRRORS[] =
+    static struct
     {
-        "https://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.mmdb.gz"
+        const char *const URL;
+        const char *const CACERT;
+    } DB_MIRRORS[] =
+    {
+        // This is the last publicly available GeoLite2 Country database.
+        // https://forum.matomo.org/t/maxmind-is-changing-access-to-free-geolite2-databases/35439/3
+        { "https://wc-ng.mooo.com/geoip-database/GeoLite2-Country.mmdb.gz", "__BUILTIN_WC_NG_CERT__" }
     };
 
-    static const int UPDATE_CHECK_INTERVAL = 1*60*60*24;
+
+    static const int UPDATE_CHECK_INTERVAL = 7*60*60*24;
 
     static MMDB_s mmdb;
     static bool mmdb_opened = false;
@@ -397,13 +404,15 @@ namespace geoip
                 if (!silent)
                 {
                     conoutf("error updating geoip database: geoip database mirror (%s) answered with invalid response code '%d'",
-                            DB_MIRRORS[mirror], responsecode);
+                            DB_MIRRORS[mirror].URL, responsecode);
                 }
             }
             else if (!silent)
             {
-                conoutf("error updating geoip database: geoip database mirror (%s) isn't answering",
-                        DB_MIRRORS[mirror]);
+                if (responsecode == http::SSL_ERROR)
+                    erroroutf_r("error updating geoip database: geoip database mirror (%s): can't verify ssl certificate", DB_MIRRORS[mirror].URL);
+                else
+                    erroroutf_r("error updating geoip database: geoip database mirror (%s): server not responding", DB_MIRRORS[mirror].URL);
             }
 
             if (++mirror < (int)sizeofarray(DB_MIRRORS))
@@ -524,7 +533,11 @@ namespace geoip
 
         auto *httpreq = new http::request_t;
 
-        httpreq->request = DB_MIRRORS[mirror];
+        httpreq->request = DB_MIRRORS[mirror].URL;
+
+        if (DB_MIRRORS[mirror].CACERT)
+            httpreq->cacert = DB_MIRRORS[mirror].CACERT;
+
         httpreq->headers = headers;
 
         httpreq->expecteddatalen = 800*1024;
