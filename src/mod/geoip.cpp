@@ -87,7 +87,7 @@ namespace geoip
     {
         // This is the last publicly available GeoLite2 Country database.
         // https://forum.matomo.org/t/maxmind-is-changing-access-to-free-geolite2-databases/35439/3
-        { "https://wc-ng.mooo.com/geoip-database/GeoLite2-Country.mmdb.gz", "__BUILTIN_WC_NG_CERT__" }
+        { "https://wc-ng.mooo.com/geoip-database/GeoLite2-Country.mmdb.gz" }
     };
 
 

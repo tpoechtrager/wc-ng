@@ -39,7 +39,7 @@ static struct
     const char *const CACERT;
 } UPDATE_CHECK_URLS[] =
 {
-    { "https://wc-ng.mooo.com/version.php", "__BUILTIN_WC_NG_CERT__" }
+    { "https://wc-ng.mooo.com/version.php" }
 };
 
 // engine
