@@ -104,7 +104,7 @@ ifeq (,$(findstring mingw,$(PLATFORM)))
   ifeq (1,$(USESTATICLIBS))
     CHATSERV_LIBS+= $(STATIC_LIB_DIR)/libssl.a $(STATIC_LIB_DIR)/libcrypto.a
   else
-    CHATSERV_LIBS+= -lssl -lcrypto -lcrypt32
+    CHATSERV_LIBS+= -lssl -lcrypto
   endif
 
   ifeq (1,$(USESTATICLIBS))
