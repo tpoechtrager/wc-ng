@@ -389,17 +389,18 @@ static bool verifybyca(X509 *cert, X509 *cacert, const char *host, strtool &erro
             if (pos == -1) break;
 
             X509_NAME_ENTRY *e = X509_NAME_get_entry(subject, pos);
-            BIO *b = BIO_new(BIO_s_mem());
-            if (!b) continue;
+            ASN1_STRING *s = X509_NAME_ENTRY_get_data(e);
 
-            string cn = "";
-            if (ASN1_STRING_print_ex(b, e->value, 0))
-                cn[BIO_read(b, cn, sizeof(cn)-1)] = '\0';
+            strtool cn;
 
-            BIO_free(b);
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+            cn.append((const char *)ASN1_STRING_data(s), ASN1_STRING_length(s));
+#else
+            cn.append((const char *)ASN1_STRING_get0_data(s), ASN1_STRING_length(s));
+#endif
 
             // check for wildcard
-            if (!strncmp(cn, "*.", 2))
+            if (!strncmp(cn.c_str(), "*.", 2))
             {
                 strtool commonname = cn;
                 strtool hostname = host;
@@ -418,7 +419,7 @@ static bool verifybyca(X509 *cert, X509 *cacert, const char *host, strtool &erro
 
                 if (!strcmp(want, given)) goto hostok;
             }
-            else if (!strcmp(host, cn)) goto hostok;
+            else if (!strcmp(host, cn.c_str())) goto hostok;
         }
 
         error = "certificate not valid for current host";
@@ -490,9 +491,17 @@ static void showcertdetails(X509 *cert)
     if (s2 && ASN1_TIME_print(s2, X509_get_notAfter(cert)))
         d2[BIO_read(s2, d2, sizeof(d2)-1)] = '\0';
 
+    ASN1_OBJECT *algobj;
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+    algobj = cert->sig_alg->algorithm;
+#else
+    algobj = X509_get0_tbs_sigalg(cert)->algorithm;
+#endif
+
     string sigalg = "";
-    OBJ_obj2txt(sigalg, sizeof(sigalg), cert->sig_alg->algorithm, 0);
+    OBJ_obj2txt(sigalg, sizeof(sigalg), algobj, 0);
     sigalg[sizeof(sigalg)-1] = '\0';
+
 
     calccerthash(cert, "sha256", fingerprint);
 
@@ -660,8 +669,14 @@ static bool connect(const char *host, int port)
     {
         SSL_library_init();
         SSL_load_error_strings();
-        sslconn.ctx = SSL_CTX_new(TLSv1_2_client_method());
-        static const int OPTS = SSL_OP_NO_SSLv2|SSL_OP_NO_SSLv3|SSL_OP_NO_TLSv1;
+        const SSL_METHOD *sslmethod;
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+		sslmethod = TLSv1_2_client_method();
+#else
+        sslmethod = TLS_client_method();
+#endif
+        sslconn.ctx = SSL_CTX_new(sslmethod);
+        static const int OPTS = SSL_OP_NO_SSLv2|SSL_OP_NO_SSLv3|SSL_OP_NO_TLSv1|SSL_OP_NO_TLSv1_1;
         if (!sslconn.ctx || !SSL_CTX_set_options(sslconn.ctx, OPTS)) abort();
         opensslinited = true;
     }
@@ -1168,7 +1183,7 @@ static int chatthread(void *)
 
     getsaltedmicroseconds(true /*newsalt*/, -1, &pingsalt,
       [](uint seed){ RAND_seed(&seed, sizeof(seed)); },
-      [](){uint t = 0; RAND_pseudo_bytes((uchar*)&t, sizeof(t)); return t;});
+      [](){uint t = 0; RAND_bytes((uchar*)&t, sizeof(t)); return t;});
 
     lastrecv = getmilliseconds();
     lastping = 0;
