@@ -454,6 +454,7 @@ else
     PLUGIN_LIBS+= $(STATIC_LIB_DIR)/libSDL2.a
     ifeq ($(PLATFORM),freebsd)
       CLIENT_LIBS+= -lvgl -liconv -lpulse -lpulse-simple
+      CHATSERV_LIBS+= -liconv
     endif
     override SDL_CONFIG= -Ilib/include
   else
@@ -555,13 +556,17 @@ ifeq ($(LTO),1)
 
   ifneq (,$(LTOFLAGS))
   ifneq (,$(findstring clang,$(CXX)))
-    #override LIBDIR=llvm-lto
+    override LIBDIR=llvm-lto
     ifneq (,$(findstring mingw,$(PLATFORM)))
       # clang with MinGW target
       override LDFLAGS+= -Wl,-plugin-opt=mtriple=$(ARCH)-w64-mingw32
     else
       ifneq ($(PLATFORM),darwin)
-        override LDFLAGS+= -Wl,-plugin-opt=mtriple=$(ARCH)-pc-$(PLATFORM)
+        ifeq ($(PLATFORM),linux)
+          override LDFLAGS+= -Wl,-plugin-opt=mtriple=$(ARCH)-unknown-$(PLATFORM)-gnu
+        else
+          override LDFLAGS+= -Wl,-plugin-opt=mtriple=$(ARCH)-pc-$(PLATFORM)
+        endif
       endif
     endif
   endif
