@@ -30,6 +30,7 @@ static sdlmutex *cryptomutex = NULL;
 void init(bool threadsafe)
 {
     if (!threadsafe) return;
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
     cryptomutex = new sdlmutex[CRYPTO_num_locks()];
     auto threadid = []() -> unsigned long { return SDL_ThreadID(); };
     auto cryptolock = [](int mode, int n, const char *, int)
@@ -39,6 +40,7 @@ void init(bool threadsafe)
     };
     CRYPTO_set_id_callback(threadid);
     CRYPTO_set_locking_callback(cryptolock);
+#endif
 }
 
 void deinit()
