@@ -2,7 +2,7 @@
 
 ## Latest Release: ##
 
-You can download the latest release [here](http://77.119.236.193/wc-ng/).
+You can download the latest release here: [wc-ng.mooo.com](https://wc-ng.mooo.com/).
 
 ### Installation: ###
 
