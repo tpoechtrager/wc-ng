@@ -609,7 +609,7 @@ $(filter-out $(SERVER_OBJS),$(MASTER_OBJS)): CXXFLAGS += $(SERVER_INCLUDES)
 $(CHATSERV_OBJS): CXXFLAGS += $(SERVER_INCLUDES) $(CHATSERV_INCLUDES)
 
 mod/wcversion.h:
-REVISION_MSG := $(shell ./build/get_revision.sh)
+REVISION_MSG := $(shell ./build/set_version.sh)
 ifneq (,$(REVISION_MSG))
 $(error $(REVISION_MSG))
 endif

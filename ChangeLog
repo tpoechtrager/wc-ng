@@ -1,3 +1,21 @@
+wc-ng v1.0.xxx 2020-xx-xx
+  
+  xxx = Count of commits in current branch
+
+  added:
+   - Neutral Player names feature. '/neutralplayernames 1'
+   - Compatibility with OpenSSL 1.1.1x (and latest LibreSSL)
+
+  changed:
+   - Merged the latest Sauerbraten sources
+   - Switched to libmaxminddb for GeoIP
+   - Switched to LibreSSL again
+   - Updated all libraries to the latest releases
+   - Rebuilt all libraries
+
+  fixed:
+   - Several compiler warnings 
+
 wc-ng v0.7.4 2015-xx-xx
 
   added:

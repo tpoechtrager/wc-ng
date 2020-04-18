@@ -17,9 +17,8 @@ which git &>/dev/null
 test $? -ne 0 && echo "git not installed?" 2>&1 && exit 1
 
 REVISION=$(git log --pretty=format:'%h' -n 1)
+COMMIT_COUNT=$(git rev-list HEAD --count)
 
-test "$1" = "stdout" && echo $REVISION && exit 0
-
-test -f "$dst" && grep "#define WCREVISION \"${REVISION}\"" "$dst" &>/dev/null && exit 0
 cp "$src" "$dst"
-sed -i'' -e 's/"$WCREVISION$"/"'$REVISION'"/g' "$dst"
+sed -i'' -e "s/__GIT_REVISION__/$REVISION/g" "$dst"
+sed -i'' -e "s/__GIT_COMMIT_COUNT__/${COMMIT_COUNT}/g" "$dst"

@@ -1,11 +1,11 @@
 #ifndef __WCVERSION_H__
 #define __WCVERSION_H__
 
-#define WCREVISION "$WCREVISION$"
+#define WCREVISION "__GIT_REVISION__"
 
-constexpr int WC_VERSION_MAJOR = 0;
-constexpr int WC_VERSION_MINOR = 8;
-constexpr int WC_VERSION_PATCH = 3;
+constexpr int WC_VERSION_MAJOR = 1;
+constexpr int WC_VERSION_MINOR = 0;
+constexpr int WC_VERSION_PATCH = __GIT_COMMIT_COUNT__;
 
 #undef major
 #undef minor

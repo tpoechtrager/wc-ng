@@ -6,7 +6,7 @@ pushd ${0%/*} &>/dev/null
 
 . include/common.inc.sh
 
-./get_revision.sh
+./set_version.sh
 
 prog="wcversion${EXESUFFIX}"
 
