@@ -21,8 +21,6 @@
 
 #include "hwtemp.h"
 
-using namespace mod::plugin;
-
 namespace hwtemp
 {
     const hostexports_t *host;
@@ -102,7 +100,7 @@ namespace hwtemp
                 {
                     SDL_Mutex_Locker m(templock);
                     host->client.erroroutf_r("hwtemp plugin: unable to read temperatures from (%s): "
-                                             "maybe not running or device not present?", ltemp.interface.str());
+                                             "client (CoreTemp, SpeedFAN, ...) not running or device not present?", ltemp.interface.str());
                     break;
                 }
             }
@@ -179,11 +177,11 @@ namespace hwtemp
 
         if (!host->event.validateeventsystem(mod::event::eventsystem))
         {
-            host->client.erroroutf_r("plugin hwtemp is oudated, please get a newer version");
+            host->client.erroroutf_r("plugin hwtemp is oudated; please get a newer version");
             return PLUGIN_INIT_ERROR;
         }
 
-        plugin->version = plugin_version_t(0, 4, 8);
+        plugin->version = plugin_version_t(0, 4, 9);
         plugin->clientver = CLIENTVERSION;
         plugin->clientrev = WCREVISION;
         plugin->unload = unload;
