@@ -996,11 +996,6 @@ static void maxfpschanged()
             conoutf("setting maxfps to 1000 instead");
             maxfps = 1000;
         }
-        else
-        {
-            conoutf("PLEASE MONITOR THE TEMPERATURE OF YOUR HARDWARE WHILE USING '/maxfps -1'");
-            conoutf("I AM NOT LIABLE FOR ANY HARDWARE DAMAGES!");
-        }
     }
 }
 //NEW END
