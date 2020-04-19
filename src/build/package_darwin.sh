@@ -11,181 +11,165 @@ PKGCOMPRESSOR="${PKGCOMPRESSOR:-bzip2}"
 . include/debug.inc.sh
 
 BUILDOPTS=""
-PLATFORM=`uname -s | awk '{print tolower($0)}'`
+export PLATFORM="darwin"
 
-### check if we are cross compiling
+which xcrun &>/dev/null || {
+    echo "xcrun not installed!"
+    exit 1
+}
 
-if [ "$PLATFORM" != "darwin" ]; then
-    # cross compiler defaults for non darwin hosts
-    eval `osxcross-conf`
+export OBJCC="xcrun clang"
+export OBJCXX="xcrun clang++"
 
-    export TOOLCHAIN=x86_64-apple-$OSXCROSS_TARGET-
-
-    export OBJCC=${TOOLCHAIN}clang
-    export OBJCXX=${TOOLCHAIN}clang++
-
-    if [ -n "$USEGCC" ]; then
-        export CC=${TOOLCHAIN}gcc
-        export CXX=${TOOLCHAIN}g++
-    else
-        if [ -n "$USELLVMGCC" ]; then
-            export CC=${TOOLCHAIN}llvm-gcc
-            export CXX=${TOOLCHAIN}-llvm-g++
-        else
-            export CC=${TOOLCHAIN}clang
-            export CXX=${TOOLCHAIN}clang++
-        fi
-    fi
-
-    export STRIP="${TOOLCHAIN}strip"
-    export HAVECROSSCOMPILER=1
-
-    which $CXX &>/dev/null || {
-        echo "$CXX not installed!"
-        exit 1
-    }
-
-    export PLATFORM="darwin"
+if [ -n "$USEGCC" ]; then
+    export CC="xcrun gcc"
+    export CXX="xcrun g++"
 else
-    TOOLCHAIN=""
+    export CC="xcrun clang"
+    export CXX="xcrun clang++"
 fi
 
-### check if multiple -arch flags are supported by the compiler
-
-if [ -z "$CXX" ]; then
-    CXX=c++
-fi
-
-TESTCXXFLAGS+="$CXXFLAGS -arch i386 -arch x86_64"
+export STRIP="xcrun strip"
 
 # this must be in here and in build.sh
 [ -z "$LTO" ] && export LTO=1
 
-if [ -n "$LTO" -a "$LTO" != "0" ]; then
-    TESTCXXFLAGS+=" `./checklto/checklto.sh $CXX`"
+. include/compressor.inc.sh
+
+I386_SUPPORTED=0
+X64_SUPPORTED=0
+X64H_SUPPORTED=0
+
+echo "int main(){return 0;}" | xcrun $CC -m32 -xc - &>/dev/null && I386_SUPPORTED=1
+echo "int main(){return 0;}" | xcrun $CC -m64 -xc - &>/dev/null && X64_SUPPORTED=1
+echo "int main(){return 0;}" | xcrun $CC -arch x86_64h -xc - &>/dev/null && X64H_SUPPORTED=1
+
+echo -n "Archs supported: "
+echo "i386: $I386_SUPPORTED, x86_64: $X64_SUPPORTED, x86_64h: $X64H_SUPPORTED"
+echo ""
+
+NUM_SUPPORTED_ARCHS=$(($I386_SUPPORTED + $X64_SUPPORTED + $X64H_SUPPORTED))
+
+set -e
+
+if [ $I386_SUPPORTED -eq 1 ]; then
+    TARGETS="-m32" PKGSUFFIX="_i386${PKGSUFFIX}" ./package.sh $BUILDOPTS $@
 fi
 
-echo "int x;" | $CXX $TESTCXXFLAGS -xc++ -c -o test - &>/dev/null
-
-if [ $? -eq 0 -a -z "$USECCACHE" ]; then
-    ARCH=`${TOOLCHAIN}lipo -info test` || exit 1
-    rm test
-
-    if [ "$ARCH" != "${ARCH/i386/}" ] && [ "$ARCH" != "${ARCH/x86_64/}" ]; then
-        UNIVERSAL=1
-    else
-        UNIVERSAL=0
-    fi
-else
-    UNIVERSAL=0
+if [ $X64_SUPPORTED -eq 1 ]; then
+    TARGETS="-m64" PKGSUFFIX="_x86_64${PKGSUFFIX}" ./package.sh $BUILDOPTS $@
 fi
 
-export UNIVERSAL # export it for use in the Makefile
+if [ $X64H_SUPPORTED -eq 1 ]; then
+    TARGETS="-arch x86_64h" PKGSUFFIX="_x86_64h${PKGSUFFIX}" ./package.sh $BUILDOPTS $@
+fi
 
-if [ $UNIVERSAL -eq 1 ]; then
-    package_callback()
-    {
-        ${TOOLCHAIN}lipo wclient -extract i386 -output wclient.i386
-    }
-    export -f package_callback
+if [ $NUM_SUPPORTED_ARCHS -eq 1 ]; then
+    exit 0
+fi
 
-    ./package.sh $@
-else
-    . include/compressor.inc.sh
+version=$(./get_version.sh)
+sauer_svn_rev=$(./get_sauer_svn_rev.sh)
 
-    echo "need to build an extra package for each arch (will put them together at the end)"
+X32PKG="${PKGDIR}/wc-ng-v${version}-sr${sauer_svn_rev}_macos_i386${PKGSUFFIX}.tar.bz2"
+X64PKG="${PKGDIR}/wc-ng-v${version}-sr${sauer_svn_rev}_macos_x86_64${PKGSUFFIX}.tar.bz2"
+X64HPKG="${PKGDIR}/wc-ng-v${version}-sr${sauer_svn_rev}_macos_x86_64h${PKGSUFFIX}.tar.bz2"
 
-    set -e
+TMP=$(mktemp -d /tmp/XXXXXXXXX)
 
-    PTMP=`mktemp -d /tmp/XXXXXXXXX`
+pushd $TMP &>/dev/null
 
-    test -n "$USELLVMGCC" && export CXXFLAGS=" -Wno-unused-variable"
+extract_package()
+{
+    echo "extracting $2 binaries"
+    tar -xjf $1 -C $TMP plugins wclient wc_chat_server
 
-    SUFFIX=$PKGSUFFIX
-
-    export PKGSUFFIX="_i386${SUFFIX}"
-    TARGETS="-m32" PKGDIR=$PTMP ./package.sh $BUILDOPTS $@
-
-    export PKGSUFFIX="_x86_64${SUFFIX}"
-    TARGETS="-m64" PKGDIR=$PTMP ./package.sh $BUILDOPTS $@
-
-    version=`./get_version.sh`
-    sauer_svn_rev=`./get_sauer_svn_rev.sh`
-
-    X32PKG="${PTMP}/wc-ng-v${version}-sr${sauer_svn_rev}_darwin_i386${SUFFIX}.tar.bz2"
-    X64PKG="${PTMP}/wc-ng-v${version}-sr${sauer_svn_rev}_darwin_x86_64${SUFFIX}.tar.bz2"
-
-    TMP=`mktemp -d /tmp/XXXXXXXXX`
-
-    pushd $TMP &>/dev/null
-
-    echo "extracting 32 bit binaries"
-    tar -xjf $X32PKG -C $TMP plugins wclient
-
-    mv wclient wclient.i386
+    mv wclient wclient.$2
+    mv wc_chat_server wc_chat_server.$2
 
     pushd plugins &>/dev/null
     for f in *.dylib; do
-        mv $f $f.i386
+        mv $f $f.$2
     done
     popd &>/dev/null
+}
 
-    ### TODO: support other compressors
-    echo "extracting 64 bit binaries"
-    tar -xjf $X64PKG -C $TMP plugins wclient
+if [ $I386_SUPPORTED -eq 1 ]; then
+    extract_package $X32PKG i386
+fi
 
-    mv wclient wclient.x86_64
+if [ $X64_SUPPORTED -eq 1 ]; then
+    extract_package $X64PKG x86_64
+fi
 
-    pushd plugins &>/dev/null
-    for f in *.dylib; do
-        mv $f $f.x86_64
-    done
-    popd &>/dev/null
+if [ $X64H_SUPPORTED -eq 1 ]; then
+    extract_package $X64HPKG x86_64h
+fi
 
-    echo "creating fat mach-o binaries"
+echo "creating fat mach-o binaries"
 
-    ${TOOLCHAIN}lipo -create wclient.i386 wclient.x86_64 -output wclient
+supported_arch=""
 
-    pushd plugins &>/dev/null
-    for f in *.x86_64; do
-        X32="${f/x86_64/i386}"
-        ${TOOLCHAIN}lipo -create $X32 $f -output "${f/\.x86_64/}"
-    done
-    popd &>/dev/null
+create_fat_binary()
+{
+    local files=""
 
-    rm wclient.x86_64
-    rm plugins/*.dylib.*
-
-    popd &>/dev/null
-
-    CTMP=`mktemp -d /tmp/XXXXXXXXX`
-
-    tar xf $X64PKG -C $CTMP
-
-    rm $CTMP/wclient
-    rm -r $CTMP/plugins
-
-    mv $TMP/* $CTMP
-
-    echo "creating final package"
-
-    ### TODO: get rid of this duplicate code
-
-    test -d "${PKGDIR}" || mkdir -p "${PKGDIR}"
-    PKGNAME="wc-ng-v${version}-sr${sauer_svn_rev}_${PLATFORM}"
-    PKGNAME="${PKGNAME}${SUFFIX}${PKGEXT}"
-
-    pushd $CTMP &>/dev/null
-    compress "*" "${PKGDIR}/$PKGNAME"
-    popd &>/dev/null
-
-    if [ -n "$SIGNPACKAGE" ]; then
-        pushd "$PKGDIR" &>/dev/null
-        gpg --sign --detach-sign --armor "$PKGNAME"
-        popd &>/dev/null
+    if [ $I386_SUPPORTED -eq 1 ]; then
+        files+="$1.i386 "
+        supported_arch="i386"
     fi
 
-    rm -rf $TMP
-    rm -rf $CTMP
-    rm -rf $PTMP
-fi
+    if [ $X64_SUPPORTED -eq 1 ]; then
+        files+="$1.x86_64 "
+        supported_arch="x86_64"
+    fi
+
+    if [ $X64H_SUPPORTED -eq 1 ]; then
+        files+="$1.x86_64h "
+        supported_arch="x86_64h"
+    fi
+
+    xcrun lipo -create $files -output $1
+    rm -f $1.i386 $1.x86_64 $1.x86_64h
+}
+
+create_fat_binary wclient
+create_fat_binary wc_chat_server
+
+pushd plugins &>/dev/null
+for file in *.$supported_arch; do
+    name=$(echo -n $f|tr '.' '\n'|head -n2|tr '\n' '.')
+    files=""
+    [ $I386_SUPPORTED -eq 1 ] && files+="$name.i386 "
+    [ $X64_SUPPORTED -eq 1 ] && files+="$name.x86_64 "
+    [ $X64H_SUPPORTED -eq 1 ] && files+="$name.x86_64h "
+    xcrun lipo -create $files -output $name
+    rm -f $files
+done
+popd &>/dev/null # plugins
+
+popd &>/dev/null
+
+CTMP=$(mktemp -d /tmp/XXXXXXXXX)
+
+tar xf $X64PKG -C $CTMP
+
+rm $CTMP/wclient
+rm -r $CTMP/plugins
+
+mv $TMP/* $CTMP
+
+echo "creating final package"
+
+test -d "${PKGDIR}" || mkdir -p "${PKGDIR}"
+PKGNAME="wc-ng-v${version}-sr${sauer_svn_rev}_macos_universal"
+PKGNAME="${PKGNAME}${PKGSUFFIX}${PKGEXT}"
+
+pushd $CTMP &>/dev/null
+compress "*" "${PKGDIR}/$PKGNAME"
+popd &>/dev/null
+
+rm -rf $TMP
+rm -rf $CTMP
+rm -rf $PTMP
+

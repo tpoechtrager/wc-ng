@@ -151,8 +151,11 @@ if [ $MINGW -ne 0 ]; then
 fi
 
 test -d "${PKGDIR}" || mkdir -p "${PKGDIR}"
-[ $PLATFORM == "mingw" ] && PLATFORM="windows"
-PKGNAME="wc-ng-v${version}-sr${sauer_svn_rev}_${PLATFORM}"
+PLATFORM_SUFFIX=$PLATFORM
+[ $PLATFORM == "mingw" ] && PLATFORM_SUFFIX="windows"
+[ $PLATFORM == "darwin" ] && PLATFORM_SUFFIX="macos"
+
+PKGNAME="wc-ng-v${version}-sr${sauer_svn_rev}_${PLATFORM_SUFFIX}"
 
 if [ "$PLATFORM" != "darwin" ]; then
     # assume it's not a fat binary
@@ -171,9 +174,3 @@ set -e
 declare -f -F package_callback &>/dev/null && package_callback
 
 compress "*" "${PKGDIR}/$PKGNAME"
-
-pushd "$PKGDIR" &>/dev/null
-
-if [ -n "$SIGNPACKAGE" ]; then
-    gpg --sign --detach-sign --armor "$PKGNAME"
-fi

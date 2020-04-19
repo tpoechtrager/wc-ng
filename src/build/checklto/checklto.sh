@@ -30,8 +30,6 @@ function checklto()
     echo "link time optimization not supported" 1>&2
 }
 
-[ -z "$JOBS" ] && JOBS=1
-
 COMPILER="$@"
 
-checklto
+JOBS=$(../get_cpu_count.sh) checklto

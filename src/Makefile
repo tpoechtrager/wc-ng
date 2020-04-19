@@ -281,13 +281,17 @@ ifeq (darwin,$(PLATFORM))
   OSXVERSIONMIN ?= 10.6
   HAVECROSSCOMPILER ?= 0
   UNIVERSAL ?= 0
-  TARGETS ?=
+  TARGETS ?= -arch x86_64
   NOPCH= 1
 
   PLUGIN_LIBS= -Wl,-exported_symbols_list,plugins/exports.ld64
 
   ifeq ($(UNIVERSAL), 1)
-    override TARGETS= -arch i386 -arch x86_64
+    override TARGETS= -arch i386 -arch x86_64 -arch x86_64h
+  endif
+
+  ifneq (,$(findstring x86_64h,$(TARGETS)))
+    OSXVERSIONMIN=10.8
   endif
 
   ifneq (,$(DEBUG))
@@ -295,20 +299,15 @@ ifeq (darwin,$(PLATFORM))
   endif
 
   ifeq (,$(findstring darwin,$(PLATFORMNATIVE)))
-  ifneq (1,$(HAVECROSSCOMPILER))
-    TOOLCHAINTARGET= $(shell osxcross-conf | grep "TARGET=" | head -n1 | cut -b24-)
-    TOOLCHAIN= x86_64-apple-$(TOOLCHAINTARGET)-
-    CXX= $(TOOLCHAIN)clang++
-    CC= $(TOOLCHAIN)clang
     PLATFORM= darwin
   endif
-  else
-    CC= clang
-    CXX= clang++
-  endif
 
-  OBJCC ?= $(CC)
-  OBJCXX ?= $(CXX)
+  ifeq (,$(CC))
+    CC= xcrun clang
+    CXX= xcrun clang++
+    OBJCC ?= $(CC)
+    OBJCXX ?= $(CXX)
+  endif
 
   override OSXMINFLAGS= -mmacosx-version-min=$(OSXVERSIONMIN) $(TARGETS)
 
@@ -577,7 +576,7 @@ endif
 ### Check for >= C++11
 
 ifeq (,$(CXXSTD))
-  CXXSTD= $(shell ./build/check_cxx_standard.sh $(CXX))
+  CXXSTD= $(shell ./build/check_cxx_standard.sh "$(CXX)")
 
   ifeq (,$(CXXSTD))
     $(error a c++11 compiler is required)
