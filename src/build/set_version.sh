@@ -25,8 +25,13 @@ sed -i'' -e "s/__GIT_COMMIT_COUNT__/${COMMIT_COUNT}/g" "$dst.new"
 
 if [ ! -f "$dst" ]; then
     mv "$dst.new" "$dst"
-elif cmp "$dest.new" "$dst" 2>/dev/null; then
-    mv "$dst.new" "$dst"
+    exit 0
 fi
 
-rm -f "$dst.new"
+cmp "$dst.new" "$dst"
+
+if [ $? -ne 0 ]; then
+    mv "$dst.new" "$dst"
+else
+    rm -f "$dst.new"
+fi

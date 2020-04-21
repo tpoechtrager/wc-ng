@@ -66,9 +66,3 @@ fi
 
 sh -c "makensis wc.nsi" # cygwin's bash shell is doing weird things without "sh -c"
 mv *.exe "${PKGDIR}/"
-
-if [ -n "$SIGNPACKAGE" ]; then
-    pushd "$PKGDIR" &>/dev/null
-    gpg --sign --detach-sign --armor wc-ng*v${version}_sr${sauer_svn_rev}*${PKGSUFFIX}*.exe
-    popd &>/dev/null
-fi
