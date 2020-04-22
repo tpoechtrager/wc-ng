@@ -27,7 +27,13 @@ namespace game
     void demorecorder_initbases(ucharbuf &p);
 }
 
+namespace server
+{
+    extern const char *demodir;
+}
+
 using namespace game;
+using namespace server;
 
 namespace mod {
 namespace demorecorder
@@ -312,12 +318,12 @@ namespace demorecorder
 
         dir = gethomedir();
         if (!dir.empty()) dir += PATHDIV;
-        dir += CLIENT_DEMO_DIRECTORY;
+        dir += demodir;
         dir.fixpathdiv();
 
         if (!fileexists(dir.str(), "r") && !createdir(dir.str()))
         {
-            conoutf(CON_ERROR, "failed to create demo directory (%s)", CLIENT_DEMO_DIRECTORY);
+            conoutf(CON_ERROR, "failed to create demo directory (%s)", demodir);
             return;
         }
 
@@ -341,7 +347,7 @@ namespace demorecorder
         static const char *fmt = "%s/%s.dmo";
 #endif
 
-        rdir = CLIENT_DEMO_DIRECTORY;
+        rdir = demodir;
         rdir += PATHDIV;
         rdir += demomode;
 
@@ -675,8 +681,6 @@ namespace demorecorder
 
     ICOMMAND(stopclientdemo, "", (), stopdemorecord());
     ICOMMAND(recordclientdemo, "s", (const char *name), setupdemorecord(name));
-
-    ICOMMAND(clientdemogetdemodir, "", (), { result(CLIENT_DEMO_DIRECTORY); });
 }
 
 using namespace demorecorder;
@@ -1528,7 +1532,7 @@ namespace searchdemo
             copystring(mode, gamemodes[i].name);
             demorecorder::fixdemofilestring(mode);
 
-            defformatstring(dir, "%s/%s", CLIENT_DEMO_DIRECTORY, mode);
+            defformatstring(dir, "%s/%s", demodir, mode);
 
             vector<char*> files;
 
@@ -1729,7 +1733,7 @@ namespace searchdemo
                 if (!strcmp(mode, "home"))
                     formatstring(tmp, "\"demo ^\"%s^\"\"\n", escapecubescriptstring(sdi.demo, escapebuf, false));
                 else
-                    formatstring(tmp, "\"demo ^\"%s/%s/%s^\"\"\n", CLIENT_DEMO_DIRECTORY, mode, escapecubescriptstring(sdi.demo, escapebuf, false));
+                    formatstring(tmp, "\"demo ^\"%s/%s/%s^\"\"\n", demodir, mode, escapecubescriptstring(sdi.demo, escapebuf, false));
 
                 PUTSTRING(tmp);
 

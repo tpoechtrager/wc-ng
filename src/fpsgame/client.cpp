@@ -2216,6 +2216,7 @@ namespace game
             case N_DEMOPACKET: break; //NEW break instead of return -> to get N_DEMORECORDER packets working again
             case N_SENDDEMO:
             {
+                if(game::demoplayback) return; //NEW (fix for commented case N_DEMOPACKET)
                 string fname;
                 fname[0] = '\0';
                 int tag = getint(p);

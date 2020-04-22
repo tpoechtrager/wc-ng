@@ -28,7 +28,7 @@ if [ ! -f "$dst" ]; then
     exit 0
 fi
 
-cmp "$dst.new" "$dst"
+cmp "$dst.new" "$dst" &>/dev/null
 
 if [ $? -ne 0 ]; then
     mv "$dst.new" "$dst"

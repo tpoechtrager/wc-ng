@@ -34,8 +34,6 @@ static const int N_DEMORECORDER_DEMOINFO_EXT = 258864235;
 namespace mod {
 namespace demorecorder
 {
-    static const char *const CLIENT_DEMO_DIRECTORY = "demos";
-
     extern bool demorecord;
     extern char *demofile;
     extern bool parsingmapchangepacket;
