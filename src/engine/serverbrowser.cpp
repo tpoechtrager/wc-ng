@@ -1325,7 +1325,7 @@ void updatefrommaster()
     //NEW END
 #if 0
     retrieveservers(data);
-    if(data.empty()) conoutf("master server not replying");
+    if(data.empty()) conoutf(CON_ERROR, "master server not replying");
     else
     {
         clearservers();
