@@ -586,6 +586,9 @@ endif
 ### Setup C/C++ flags
 
 override CXXFLAGS+= $(CXXSTD)
+ifeq (,$(findstring clang,$(CC)))
+  override CXXFLAGS+= -Wno-multistatement-macros
+endif
 override CXXFLAGS+= -Wall -Wsign-compare -Wformat-security -Wtype-limits
 override CXXFLAGS+= -fsigned-char -fno-exceptions
 override CFLAGS+= -Wall -Wsign-compare -Wformat-security -Wtype-limits

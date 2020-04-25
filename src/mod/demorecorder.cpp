@@ -29,7 +29,7 @@ namespace game
 
 namespace server
 {
-    extern const char *demodir;
+    extern char *demodir;
 }
 
 using namespace game;
