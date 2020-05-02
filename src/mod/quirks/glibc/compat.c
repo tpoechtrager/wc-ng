@@ -66,7 +66,6 @@ __attribute__((constructor (101)))                                             \
 __attribute__((visibility ("hidden")))                                         \
 void init___wrap_##OS(void)                                                    \
 {                                                                              \
-    LOOKUP(_##WS, ON, !strcmp(TOSTRING(WN), TOSTRING(OS)));                    \
     LOOKUP(_##WS, WS, 1);                                                      \
 }                                                                              \
 void __wrap_##OS(void)                                                         \
