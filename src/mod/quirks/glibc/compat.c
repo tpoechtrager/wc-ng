@@ -96,6 +96,18 @@ WRAPFINITE(asin)
 WRAPFINITE(log10)
 WRAPFINITE(atan2)
 
+REMOVESYMVER(reallocarray)
+
+REMOVESYMVER(exp2f)
+
+REMOVESYMVER(pow)
+REMOVESYMVER(log)
+REMOVESYMVER(exp)
+
+REMOVESYMVER(powf)
+REMOVESYMVER(logf)
+REMOVESYMVER(expf)
+
 void __wrap_memcpy(void)
 {
     /* GLIBC 2.2.5 implemented memcpy() as memmove() */
