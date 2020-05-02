@@ -417,18 +417,30 @@ else
     else
       override COMPATCC= $(CC)
     endif
+    glibc_quirks=0
+    # ARM
+    ifeq (,$(findstring a,$(ARCH)))
+      glibc_quirks=1
+    endif
+    ifeq ($(glibc_quirks),1)
     CLIENT_OBJS+= mod/quirks/glibc/compat.o
     SERVER_OBJS+= mod/quirks/glibc/compat.o
     MASTER_OBJS+= mod/quirks/glibc/compat.o
     CHATSERV_OBJS+= mod/quirks/glibc/compat.o
     PLUGIN_OBJS+= mod/quirks/glibc/compat-plugin.o
+    endif
     mod/quirks/glibc/%.o: override CC:= $(COMPATCC)
     mod/quirks/glibc/%.o: override CFLAGS= $(PLATFORMFLAG) -O2 -fomit-frame-pointer
     mod/quirks/glibc/%-plugin.o: override CFLAGS+= -fPIC
     ifeq (,$(findstring icc,$(CC)))
       override LDFLAGS+= -lm
     endif
+    ifeq ($(glibc_quirks),1)
     override LDFLAGS+= -Wl,--wrap=memcpy -Wl,--wrap=__fdelt_chk
+    override LDFLAGS+= -Wl,--wrap=reallocarray
+    override LDFLAGS+= -Wl,--wrap=exp2f
+    override LDFLAGS+= -Wl,--wrap=pow -Wl,--wrap=log -Wl,--wrap=exp
+    override LDFLAGS+= -Wl,--wrap=powf -Wl,--wrap=logf -Wl,--wrap=expf
     override LDFLAGS+= -Wl,--wrap=__exp_finite -Wl,--wrap=__expf_finite
     override LDFLAGS+= -Wl,--wrap=__log_finite -Wl,--wrap=__logf_finite
     override LDFLAGS+= -Wl,--wrap=__log10f_finite -Wl,--wrap=__pow_finite
@@ -436,6 +448,7 @@ else
     override LDFLAGS+= -Wl,--wrap=__atan2f_finite -Wl,--wrap=__fmod_finite
     override LDFLAGS+= -Wl,--wrap=__acos_finite -Wl,--wrap=__asin_finite
     override LDFLAGS+= -Wl,--wrap=__log10_finite -Wl,--wrap=__atan2_finite
+    endif
   endif
   endif
 
@@ -499,6 +512,10 @@ else
     CLIENT_LIBS+= -lrt -ldl
     CHATSERV_LIBS+= -lrt -ldl
     PLUGIN_LIBS+= -lrt -ldl
+
+    ifneq (,$(findstring arm,$(ARCH)))
+      CHATSERV_LIBS+=-latomic
+    endif
   endif
 
   ################ UNIX TARGETS ################
