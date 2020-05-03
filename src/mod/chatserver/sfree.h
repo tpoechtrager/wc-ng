@@ -34,6 +34,7 @@ static inline void szeromemory(void *ptr, size_t size)
 #include <stdint.h>
 #include <dlfcn.h>
 
+#ifndef STATIC
 extern "C" {
 
 size_t malloc_usable_size(void *ptr);
@@ -47,6 +48,7 @@ void free(void *mem)
 }
 
 }
+#endif
 #endif
 
 template<class T, class C = bool, class L = size_t*>
