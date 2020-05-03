@@ -899,9 +899,9 @@ static void setupserver()
         const SSL_METHOD *sslmethod;
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
-		sslmethod = TLSv1_2_client_method();
+         sslmethod = TLSv1_2_server_method();
 #else
-        sslmethod = TLS_client_method();
+        sslmethod = TLS_server_method();
 #endif
 
         ctx = SSL_CTX_new(sslmethod);
