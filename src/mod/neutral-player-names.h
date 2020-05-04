@@ -1,6 +1,6 @@
 /***********************************************************************
  *  WC-NG - Cube 2: Sauerbraten Modification                           *
- *  Copyright (C) 2014, 2015 by Thomas Poechtrager                     *
+ *  Copyright (C) 2019 by Thomas Poechtrager                           *
  *  t.poechtrager@gmail.com                                            *
  *                                                                     *
  *  This program is free software; you can redistribute it and/or      *
@@ -19,36 +19,12 @@
  *  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.      *
  ***********************************************************************/
 
-#include <cube.h>
-#include <openssl/crypto.h>
-
 namespace mod {
-namespace crypto {
+namespace neutral_player_names {
 
-static sdlmutex *cryptomutex = NULL;
+void newname(char *name, int len = sizeof(string));
+const char *newname(const extinfo::playerv2 &ep);
+void replacenames(char *text, int len);
 
-void init(bool threadsafe)
-{
-    if (!threadsafe) return;
-#if OPENSSL_VERSION_NUMBER < 0x10100000L
-    cryptomutex = new sdlmutex[CRYPTO_num_locks()];
-    auto threadid = []() -> unsigned long { return SDL_ThreadID(); };
-    auto cryptolock = [](int mode, int n, const char *, int)
-    {
-        if (mode&CRYPTO_LOCK) cryptomutex[n].lock();
-        else cryptomutex[n].unlock();
-    };
-    CRYPTO_set_id_callback(threadid);
-    CRYPTO_set_locking_callback(cryptolock);
-#endif
 }
-
-void deinit()
-{
-    CRYPTO_set_id_callback(NULL);
-    CRYPTO_set_locking_callback(NULL);
-    DELETEA(cryptomutex);
 }
-
-} // namespace crypto
-} // namespace mod

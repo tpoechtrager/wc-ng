@@ -389,7 +389,7 @@ namespace gamemod
 
         if (!isshutdown && !strcmp(plugin, HWTEMPPLUGINNAME))
         {
-            conoutf("%s plugin has been unloaded unexpectedly, will load it again ...", HWTEMPPLUGINNAME);
+            conoutf("%s plugin has been unloaded unexpectedly; will load it again ...", HWTEMPPLUGINNAME);
 
             uninstallhooks();
             resetvariables();

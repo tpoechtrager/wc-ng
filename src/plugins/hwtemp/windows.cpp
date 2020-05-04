@@ -92,6 +92,7 @@ namespace hwtemp
         const CORE_TEMP_SHARED_DATA *getdata()
         {
             static CORE_TEMP_SHARED_DATA coretempdata;
+            if (!h || !getcoretempinfo) return NULL;
             if (getcoretempinfo(&coretempdata)) return &coretempdata;
             return NULL;
         }
@@ -102,21 +103,20 @@ namespace hwtemp
 
             if (!h)
             {
-                MessageBox(NULL, "Couldn't load GetCoreTempInfo.dll", "Error", MB_OK);
-                abort();
+                host->client.erroroutf_r("couldn't load GetCoreTempInfo.dll");
+                host->client.conoutf_r(CON_INFO, "On 32-bit Windows you must install \"Microsoft Visual C++ 2010 Redistributable Package (x86)\" "
+                                                 "before you can use this feature.");
             }
 
             getcoretempinfo = (fpgetcoretempinfo)GetProcAddress(h, "fnGetCoreTempInfoAlt");
 
             if (!getcoretempinfo)
-            {
-                MessageBox(NULL, "Couldn't get address of fnGetCoreTempInfoAlt", "Error", MB_OK);
-                abort();
-            }
+                host->client.erroroutf_r("couldn't get address of fnGetCoreTempInfoAlt");
         }
 
         ~coretemp()
         {
+            if (!h) return;
             FreeLibrary(h);
         }
 
@@ -124,11 +124,17 @@ namespace hwtemp
         HMODULE h;
         bool (WINAPI *getcoretempinfo)(CORE_TEMP_SHARED_DATA *data);
         typedef bool (WINAPI *fpgetcoretempinfo)(CORE_TEMP_SHARED_DATA *data);
-    } coretemp;
+    } *coretemp;
 
     static bool coretempgettemp(temps &t)
     {
-        const CORE_TEMP_SHARED_DATA *ctdata = coretemp.getdata();
+        if (!coretemp)
+        {
+            coretemp = new class coretemp;
+            atexit(+[](){ delete coretemp; });
+        }
+
+        const CORE_TEMP_SHARED_DATA *ctdata = coretemp->getdata();
 
         if (ctdata)
         {

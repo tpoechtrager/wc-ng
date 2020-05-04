@@ -27,8 +27,6 @@ using namespace mod::plugin;
 
 namespace hwtemp
 {
-    extern hostexports_t *host;
-
     struct initlibsensors
     {
         initlibsensors() : ok(!sensors_init(NULL)) {}

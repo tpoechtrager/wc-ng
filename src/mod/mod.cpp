@@ -21,9 +21,10 @@
 
 #include "cube.h"
 #include <curl/curl.h>
-#include LIB_GEOIP_HEADER
+#include <maxminddb.h>
 #include "../last_sauer_svn_rev.h"
 
+#include <sys/stat.h>
 #include <openssl/ssl.h>
 
 #ifdef __APPLE__
@@ -38,7 +39,7 @@ static struct
     const char *const CACERT;
 } UPDATE_CHECK_URLS[] =
 {
-    { "https://wc-ng.sauerworld.org/checkversion.php", "data/CA/wc-ng-ca.crt" }
+    { "https://wc-ng.mooo.com/version.php" }
 };
 
 // engine
@@ -507,7 +508,7 @@ namespace mod
             if (cbdata[0] /* user request */)
             {
                 if (responsecode == http::SSL_ERROR) erroroutf_r("update check: can't verify ssl certificate");
-                else erroroutf_r("update check server unreachable");
+                else erroroutf_r("update check server not responding");
             }
 
             goto fail;
@@ -719,7 +720,7 @@ namespace mod
             libinfo << "libs: "
                     << "enet version: (" << enetversion << ")  "
                     << "curl version: (" << curl_version() << ")  "
-                    << "geoip version: (" << GeoIP_lib_version() << ")  "
+                    << "maxminddb version: (" << MMDB_lib_version() << ")  "
                     << "zlib version: (" << zlibVersion() << ")  "
                     << "openssl version: (" << SSLeay_version(SSLEAY_VERSION) << ")";
         }

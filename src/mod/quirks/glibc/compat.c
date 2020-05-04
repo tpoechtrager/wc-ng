@@ -66,7 +66,6 @@ __attribute__((constructor (101)))                                             \
 __attribute__((visibility ("hidden")))                                         \
 void init___wrap_##OS(void)                                                    \
 {                                                                              \
-    LOOKUP(_##WS, ON, !strcmp(TOSTRING(WN), TOSTRING(OS)));                    \
     LOOKUP(_##WS, WS, 1);                                                      \
 }                                                                              \
 void __wrap_##OS(void)                                                         \
@@ -95,6 +94,18 @@ WRAPFINITE(acos)
 WRAPFINITE(asin)
 WRAPFINITE(log10)
 WRAPFINITE(atan2)
+
+REMOVESYMVER(reallocarray)
+
+REMOVESYMVER(exp2f)
+
+REMOVESYMVER(pow)
+REMOVESYMVER(log)
+REMOVESYMVER(exp)
+
+REMOVESYMVER(powf)
+REMOVESYMVER(logf)
+REMOVESYMVER(expf)
 
 void __wrap_memcpy(void)
 {

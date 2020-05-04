@@ -30,6 +30,7 @@ void conoutfv(int type, const char *fmt, va_list args)
 {
     static char buf[CONSTRLEN];
     vformatstring(buf, fmt, args, sizeof(buf));
+    mod::neutral_player_names::replacenames(buf, sizeof(buf)); //NEW
     conline(type, buf);
     logoutf("%s", buf);
 }

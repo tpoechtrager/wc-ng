@@ -896,7 +896,15 @@ static void setupserver()
         SSL_library_init();
         SSL_load_error_strings();
 
-        ctx = SSL_CTX_new(TLSv1_2_server_method());
+        const SSL_METHOD *sslmethod;
+
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
+         sslmethod = TLSv1_2_server_method();
+#else
+        sslmethod = TLS_server_method();
+#endif
+
+        ctx = SSL_CTX_new(sslmethod);
 
         if (!ctx)
         {
@@ -921,10 +929,10 @@ static void setupserver()
             EC_KEY_free(ecdh);
         }
 
-        // Disable TLS v1.0, SSLv2, SSLv3 and prefer the server's
+        // Disable TLS v1.0, TLS v1.1, SSLv2, SSLv3 and prefer the server's
         // cipher preference.
 
-        static const int OPTS = SSL_OP_NO_SSLv2|SSL_OP_NO_SSLv3|SSL_OP_NO_TLSv1|
+        static const int OPTS = SSL_OP_NO_SSLv2|SSL_OP_NO_SSLv3|SSL_OP_NO_TLSv1|SSL_OP_NO_TLSv1_1|
                                 SSL_OP_CIPHER_SERVER_PREFERENCE;
 
         if (!SSL_CTX_set_options(ctx, OPTS))

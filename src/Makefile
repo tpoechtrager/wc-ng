@@ -125,11 +125,11 @@ ifeq (,$(findstring mingw,$(PLATFORM)))
     endif
 
     CHATSERV_INCLUDES+= -Ilib/include/SDL2
-    CLIENT_INCLUDES+= -Ilib/include -Ilib/include/SDL2 -Ilib/include/GeoIP
-    CLIENT_LIBS+= $(STATIC_LIB_DIR)/libcurl.a $(STATIC_LIB_DIR)/libGeoIP.a
+    CLIENT_INCLUDES+= -Ilib/include -Ilib/include/SDL2
+    CLIENT_LIBS+= $(STATIC_LIB_DIR)/libcurl.a $(STATIC_LIB_DIR)/libmaxminddb.a
     CLIENT_LIBS+= $(STATIC_LIB_DIR)/libssl.a $(STATIC_LIB_DIR)/libcrypto.a
   else
-    CLIENT_LIBS+= -lcurl -lssl -lcrypto -lGeoIP
+    CLIENT_LIBS+= -lcurl -lssl -lcrypto -lmaxminddb
   endif
 
   MASTER_LIBS= $(SERVER_LIBS)
@@ -202,19 +202,19 @@ ifneq (,$(findstring mingw,$(PLATFORM)))
   override CFLAGS:= $(PLATFORMFLAG) $(CFLAGS)
   override LDFLAGS:= $(PLATFORMFLAG) $(LDFLAGS)
 
-  CLIENT_INCLUDES= $(INCLUDES) -Ilib/include -Ilib/include/SDL2 -Ilib/include/GeoIP
-  SERVER_INCLUDES= -DSTANDALONE $(INCLUDES) -Ilib/include -Ilib/include/SDL2 # (SDL for the chat server)
+  CLIENT_INCLUDES= $(INCLUDES) -Ilib/include -Ilib/include/SDL1
+  SERVER_INCLUDES= -DSTANDALONE $(INCLUDES) -Ilib/include -Ilib/include/SDL2
 
   SDL_DEP_LIBS= -lgdi32 -ldxguid -lole32 -lwinmm
   SDL_DEP_LIBS+= -limm32 -lversion -loleaut32
 
   SERVER_LIBS= $(SUBSYSTEM) -L$(WINLIB) -Wl,-Bstatic -lz -Wl,-Bdynamic -lws2_32 -lwinmm
-  CHATSERV_LIBS+= -L$(WINLIB)/openssl -Wl,-Bstatic -lssl -lcrypto -Wl,-Bdynamic
+  CHATSERV_LIBS+= -L$(WINLIB)/openssl -Wl,-Bstatic -lssl -lcrypto -lcrypt32 -Wl,-Bdynamic
   CHATSERV_LIBS+= -mconsole -Wl,-Bstatic -lSDL2 -lpthread -Wl,-Bdynamic -lws2_32 $(SDL_DEP_LIBS)
   MASTER_LIBS= -L$(WINLIB) -Wl,-Bstatic -lz -Wl,-Bdynamic -lws2_32 -lwinmm
 
   CLIENT_LIBS+= $(SUBSYSTEM) -L$(WINLIB)
-  CLIENT_LIBS+= -Wl,-Bstatic -lcurl -lssl -lcrypto -ldl -Wl,-Bdynamic
+  CLIENT_LIBS+= -Wl,-Bstatic -lmaxminddb -lcurl -lssl -lcrypto -lcrypt32 -ldl -Wl,-Bdynamic
   CLIENT_LIBS+= -lgdi32
 
   CLIENT_LIBS+= -Wl,-Bstatic
@@ -227,8 +227,7 @@ ifneq (,$(findstring mingw,$(PLATFORM)))
   CLIENT_LIBS+= -Wl,-Bdynamic
 
   PLUGIN_INCLUDES= $(CLIENT_INCLUDES) -DPLUGIN
-
-  PLUGIN_LIBS+= -L$(WINLIB) -Wl,-Bstatic -lz -lSDL2 -Wl,-Bdynamic
+  PLUGIN_LIBS+= -L$(WINLIB) -Wl,-Bstatic -lz -lSDL2 -lstdc++ -lpthread -Wl,-Bdynamic
   PLUGIN_LIBS+= -lws2_32 $(SDL_DEP_LIBS)
 
   # Old MinGW-w64-crt doesn't have strtok_r.
@@ -279,7 +278,7 @@ else
 ifeq (darwin,$(PLATFORM))
   ################ OS X ################
 
-  OSXVERSIONMIN ?= 10.5
+  OSXVERSIONMIN ?= 10.8
   HAVECROSSCOMPILER ?= 0
   UNIVERSAL ?= 0
   TARGETS ?=
@@ -336,9 +335,9 @@ ifeq (darwin,$(PLATFORM))
   CLIENT_LIBS+= $(STATIC_LIB_DIR)/libpng16.a
   CLIENT_LIBS+= $(STATIC_LIB_DIR)/libjpeg.a
   CLIENT_LIBS+= $(STATIC_LIB_DIR)/libz.a
-  CLIENT_LIBS+= $(STATIC_LIB_DIR)/libGeoIP.a
+  CLIENT_LIBS+= $(STATIC_LIB_DIR)/libmaxminddb.a
 
-  PLUGIN_INCLUDES= $(CLIENT_INCLUDES) -fPIC -DPLUGIN -Ilib/include/GeoIP -Ilib/include/osx-cpu-temp
+  PLUGIN_INCLUDES= $(CLIENT_INCLUDES) -fPIC -DPLUGIN -Ilib/include/osx-cpu-temp
   CLIENT_OBJS+= xcode/macutils.o xcode/main.o xcode/Launcher.o
 
   HWTEMP_LIBS= $(STATIC_LIB_DIR)/smc.a
@@ -416,18 +415,30 @@ else
     else
       override COMPATCC= $(CC)
     endif
+    glibc_quirks=0
+    # ARM
+    ifeq (,$(findstring a,$(ARCH)))
+      glibc_quirks=1
+    endif
+    ifeq ($(glibc_quirks),1)
     CLIENT_OBJS+= mod/quirks/glibc/compat.o
     SERVER_OBJS+= mod/quirks/glibc/compat.o
     MASTER_OBJS+= mod/quirks/glibc/compat.o
     CHATSERV_OBJS+= mod/quirks/glibc/compat.o
     PLUGIN_OBJS+= mod/quirks/glibc/compat-plugin.o
+    endif
     mod/quirks/glibc/%.o: override CC:= $(COMPATCC)
     mod/quirks/glibc/%.o: override CFLAGS= $(PLATFORMFLAG) -O2 -fomit-frame-pointer
     mod/quirks/glibc/%-plugin.o: override CFLAGS+= -fPIC
     ifeq (,$(findstring icc,$(CC)))
       override LDFLAGS+= -lm
     endif
+    ifeq ($(glibc_quirks),1)
     override LDFLAGS+= -Wl,--wrap=memcpy -Wl,--wrap=__fdelt_chk
+    override LDFLAGS+= -Wl,--wrap=reallocarray
+    override LDFLAGS+= -Wl,--wrap=exp2f
+    override LDFLAGS+= -Wl,--wrap=pow -Wl,--wrap=log -Wl,--wrap=exp
+    override LDFLAGS+= -Wl,--wrap=powf -Wl,--wrap=logf -Wl,--wrap=expf
     override LDFLAGS+= -Wl,--wrap=__exp_finite -Wl,--wrap=__expf_finite
     override LDFLAGS+= -Wl,--wrap=__log_finite -Wl,--wrap=__logf_finite
     override LDFLAGS+= -Wl,--wrap=__log10f_finite -Wl,--wrap=__pow_finite
@@ -435,6 +446,7 @@ else
     override LDFLAGS+= -Wl,--wrap=__atan2f_finite -Wl,--wrap=__fmod_finite
     override LDFLAGS+= -Wl,--wrap=__acos_finite -Wl,--wrap=__asin_finite
     override LDFLAGS+= -Wl,--wrap=__log10_finite -Wl,--wrap=__atan2_finite
+    endif
   endif
   endif
 
@@ -499,6 +511,10 @@ else
     CLIENT_LIBS+= -lrt -ldl
     CHATSERV_LIBS+= -lrt -ldl
     PLUGIN_LIBS+= -lrt -ldl
+
+    ifneq (,$(findstring arm,$(ARCH)))
+      CHATSERV_LIBS+=-latomic
+    endif
   endif
 
   ################ UNIX TARGETS ################

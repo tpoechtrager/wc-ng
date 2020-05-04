@@ -442,15 +442,6 @@ struct checkcalldepth
         __calldepthwarningshown, __FUNCTION__);            \
     if (cd.overflow) do { overflowinst; } while(0)         \
 
-#if defined(WIN32) || defined(__APPLE__)
-// workaround for systems with case insensitive file systems
-#define LIB_GEOIP_HEADER "../include/GeoIP/GeoIP.h"
-#define MOD_GEOIP_HEADER "../mod/geoip.h"
-#else
-#define LIB_GEOIP_HEADER "GeoIP.h"
-#define MOD_GEOIP_HEADER "geoip.h"
-#endif //WIN32 || __APPLE__
-
 #endif //STANDALONE
 
 #include "ipbuf.h"
@@ -460,7 +451,7 @@ struct checkcalldepth
 
 #include "gamemod.h"
 #include "http.h"
-#include MOD_GEOIP_HEADER
+#include "geoip.h"
 #include "ipignore.h"
 #include "extinfo.h"
 #include "demorecorder.h"
@@ -468,6 +459,7 @@ struct checkcalldepth
 #include "events.h"
 #include "thread.h"
 #include "proxy-detection.h"
+#include "neutral-player-names.h"
 
 #endif //STANDALONE
 #endif //__MOD_H__

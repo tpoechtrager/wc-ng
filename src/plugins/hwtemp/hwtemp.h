@@ -21,8 +21,12 @@
 
 #include "cube.h"
 
+using namespace mod::plugin;
+
 namespace hwtemp
 {
+    extern const hostexports_t *host;
+
     struct temp
     {
         string desc;          // description of device

@@ -1,4 +1,36 @@
------BEGIN CERTIFICATE-----
+/***********************************************************************
+ *  WC-NG - Cube 2: Sauerbraten Modification                           *
+ *  Copyright (C) 2020 by Thomas Poechtrager                           *
+ *  t.poechtrager@gmail.com                                            *
+ *                                                                     *
+ *  This program is free software; you can redistribute it and/or      *
+ *  modify it under the terms of the GNU General Public License        *
+ *  as published by the Free Software Foundation; either version 2     *
+ *  of the License, or (at your option) any later version.             *
+ *                                                                     *
+ *  This program is distributed in the hope that it will be useful,    *
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of     *
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the      *
+ *  GNU General Public License for more details.                       *
+ *                                                                     *
+ *  You should have received a copy of the GNU General Public License  *
+ *  along with this program; if not, write to the Free Software        *
+ *  Foundation, Inc.,                                                  *
+ *  51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.      *
+ ***********************************************************************/
+
+//#include "cube.h"
+#include <curl/curl.h>
+
+#include <openssl/err.h>
+#include <openssl/ssl.h>
+
+namespace mod {
+namespace http
+{
+
+static const char builtin_wc_ng_certificate[] =
+R"(-----BEGIN CERTIFICATE-----
 MIIJmTCCBYGgAwIBAgIJAL+4Ea/9V0JSMA0GCSqGSIb3DQEBCwUAMGMxCzAJBgNV
 BAYTAkFUMRAwDgYDVQQIDAdBdXN0cmlhMRowGAYDVQQKDBFEYW5nZXJvdXMgTW9u
 a2V5czEmMCQGCSqGSIb3DQEJARYXdC5wb2VjaHRyYWdlckBnbWFpbC5jb20wHhcN
@@ -52,3 +84,44 @@ S0fE0NlmZGhZkJZnFf3nGQDn/RUYLbovqxvnm6OI7yfmnk+B6ZZW8MHtIv7vxBoo
 ol5WYVP9ipxGRMLDKlb4StN1FSEGTZ7TsFTJnRKozk0gXpVfUcasu7sW6jnj/WfV
 rT76DN69Pkxh09v/QQ==
 -----END CERTIFICATE-----
+")";
+
+CURLcode handlebuiltincert(CURL *curl, void *sslctx, void *parm)
+{
+    (void)curl;
+    (void)parm;
+
+    CURLcode rv = CURLE_ABORTED_BY_CALLBACK;
+
+    BIO *cbio = BIO_new_mem_buf(builtin_wc_ng_certificate, sizeof(builtin_wc_ng_certificate));
+    X509_STORE  *cts = SSL_CTX_get_cert_store((SSL_CTX *)sslctx);
+    int i;
+    STACK_OF(X509_INFO) *inf;
+
+    if(!cts || !cbio) return rv;
+
+    inf = PEM_X509_INFO_read_bio(cbio, NULL, NULL, NULL);
+
+    if(!inf)
+    {
+        BIO_free(cbio);
+        return rv;
+    }
+
+    for(i = 0; i < sk_X509_INFO_num(inf); i++)
+    {
+        X509_INFO *itmp = sk_X509_INFO_value(inf, i);
+        if (itmp->x509) X509_STORE_add_cert(cts, itmp->x509);
+
+        if (itmp->crl) X509_STORE_add_crl(cts, itmp->crl);
+    }
+
+    sk_X509_INFO_pop_free(inf, X509_INFO_free);
+    BIO_free(cbio);
+ 
+    rv = CURLE_OK;
+    return rv;
+} 
+
+} // namespace http
+} // namespace mod
