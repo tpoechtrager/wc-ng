@@ -202,7 +202,7 @@ ifneq (,$(findstring mingw,$(PLATFORM)))
   override CFLAGS:= $(PLATFORMFLAG) $(CFLAGS)
   override LDFLAGS:= $(PLATFORMFLAG) $(LDFLAGS)
 
-  CLIENT_INCLUDES= $(INCLUDES) -Ilib/include -Ilib/include/SDL1
+  CLIENT_INCLUDES= $(INCLUDES) -Ilib/include -Ilib/include/SDL2
   SERVER_INCLUDES= -DSTANDALONE $(INCLUDES) -Ilib/include -Ilib/include/SDL2
 
   SDL_DEP_LIBS= -lgdi32 -ldxguid -lole32 -lwinmm
