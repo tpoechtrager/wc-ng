@@ -1950,7 +1950,6 @@ void gl_drawframe()
     if(isliquid(fogmat&MATF_VOLUME)) drawfogoverlay(fogmat, fogblend, abovemat);
     renderpostfx();
 
-    g3d_render();
     gl_drawhud();
 
     renderedgame = false;
@@ -1962,8 +1961,6 @@ void gl_drawmainmenu()
 
     renderbackground(NULL, NULL, NULL, NULL, true, true);
     renderpostfx();
-    
-    g3d_render();
     mod::event::run(mod::event::FRAME); //NEW
     gl_drawhud();
 }
@@ -2181,6 +2178,8 @@ namespace game
 
 void gl_drawhud()
 {
+    g3d_render();
+
     int w = screenw, h = screenh;
     if(forceaspect) w = int(ceil(h*forceaspect));
 
@@ -2369,8 +2368,16 @@ void gl_drawhud()
 
         rendertexturepanel(w, h);
     }
-    
+
+    glDisable(GL_BLEND);
+
     g3d_limitscale((2*limitgui - conh) / float(conh));
+    g3d_render2d();
+
+    glEnable(GL_BLEND);
+
+    hudmatrix.ortho(0, w, h, 0, -1, 1);
+    resethudmatrix();
 
     pushhudmatrix();
     hudmatrix.scale(conscale, conscale, 1);
