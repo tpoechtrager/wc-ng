@@ -1,4 +1,4 @@
-#define SAUERSVNREV 6045
+#define SAUERSVNREV 6059
 
 //
 // -4957 (add libwinpthread dlls)
