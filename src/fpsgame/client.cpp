@@ -1492,6 +1492,8 @@ namespace game
                     mod::demorecorder::stopdemorecord();
                 //NEW END
                 getstring(text, p);
+                filtertext(text, text, false);
+                fixmapname(text);
                 mod::demorecorder::parsingmapchangepacket = true; //NEW  prevent demo mod to record N_MAPCHANGE twice
                 changemapserv(text, getint(p));
                 if(mod::demorecorder::clientdemoautorecord && isconnected(false, false))
