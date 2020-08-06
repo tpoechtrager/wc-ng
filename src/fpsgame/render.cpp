@@ -226,6 +226,72 @@ namespace game
     VAR(dbgspawns, 0, 0, 1);
 #endif
 
+    VARP(statusicons, 0, 1, 1);
+
+    void renderstatusicons(fpsent *d, int team, float yoffset)
+    {
+        vec p = d->abovehead().madd(camup, yoffset);
+        int icons = 0;
+        const itemstat &boost = itemstats[I_BOOST-I_SHELLS];
+        if(statusicons)
+        {
+            if(d->quadmillis) icons++;
+            if(d->maxhealth>100) icons += (min(d->maxhealth, boost.max) - 100 + boost.info-1) / boost.info;
+            if(d->armour>0 && d->armourtype>=A_GREEN && !m_noitems) icons++;
+        }
+        if(icons) concatstring(d->info, " ");
+        particle_text(p, d->info, PART_TEXT, 1, team ? (team==1 ? 0x6496FF : 0xFF4B19) : 0x1EC850, playerinfofontsize, 0, icons); //NEW 2.0f -> playerinfofontsizes
+        if(icons)
+        {
+            float tw, th;
+            text_boundsf(d->info, tw, th);
+            float offset = (tw - icons*th)/2;
+            if(d->armour>0 && d->armourtype>=A_GREEN && !m_noitems)
+            {
+                int icon = itemstats[(d->armourtype==A_YELLOW ? I_YELLOWARMOUR : I_GREENARMOUR)-I_SHELLS].icon;
+                particle_texticon(p, icon%4, icon/4, offset, PART_TEXT_ICON, 1, 0xFFFFFF, playerinfofontsize); //NEW 2.0f -> playerinfofontsizes
+                offset += th;
+            }
+            for(int i = 100; i < min(d->maxhealth, boost.max); i += boost.info)
+            {
+                particle_texticon(p, boost.icon%4, boost.icon/4, offset, PART_TEXT_ICON, 1, 0xFFFFFF, playerinfofontsize); //NEW 2.0f -> playerinfofontsizes
+                offset += th;
+            }
+            if(d->quadmillis)
+            {
+                int icon = itemstats[I_QUAD-I_SHELLS].icon;
+                particle_texticon(p, icon%4, icon/4, offset, PART_TEXT_ICON, 1, 0xFFFFFF, playerinfofontsize); //NEW 2.0f -> playerinfofontsizes
+                offset += th;
+            }
+        }
+    }
+
+    VARP(statusbars, 0, 0, 2);
+    FVARP(statusbarscale, 0, 1, 2);
+
+    float renderstatusbars(fpsent *d, int team)
+    {
+        if(!statusbars || m_insta || (player1->state==CS_SPECTATOR ? statusbars <= 1 : team != 1)) return 0;
+        vec p = d->abovehead().msub(camdir, 50/80.0f).msub(camup, 2.0f);
+        float offset = 0;
+        float scale = statusbarscale;
+        if(d->armour > 0)
+        {
+            int limit = d->armourtype==A_YELLOW ? 200 : (d->armourtype==A_GREEN ? 100 : 50);
+            int color = d->armourtype==A_YELLOW ? 0xFFC040 : (d->armourtype==A_GREEN ? 0x008C00 : 0x0B5899);
+            float size = scale*sqrtf(max(d->armour, limit)/100.0f);
+            float fill = float(d->armour)/limit;
+            offset += size;
+            particle_meter(vec(p).madd(camup, offset), fill, PART_METER, 1, color, 0, size);
+        }
+        int color = d->health<=25 ? 0xFF0000 : (d->health<=50 ? 0xFF8000 : (d->health<=100 ? 0x40FF80 : 0x40C0FF));
+        float size = scale*sqrtf(max(d->health, d->maxhealth)/100.0f);
+        float fill = float(d->health)/d->maxhealth;
+        offset += size;
+        particle_meter(vec(p).madd(camup, offset), fill, PART_METER, 1, color, 0, size);
+        return offset;
+    }
+
     void rendergame(bool mainpass)
     {
         if(mainpass) ai::render();
@@ -261,37 +327,8 @@ namespace game
             copystring(d->info, colorname(d));
             if(d->state!=CS_DEAD)
             {
-                vec p = d->abovehead();
-                int icons = 0;
-                if(d->quadmillis) icons++;
-                const itemstat &boost = itemstats[I_BOOST-I_SHELLS];
-                if(d->maxhealth>100) icons += (min(d->maxhealth, boost.max) - 100 + boost.info-1) / boost.info;
-                if(d->armour>0 && d->armourtype>=A_GREEN && !m_noitems) icons++;
-                if(icons) concatstring(d->info, " ");
-                particle_text(p, d->info, PART_TEXT, 1, team ? (team==1 ? 0x6496FF : 0xFF4B19) : 0x1EC850, playerinfofontsize, 0, icons); //NEW 2.0f -> playerinfofontsizes
-                if(icons)
-                {
-                    float tw, th;
-                    text_boundsf(d->info, tw, th);
-                    float offset = (tw - icons*th)/2;
-                    if(d->armour>0 && d->armourtype>=A_GREEN && !m_noitems)
-                    {
-                        int icon = itemstats[(d->armourtype==A_YELLOW ? I_YELLOWARMOUR : I_GREENARMOUR)-I_SHELLS].icon;
-                        particle_texticon(p, icon%4, icon/4, offset, PART_TEXT_ICON, 1, 0xFFFFFF, playerinfofontsize);
-                        offset += th;
-                    }
-                    for(int i = 100; i < min(d->maxhealth, boost.max); i += boost.info)
-                    {
-                        particle_texticon(p, boost.icon%4, boost.icon/4, offset, PART_TEXT_ICON, 1, 0xFFFFFF, playerinfofontsize); //NEW 2.0f -> playerinfofontsizes
-                        offset += th;
-                    }
-                    if(d->quadmillis)
-                    {
-                        int icon = itemstats[I_QUAD-I_SHELLS].icon;
-                        particle_texticon(p, icon%4, icon/4, offset, PART_TEXT_ICON, 1, 0xFFFFFF, playerinfofontsize); //NEW 2.0f -> playerinfofontsizes
-                        offset += th;
-                    }
-                }
+                float offset = renderstatusbars(d, team);
+                renderstatusicons(d, team, offset);
             }
         }
         loopv(ragdolls)
