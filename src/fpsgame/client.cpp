@@ -1354,6 +1354,7 @@ namespace game
             else d->state = getint(p);
             d->frags = getint(p);
             d->flags = getint(p);
+            d->deaths = getint(p);
             if(d==player1) getint(p);
             else d->quadmillis = getint(p);
         }

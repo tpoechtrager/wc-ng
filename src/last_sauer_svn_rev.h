@@ -1,7 +1,5 @@
-#define SAUERSVNREV 6136
+#define SAUERSVNREV 6142
 
 //
-// -4957 (add libwinpthread dlls)
-// -4948 (makefile cleanups)
-//
+// -6138 (showdeaths)
 //
