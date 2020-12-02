@@ -1,16 +1,7 @@
 // sound.cpp: basic positional sound using sdl_mixer
 
 #include "engine.h"
-
-#if 0 //NEW commented
-#ifdef __APPLE__
-  #include "SDL2_mixer/SDL_mixer.h"
-#else
-  #include "SDL_mixer.h"
-#endif
-#endif
-
-#include <SDL_mixer.h>
+#include "SDL_mixer.h"
 
 bool nosound = true;
 
@@ -128,7 +119,14 @@ void stopchannels()
 }
 
 void setmusicvol(int musicvol);
-VARFP(soundvol, 0, 255, 255, if(!soundvol) { stopchannels(); setmusicvol(0); });
+extern int musicvol;
+static int curvol = 0;
+VARFP(soundvol, 0, 255, 255,
+{
+    if(!soundvol) { stopchannels(); setmusicvol(0); }
+    else if(!curvol) setmusicvol(musicvol);
+    curvol = soundvol;
+});
 VARFP(musicvol, 0, 128, 255, setmusicvol(soundvol ? musicvol : 0));
 
 char *musicfile = NULL, *musicdonecmd = NULL;

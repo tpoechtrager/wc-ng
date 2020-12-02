@@ -352,6 +352,7 @@ COMMAND(mapmodelreset, "i");
 ICOMMAND(mapmodelname, "i", (int *index), { result(mapmodels.inrange(*index) ? mapmodels[*index].name : ""); });
 ICOMMAND(mapmodelloaded, "i", (int *index), { intret(mapmodels.inrange(*index) && mapmodels[*index].m ? 1 : 0); });
 ICOMMAND(nummapmodels, "", (), { intret(mapmodels.length()); });
+ICOMMAND(mapmodelfind, "s", (char *name), { int found = -1; loopv(mapmodels) if(strstr(mapmodels[i].name, name)) { found = i; break; } intret(found); });
 
 // model registry
 
@@ -404,6 +405,11 @@ void preloadusedmapmodels(bool msg, bool bih)
         }
     }
     loadprogress = 0;
+}
+
+bool modelloaded(const char *name)
+{
+    return models.find(name, NULL) != NULL;
 }
 
 model *loadmodel(const char *name, int i, bool msg)

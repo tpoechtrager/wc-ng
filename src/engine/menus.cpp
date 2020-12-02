@@ -10,23 +10,27 @@ static vec menupos;
 static int menustart = 0;
 static g3d_gui *cgui = NULL;
 
+VAR(guitabnum, 1, 0, 0);
+
 struct menu : g3d_callback
 {
     char *name, *header;
     uint *contents, *init, *onclear;
-    bool showtab;
+    bool showtab, keeptab;
     int menutab;
 
-    menu() : name(NULL), header(NULL), contents(NULL), init(NULL), onclear(NULL), showtab(true), menutab(1) {}
+    menu() : name(NULL), header(NULL), contents(NULL), init(NULL), onclear(NULL), showtab(true), keeptab(false), menutab(1) {}
 
     void gui(g3d_gui &g, bool firstpass)
     {
         cgui = &g;
+        guitabnum = menutab;
         cgui->start(menustart, 0.03f, showtab ? &menutab : NULL);
         if(showtab) cgui->tab(header ? header : name, GUI_TITLE_COLOR);
         execute(contents);
         cgui->end();
         cgui = NULL;
+        guitabnum = 0;
     }
 
     virtual void clear()
@@ -183,7 +187,7 @@ void pushgui(menu *m, int pos = -1)
     else guistack.insert(pos, m);
     if(pos < 0 || pos==guistack.length()-1)
     {
-        m->menutab = 1;
+        if(!m->keeptab) m->menutab = 1;
         menustart = totalmillis;
     }
     if(m->init) execute(m->init);
@@ -299,7 +303,7 @@ void guibutton(char *name, char *action, char *icon)
     }
 }
 
-void guiimage(char *path, char *action, float *scale, int *overlaid, char *alt)
+void guiimage(char *path, char *action, float *scale, int *overlaid, char *alt, char *title)
 {
     if(!cgui) return;
     Texture *t = textureload(path, 0, true, false);
@@ -308,7 +312,7 @@ void guiimage(char *path, char *action, float *scale, int *overlaid, char *alt)
         if(alt[0]) t = textureload(alt, 0, true, false);
         if(t==notexture) return;
     }
-    int ret = cgui->image(t, *scale, *overlaid!=0);
+    int ret = cgui->image(t, *scale, *overlaid!=0 ? title : NULL);
     if(ret&G3D_UP)
     {
         if(*action)
@@ -686,7 +690,7 @@ COMMAND(guionclear, "s");
 COMMAND(guistayopen, "e");
 COMMAND(guinoautotab, "e");
 COMMAND(guimerge, "e");
-
+ICOMMAND(guikeeptab, "b", (int *keeptab), if(guistack.length()) guistack.last()->keeptab = *keeptab!=0);
 COMMAND(guilist, "e");
 COMMAND(guialign, "ie");
 COMMAND(guititle, "s");
@@ -698,7 +702,7 @@ COMMAND(guicolumn, "i");
 COMMAND(guibackground, "iii"); //NEW
 COMMAND(guipushlist, "");      //NEW
 COMMAND(guipoplist, "");       //NEW
-COMMAND(guiimage,"ssfis");
+COMMAND(guiimage,"ssfiss");
 COMMAND(guislider,"sbbs");
 COMMAND(guilistslider, "sss");
 COMMAND(guinameslider, "ssss");
@@ -713,10 +717,10 @@ COMMAND(guieditor, "siii");
 COMMAND(guicolor, "i");
 COMMAND(guitextbox, "siii");
 
-void guiplayerpreview(int *model, int *team, int *weap, char *action, float *scale, int *overlaid)
+void guiplayerpreview(int *model, int *team, int *weap, char *action, float *scale, int *overlaid, char *title)
 {
     if(!cgui) return;
-    int ret = cgui->playerpreview(*model, *team, *weap, *scale, *overlaid!=0);
+    int ret = cgui->playerpreview(*model, *team, *weap, *scale, *overlaid!=0 ? title : NULL);
     if(ret&G3D_UP)
     {
         if(*action)
@@ -726,9 +730,9 @@ void guiplayerpreview(int *model, int *team, int *weap, char *action, float *sca
         }
     }
 }
-COMMAND(guiplayerpreview, "iiisfi");
+COMMAND(guiplayerpreview, "iiisfis");
 
-void guimodelpreview(char *model, char *animspec, char *action, float *scale, int *overlaid)
+void guimodelpreview(char *model, char *animspec, char *action, float *scale, int *overlaid, char *title, int *throttle)
 {
     if(!cgui) return;
     int anim = ANIM_ALL;
@@ -747,7 +751,7 @@ void guimodelpreview(char *model, char *animspec, char *action, float *scale, in
             if(anims.length()) anim = anims[0];
         }
     }
-    int ret = cgui->modelpreview(model, anim|ANIM_LOOP, *scale, *overlaid!=0);
+    int ret = cgui->modelpreview(model, anim|ANIM_LOOP, *scale, *overlaid!=0 ? title : NULL, *throttle!=0);
     if(ret&G3D_UP)
     {
         if(*action)
@@ -756,13 +760,18 @@ void guimodelpreview(char *model, char *animspec, char *action, float *scale, in
             if(shouldclearmenu) clearlater = true;
         }
     }
+    else if(ret&G3D_ROLLOVER)
+    {
+        alias("guirolloverpreviewname", model);
+        alias("guirolloverpreviewaction", action);
+    }
 }
-COMMAND(guimodelpreview, "sssfi");
+COMMAND(guimodelpreview, "sssfisi");
 
-void guiprefabpreview(char *prefab, int *color, char *action, float *scale, int *overlaid)
+void guiprefabpreview(char *prefab, int *color, char *action, float *scale, int *overlaid, char *title, int *throttle)
 {
     if(!cgui) return;
-    int ret = cgui->prefabpreview(prefab, vec::hexcolor(*color), *scale, *overlaid!=0);
+    int ret = cgui->prefabpreview(prefab, vec::hexcolor(*color), *scale, *overlaid!=0 ? title : NULL, *throttle!=0);
     if(ret&G3D_UP)
     {
         if(*action)
@@ -771,8 +780,13 @@ void guiprefabpreview(char *prefab, int *color, char *action, float *scale, int 
             if(shouldclearmenu) clearlater = true;
         }
     }
+    else if(ret&G3D_ROLLOVER)
+    {
+        alias("guirolloverpreviewname", prefab);
+        alias("guirolloverpreviewaction", action);
+    }
 }
-COMMAND(guiprefabpreview, "sisfi");
+COMMAND(guiprefabpreview, "sisfisi");
 
 struct change
 {

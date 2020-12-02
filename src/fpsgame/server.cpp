@@ -605,72 +605,12 @@ namespace server
 
     bool demonextmatch = false;
     stream *demotmp = NULL, *demorecord = NULL, *demoplayback = NULL;
-    int nextplayback = 0; //NEW removed demomillis = 0;
-
-    //NEW
-    int demomillis2 = 0;
-    bool demomillisjump = false;
-
-#ifndef STANDALONE
-    void demomillischanged()
-    {
-        if(!demoplayback)
-        {
-            mod::erroroutf_r("no demo playback");
-            return;
-        }
-        extern int demomillis;
-        int jumpmillis = demomillis-demomillis2;
-        if(jumpmillis < 0)
-        {
-            demomillis = demomillis2;
-            mod::erroroutf_r("going back in demos is not supported");
-            return;
-        }
-        game::adjusttimeleft(jumpmillis);
-        demomillis2 = demomillis;
-        demomillisjump = true;
-    }
-    MODVARF(demomillis, 0, 0, INT_MAX, demomillischanged());
-
-    void jumpto(const char *time)
-    {
-        if(!demoplayback)
-        {
-            mod::erroroutf_r("jumpto works only in demo playback");
-            return;
-        }
-        int min, sec = 0;
-        if(sscanf(time, "%d:%d", &min, &sec) < 1)
-        {
-            error:;
-            mod::erroroutf_r("format for jumpto is mm[:ss]");
-            return;
-        }
-        if(sec > 59) goto error;
-        int timeleft = game::gettimeleft();
-        int millis = (min*60*1000)+(sec*1000);
-        if(millis < 0) goto error;
-        if(millis > timeleft)
-        {
-            mod::erroroutf_r("going back in demos is not supported");
-            return;
-        }
-        int diffmillis = timeleft-millis;
-        demomillis += diffmillis;
-        game::adjusttimeleft(diffmillis);
-        demomillisjump = true;
-    }
-    COMMAND(jumpto, "s");
-#else
-    int demomillis = 0;
-#endif //STANDALONE
-    //NEW END
+    int nextplayback = 0;
 
     VAR(maxdemos, 0, 5, 25);
     VAR(maxdemosize, 0, 16, 31);
     VAR(restrictdemos, 0, 1, 1);
-    VAR(autorecorddemo, 0, 0, 1);
+    VARF(autorecorddemo, 0, 0, 1, demonextmatch = autorecorddemo!=0);
 
     VAR(restrictpausegame, 0, 1, 1);
     VAR(restrictgamespeed, 0, 1, 1);
@@ -1045,10 +985,15 @@ namespace server
         loopi(sizeof(team)/sizeof(team[0]))
         {
             addteaminfo(teamnames[i]);
-            if(!persistteams) loopvj(team[i])
+            loopvj(team[i])
             {
                 clientinfo *ci = team[i][j];
                 if(!strcmp(ci->team, teamnames[i])) continue;
+                if(persistteams && ci->team[0] && (!smode || smode->canchangeteam(ci, teamnames[i], ci->team)))
+                {
+                    addteaminfo(ci->team);
+                    continue;
+                }
                 copystring(ci->team, teamnames[i], MAXTEAMLEN+1);
                 sendf(-1, 1, "riisi", N_SETTEAM, ci->clientnum, teamnames[i], -1);
             }
@@ -1301,8 +1246,6 @@ namespace server
 
         sendservmsgf("playing demo \"%s\"", file);
 
-        demomillis = 0;
-        demomillis2 = 0; //NEW
         sendf(-1, 1, "ri3", N_DEMOPLAYBACK, 1, -1);
 
         if(demoplayback->read(&nextplayback, sizeof(nextplayback))!=sizeof(nextplayback))
@@ -1320,18 +1263,7 @@ namespace server
     void readdemo()
     {
         if(!demoplayback) return;
-        demomillis += curtime;
-        //NEW
-#ifndef STANDALONE
-        demomillis2 = demomillis;
-        struct ev
-        {
-            ev() { if(!demomillisjump) return; mod::event::run(mod::event::DEMOMILLISJUMP_START); }
-            ~ev() { if(!demomillisjump) return; mod::event::run(mod::event::DEMOMILLISJUMP_END); demomillisjump = false; }
-        } ev;
-#endif //STANDALONE
-        //NEW END
-        while(demomillis>=nextplayback)
+        while(gamemillis>=nextplayback)
         {
             int chan, len;
             if(demoplayback->read(&chan, sizeof(chan))!=sizeof(chan) ||
@@ -1368,6 +1300,54 @@ namespace server
             lilswap(&nextplayback, 1);
         }
     }
+
+    void timeupdate(int secs)
+    {
+        if(!demoplayback) return;
+        if(secs <= 0) interm = -1;
+        else gamelimit = max(gamelimit, nextplayback + secs*1000);
+    }
+
+    void seekdemo(char *t)
+    {
+        if(!demoplayback) return;
+        bool rev = *t == '-';
+        if(rev) t++;
+        int mins = strtoul(t, &t, 10), secs = 0, millis = 0;
+        if(*t == ':') secs = strtoul(t+1, &t, 10);
+        else { secs = mins; mins = 0; }
+        if(*t == '.') millis = strtoul(t+1, &t, 10);
+        int offset = max(millis + (mins*60 + secs)*1000, 0), prevmillis = gamemillis;
+        if(rev) while(gamelimit - offset > gamemillis)
+        {
+            gamemillis = gamelimit - offset;
+            readdemo();
+        }
+        else if(offset > gamemillis)
+        {
+            gamemillis = offset;
+            readdemo();
+        }
+        if(gamemillis > prevmillis)
+        {
+            if(!interm) sendf(-1, 1, "ri2", N_TIMEUP, max((gamelimit - gamemillis)/1000, 1));
+#ifndef STANDALONE
+            cleardamagescreen();
+#endif
+        }
+    }
+
+    ICOMMAND(seekdemo, "sN$", (char *t, int *numargs, ident *id),
+    {
+        if(*numargs > 0) seekdemo(t);
+        else
+        {
+            int secs = gamemillis/1000;
+            defformatstring(str, "%d:%02d.%03d", secs/60, secs%60, gamemillis%1000);
+            if(*numargs < 0) result(str);
+            else printsvar(id, str);
+        }
+    });
 
     void stopdemo()
     {
@@ -2103,13 +2083,13 @@ namespace server
 
         sendf(-1, 1, "risii", N_MAPCHANGE, smapname, gamemode, 1);
 
-        clearteaminfo();
-        if(m_teammode) autoteam();
-
         if(m_capture) smode = &capturemode;
         else if(m_ctf) smode = &ctfmode;
         else if(m_collect) smode = &collectmode;
         else smode = NULL;
+
+        clearteaminfo();
+        if(m_teammode) autoteam();
 
         if(m_timed && smapname[0]) sendf(-1, 1, "ri2", N_TIMEUP, gamemillis < gamelimit && !interm ? max((gamelimit - gamemillis)/1000, 1) : 0);
         loopv(clients)

@@ -251,6 +251,7 @@ extern void commitchanges(bool force = false);
 extern void rendereditcursor();
 extern void tryedit();
 
+extern bool prefabloaded(const char *name);
 extern void renderprefab(const char *name, const vec &o, float yaw, float pitch, float roll, float size = 1, const vec &color = vec(1, 1, 1));
 extern void previewprefab(const char *name, const vec &color);
 
@@ -445,7 +446,6 @@ extern bool initwarning(const char *desc, int level = INIT_RESET, int type = CHA
 
 extern bool grabinput, minimized;
 
-extern void pushevent(const SDL_Event &e);
 extern bool interceptkey(int sym);
 
 extern float loadprogress;
@@ -496,6 +496,7 @@ extern void startmap(const char *name);
 // rendermodel
 struct mapmodelinfo { string name; model *m; };
 
+extern bool modelloaded(const char *name);
 extern void findanims(const char *pattern, vector<int> &anims);
 extern void loadskin(const char *dir, const char *altdir, Texture *&skin, Texture *&masks);
 extern mapmodelinfo *getmminfo(int i);

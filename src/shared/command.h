@@ -40,7 +40,7 @@ enum
 
 enum { ID_VAR, ID_FVAR, ID_SVAR, ID_COMMAND, ID_ALIAS, ID_LOCAL };
 
-enum { IDF_PERSIST = 1<<0, IDF_OVERRIDE = 1<<1, IDF_HEX = 1<<2, IDF_READONLY = 1<<3, IDF_OVERRIDDEN = 1<<4, IDF_UNKNOWN = 1<<5, IDF_ARG = 1<<6, IDF_MODVAR = 1<<7, IDF_IGNOREVAR = 1<<8, IDF_EVENTARG = 1<<9 }; //NEW IDF_MODVAR, IDF_IGNOREVAR, IDF_EVENTARG
+enum { IDF_PERSIST = 1<<0, IDF_OVERRIDE = 1<<1, IDF_HEX = 1<<2, IDF_READONLY = 1<<3, IDF_OVERRIDDEN = 1<<4, IDF_UNKNOWN = 1<<5, IDF_ARG = 1<<6, IDF_EMUVAR = 1<<7, IDF_MODVAR = 1<<8, IDF_IGNOREVAR = 1<<9, IDF_EVENTARG = 1<<10 }; //NEW IDF_MODVAR, IDF_IGNOREVAR, IDF_EVENTARG
 
 struct ident;
 
@@ -217,7 +217,7 @@ static inline float parsefloat(const char *s)
 }
 
 static inline void intformat(char *buf, int v, int len = 20) { nformatstring(buf, len, "%d", v); }
-static inline void floatformat(char *buf, float v, int len = 20) { nformatstring(buf, len, v==int(v) ? "%.1f" : "%.7g", v); }
+static inline void floatformat(char *buf, float v, int len = 20) { nformatstring(buf, len, v==int(v) ? "%.1f" : "%.6g", v); }
 static inline void hexformat(char *buf, int v, int len = 20, bool iscolor = false) { nformatstring(buf, len, iscolor ? "0x%06X" : "0x%08X", v); } //NEW
 
 static inline const char *getstr(const identval &v, int type) 
