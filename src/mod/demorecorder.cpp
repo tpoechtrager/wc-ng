@@ -220,6 +220,7 @@ namespace demorecorder
         {
             putint(p, N_PAUSEGAME);
             putint(p, 1);
+            putint(p, -1);
         }
 
         putint(p, N_RESUME);
@@ -235,6 +236,7 @@ namespace demorecorder
             putint(p, d->state);
             putint(p, d->frags);
             putint(p, d->flags);
+            putint(p, d->deaths);
             putint(p, d->quadmillis);
 
             putint(p, d->lifesequence);
@@ -260,6 +262,7 @@ namespace demorecorder
             if (d->aitype != AI_NONE)
             {
                 putint(p, N_INITAI);
+
                 putint(p, d->clientnum);
                 putint(p, d->ownernum);
                 putint(p, d->aitype);
@@ -271,6 +274,7 @@ namespace demorecorder
             else
             {
                 putint(p, N_INITCLIENT);
+
                 putint(p, d->clientnum);
                 sendstring(d->name, p);
                 sendstring(d->team, p);

@@ -126,19 +126,24 @@ namespace game
     {
         if(cmode != &ctfmode) return;
         putint(p, N_INITFLAGS);
-        loopk(2) putint(p, ctfmode.scores[k]);
-        putint(p, ctfmode.flags.length());
-        loopv(ctfmode.flags)
+        if(m_hold)
         {
-            ctfclientmode::flag &f = ctfmode.flags[i];
-            putint(p, f.version);
-            putint(p, f.spawnindex);
-            putint(p, f.owner ? f.owner->clientnum : -1);
-            putint(p, f.vistime ? 0 : 1);
-            if(!f.owner)
+            putint(p, ctfmode.holdspawns.length());
+            loopv(ctfmode.holdspawns)
             {
-                putint(p, f.droptime ? 1 : 0);
-                if(f.droptime) loopi (3)putint(p, int(f.droploc[i]*DMF));
+                ctfclientmode::holdspawn &h = ctfmode.holdspawns[i];
+                putint(p, -1);
+                loopk(3) putint(p, int(h.o[k]*DMF));
+            }
+        }
+        else
+        {
+            putint(p, ctfmode.flags.length());
+            loopv(ctfmode.flags)
+            {
+                ctfclientmode::flag &f = ctfmode.flags[i];
+                putint(p, f.team);
+                loopk(3) putint(p, int(f.spawnloc[k]*DMF));
             }
         }
     }
@@ -159,7 +164,7 @@ namespace game
         loopv(capturemode.bases)
         {
             captureclientmode::baseinfo &b = capturemode.bases[i];
-            putint(p, min(max(b.ammotype, 1), I_CARTRIDGES+1));
+            putint(p, b.ammotype);
             sendstring(b.owner, p);
             sendstring(b.enemy, p);
             putint(p, b.converted);

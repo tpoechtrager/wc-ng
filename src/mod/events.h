@@ -50,7 +50,7 @@ namespace event
         HWTEMP_INTERFACE, HWTEMP,
 
         // DEMOPLAYBACK
-        DEMO_START, DEMO_END, DEMOMILLISJUMP_START, DEMOMILLISJUMP_END,
+        DEMO_START, DEMO_END,
 
         // EXTINFO
         SERVER_MOD, EXTINFO_UPDATE, EXTINFO_COUNTRY_UPDATE,
@@ -98,7 +98,7 @@ namespace event
         "hwtemp_interface", "hwtemp",
 
         // DEMOPLAYBACK
-        "demostart", "demoend", "demomillisjump_start", "demomillisjump_end",
+        "demostart", "demoend",
 
         // EXTINFO
         "servermod", "extinfoupdate", "countryupdate",

@@ -667,6 +667,7 @@ namespace game
                 //NEW
                 if(displayextinfo(showcountry) && havecountrynames)
                 {
+                    g.space(1);
                     g.pushlist();
                     g.text("country", fgcolor);
                     g.strut(8);
