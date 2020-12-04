@@ -1498,11 +1498,7 @@ int main(int argc, char **argv)
 
     if(initscript) execute(initscript);
 
-    //NEW
-    // MSVC requires the following to be a function, otherwise the compiler
-    // complains about destructible objects used in a __try block
-    [](){ conoutf("WC NG version: %s", CLIENTVERSION.str().str()); }();
-    //NEW END
+    mod::wcinfo(); //NEW
 
     initmumble();
     resetfpshistory();

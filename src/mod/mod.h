@@ -215,6 +215,7 @@ namespace mod
     int distinctlistfiles(const char *dir, const char *ext, vector<char*>& files);
     void wccheckversion(bool userrequest = false, int n = 0);
     void wcautocheckversion();
+    void wcinfo(int * = NULL);
 
     // timers
     void setnanosecondsbase(ullong baseval);

@@ -685,7 +685,7 @@ namespace mod
         wccheckversion();
     }
 
-    static void wcinfo(int *get)
+    void wcinfo(int *get)
     {
         static const char *const *compiler = getcompilerversion();
         static const char *const wcrev = getwcrevision();
@@ -725,7 +725,7 @@ namespace mod
                     << "openssl version: (" << SSLeay_version(SSLEAY_VERSION) << ")";
         }
 
-        if (*get)
+        if (get && *get)
         {
             static string tmp = {0};
 
