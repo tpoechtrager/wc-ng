@@ -47,11 +47,11 @@ namespace geoip
 
     static vector<country_t> countries;
 
-    static country_t getoraddcountry(const strtool &name, const strtool &code)
+    static country_t getoraddcountry(strtool &name, strtool &code)
     {
         loopv(countries) if (countries[i] == name) return countries[i];
-        return countries.add({newstring(name.getrawbuf(), name.length()),
-                              newstring(code.getrawbuf(), code.length())});
+        return countries.add({newstring(name.str(), name.length()),
+                              newstring(code.str(), code.length())});
     }
 
     static const char *GEOIP_DB = "data/GeoLite2-Country.mmdb";
