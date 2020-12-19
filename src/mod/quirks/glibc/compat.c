@@ -96,7 +96,7 @@ WRAPFINITE(log10)
 WRAPFINITE(atan2)
 
 REMOVESYMVER(reallocarray)
-
+REMOVESYMVER(pthread_sigmask)
 REMOVESYMVER(exp2f)
 
 REMOVESYMVER(pow)
@@ -106,6 +106,8 @@ REMOVESYMVER(exp)
 REMOVESYMVER(powf)
 REMOVESYMVER(logf)
 REMOVESYMVER(expf)
+
+
 
 void __wrap_memcpy(void)
 {

@@ -436,6 +436,7 @@ else
     ifeq ($(glibc_quirks),1)
     override LDFLAGS+= -Wl,--wrap=memcpy -Wl,--wrap=__fdelt_chk
     override LDFLAGS+= -Wl,--wrap=reallocarray
+    override LDFLAGS+= -Wl,--wrap=pthread_sigmask
     override LDFLAGS+= -Wl,--wrap=exp2f
     override LDFLAGS+= -Wl,--wrap=pow -Wl,--wrap=log -Wl,--wrap=exp
     override LDFLAGS+= -Wl,--wrap=powf -Wl,--wrap=logf -Wl,--wrap=expf
