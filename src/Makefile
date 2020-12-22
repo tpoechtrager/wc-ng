@@ -434,20 +434,11 @@ else
       override LDFLAGS+= -lm
     endif
     ifeq ($(glibc_quirks),1)
-    override LDFLAGS+= -Wl,--wrap=memcpy -Wl,--wrap=__fdelt_chk
     override LDFLAGS+= -Wl,--wrap=reallocarray
     override LDFLAGS+= -Wl,--wrap=pthread_sigmask
-    override LDFLAGS+= -Wl,--wrap=exp2
-    override LDFLAGS+= -Wl,--wrap=exp2f
+    override LDFLAGS+= -Wl,--wrap=exp2 -Wl,--wrap=exp2f
     override LDFLAGS+= -Wl,--wrap=pow -Wl,--wrap=log -Wl,--wrap=exp
     override LDFLAGS+= -Wl,--wrap=powf -Wl,--wrap=logf -Wl,--wrap=expf
-    override LDFLAGS+= -Wl,--wrap=__exp_finite -Wl,--wrap=__expf_finite
-    override LDFLAGS+= -Wl,--wrap=__log_finite -Wl,--wrap=__logf_finite
-    override LDFLAGS+= -Wl,--wrap=__log10f_finite -Wl,--wrap=__pow_finite
-    override LDFLAGS+= -Wl,--wrap=__powf_finite -Wl,--wrap=__acosf_finite
-    override LDFLAGS+= -Wl,--wrap=__atan2f_finite -Wl,--wrap=__fmod_finite
-    override LDFLAGS+= -Wl,--wrap=__acos_finite -Wl,--wrap=__asin_finite
-    override LDFLAGS+= -Wl,--wrap=__log10_finite -Wl,--wrap=__atan2_finite
     endif
   endif
   endif

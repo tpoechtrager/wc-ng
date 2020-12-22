@@ -1,6 +1,6 @@
 /***********************************************************************
  *  WC-NG - Cube 2: Sauerbraten Modification                           *
- *  Copyright (C) 2014, 2015 by Thomas Poechtrager                     *
+ *  Copyright (C) 2014, 2015, 2020 by Thomas Poechtrager               *
  *  t.poechtrager@gmail.com                                            *
  *                                                                     *
  *  This program is free software; you can redistribute it and/or      *
@@ -25,109 +25,60 @@
 #include <sys/select.h>
 #include <dlfcn.h>
 
-#define STRINGIFY(x) #x
-#define TOSTRING(x)  STRINGIFY(x)
-
-#if defined(__PIC__) && defined(__x86_64__)
-#define JMP(ADDR)                                                              \
-do {                                                                           \
-    asm("jmp *%0" :: "r" (ADDR));                                              \
-    __builtin_unreachable();                                                   \
-} while (0)
-#define JMPFN JMP
-#else
-#define JMP(SN)                                                                \
-do {                                                                           \
-    asm("jmp *" TOSTRING(SN));                                                 \
-    __builtin_unreachable();                                                   \
-} while (0)
-#define JMPFN(SN)                                                              \
-do {                                                                           \
-    asm("jmp " TOSTRING(SN));                                                  \
-    __builtin_unreachable();                                                   \
-} while (0)
-#endif /* __PIC__ && __x86_64__ */
-
-#define LOOKUP(FP, SN, REQUIRED)                                               \
-do {                                                                           \
-    FP = (void (*)())dlsym(NULL, TOSTRING(SN));                                \
-    if (FP) return;                                                            \
-    if (REQUIRED)                                                              \
-    {                                                                          \
-        fprintf(stderr, "cannot find address of " TOSTRING(SN) "\n");          \
-        asm("int $3");                                                         \
-        return;                                                                \
-    }                                                                          \
-} while (0)
-
-#define WRAPSYMBOL(OS, WS)                                                     \
-void (*_##WS)(void);                                                           \
-__attribute__((constructor (101)))                                             \
-__attribute__((visibility ("hidden")))                                         \
-void init___wrap_##OS(void)                                                    \
-{                                                                              \
-    LOOKUP(_##WS, WS, 1);                                                      \
-}                                                                              \
-void __wrap_##OS(void)                                                         \
-{                                                                              \
-    JMP(_##WS);                                                                \
-}
-
-#define WRAPFINITE(SN)   WRAPSYMBOL(__##SN##_finite, SN)
-#define REMOVESYMVER(SN) WRAPSYMBOL(SN, SN)
-
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus*/
 
-WRAPFINITE(exp)
-WRAPFINITE(expf)
-WRAPFINITE(log)
-WRAPFINITE(logf)
-WRAPFINITE(log10f)
-WRAPFINITE(pow)
-WRAPFINITE(powf)
-WRAPFINITE(acosf)
-WRAPFINITE(atan2f)
-WRAPFINITE(fmod)
-WRAPFINITE(acos)
-WRAPFINITE(asin)
-WRAPFINITE(log10)
-WRAPFINITE(atan2)
+#define STRINGIFY(x) #x
+#define TOSTRING(x)  STRINGIFY(x)
 
-REMOVESYMVER(reallocarray)
-REMOVESYMVER(pthread_sigmask)
-REMOVESYMVER(fcntl)
-REMOVESYMVER(fcntl64)
-
-REMOVESYMVER(exp2)
-REMOVESYMVER(exp2f)
-
-REMOVESYMVER(pow)
-REMOVESYMVER(log)
-REMOVESYMVER(exp)
-
-REMOVESYMVER(powf)
-REMOVESYMVER(logf)
-REMOVESYMVER(expf)
-
-
-
-void __wrap_memcpy(void)
-{
-    /* GLIBC 2.2.5 implemented memcpy() as memmove() */
-    JMPFN(memmove);
+#define INIT(FN, FN_TYPE) \
+static FN_TYPE FN##_addr = NULL; \
+__attribute__((constructor (101))) \
+__attribute__((visibility ("hidden"))) \
+void init___wrap_##FN(void) \
+{ \
+    if (!FN##_addr) \
+    { \
+        FN##_addr = (FN_TYPE)dlsym(NULL, TOSTRING(FN)); \
+        if (!FN##_addr) abort(); \
+    } \
 }
 
-extern void __chk_fail(void);
+#define WRAP1(FN, TYPE_RET, TYPE_ARG1) \
+typedef TYPE_RET (*FN_TYPE_##FN)(TYPE_ARG1); \
+INIT(FN, FN_TYPE_##FN) \
+TYPE_RET __wrap_##FN(TYPE_ARG1 arg1) { return FN##_addr(arg1); }
 
-unsigned long int __wrap___fdelt_chk(unsigned long int index)
-{
-    if (index >= FD_SETSIZE)
-        __chk_fail();
+#define WRAP2(FN, TYPE_RET, TYPE_ARG1, TYPE_ARG2) \
+typedef TYPE_RET (*FN_TYPE_##FN)(TYPE_ARG1, TYPE_ARG2); \
+INIT(FN, FN_TYPE_##FN) \
+TYPE_RET __wrap_##FN(TYPE_ARG1 arg1, TYPE_ARG2 arg2) { return FN##_addr(arg1, arg2); }
 
-    return index / __NFDBITS;
-}
+#define WRAP3(FN, TYPE_RET, TYPE_ARG1, TYPE_ARG2, TYPE_ARG3) \
+typedef TYPE_RET (*FN_TYPE_##FN)(TYPE_ARG1, TYPE_ARG2, TYPE_ARG3); \
+INIT(FN, FN_TYPE_##FN) \
+TYPE_RET __wrap_##FN(TYPE_ARG1 arg1, TYPE_ARG2 arg2, TYPE_ARG3 arg3) { return FN##_addr(arg1, arg2, arg3); }
+
+
+/*
+ * Remove glibc symbol versions.
+ */
+
+WRAP1(exp, double, double)
+WRAP1(expf, float, float)
+
+WRAP1(exp2, double, double)
+WRAP1(exp2f, float, float)
+
+WRAP1(log, double, double)
+WRAP1(logf, float, float)
+
+WRAP2(pow, double, double, double)
+WRAP2(powf, float, float, float)
+
+WRAP3(reallocarray, void *, void *, size_t, size_t);
+WRAP3(pthread_sigmask, int, int, const void *, void *);
 
 #ifdef __cplusplus
 }
