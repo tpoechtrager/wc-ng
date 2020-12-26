@@ -1181,10 +1181,12 @@ namespace game
         sendclientpacket(p.finalize(), 1);
     }
 
+    MODVARP(tickrate, 30, 30, 240); //NEW
+
     void c2sinfo(bool force) // send update to the server
     {
         static int lastupdate = -1000;
-        if(totalmillis - lastupdate < 33 && !force) return; // don't update faster than 30fps
+        if(totalmillis - lastupdate < (1000/tickrate) && !force) return; // NEW:  (1000/tickrate) instead of 33
         lastupdate = totalmillis;
         sendpositions();
         sendmessages();
