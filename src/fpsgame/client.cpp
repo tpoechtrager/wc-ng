@@ -1035,6 +1035,8 @@ namespace game
         hasextinfo = false;
         mod::unsetbouncervars();
         fullyconnected = false;
+        extern int tickrateoverride;
+        tickrateoverride = 0;
         //NEW END
     }
 
@@ -1181,12 +1183,20 @@ namespace game
         sendclientpacket(p.finalize(), 1);
     }
 
-    MODVARP(tickrate, 30, 30, 240); //NEW
+    //NEW
+    static int TICKRATE_MIN = 30;
+    static int TICKRATE_DEFAULT = 30;
+    static int TICKRATE_MAX = 240;
+    static int TICKRATE_MIN_OVERRIDE = 1;
+    MODVARP(tickrate, TICKRATE_MIN, TICKRATE_DEFAULT, TICKRATE_MAX);
+    int tickrateoverride = 0;
+    //NEW END
 
     void c2sinfo(bool force) // send update to the server
     {
         static int lastupdate = -1000;
-        if(totalmillis - lastupdate < (1000/tickrate) && !force) return; // NEW:  (1000/tickrate) instead of 33
+        // NEW:  (1000/(tickrateoverride ? tickrateoverride : tickrate)) instead of 33
+        if(totalmillis - lastupdate < (1000/(tickrateoverride ? tickrateoverride : tickrate)) && !force) return;
         lastupdate = totalmillis;
         sendpositions();
         sendmessages();
@@ -1220,6 +1230,13 @@ namespace game
             sendstring("", p);
         }
         sendclientpacket(p.finalize(), 1);
+
+        //NEW
+        packetbuf p2(256, ENET_PACKET_FLAG_RELIABLE);
+        putint(p2, N_SERVCMD);
+        sendstring("__VARIABLE_TICKRATE_SUPPORTED\n", p2);
+        sendclientpacket(p2.finalize(), 1);
+        //NEW END
     }
 
     void updatepos(fpsent *d)
@@ -1396,6 +1413,7 @@ namespace game
             case N_SERVINFO:                   // welcome messsage from the server
             {
                 DEMORECORDER_SKIP_PACKET_NC; //NEW
+                bool wasconnected = player1->clientnum!=-1; //NEW
                 int mycn = getint(p), prot = getint(p);
                 if(prot!=PROTOCOL_VERSION)
                 {
@@ -1408,10 +1426,22 @@ namespace game
                 if(getint(p) > 0) conoutf("this server is password protected");
                 getstring(servinfo, p, sizeof(servinfo));
                 getstring(servauth, p, sizeof(servauth));
-                sendintro();
-                if(curpeer) mod::chat::servconnect(); //NEW
+                if(!wasconnected) //NEW if
+                {
+                    sendintro();
+                    if(curpeer) mod::chat::servconnect(); //NEW
+                }
                 break;
             }
+
+            //NEW
+            case N_TICKRATE:
+            {
+                int rate = getint(p);
+                tickrateoverride = clamp(rate, TICKRATE_MIN_OVERRIDE, TICKRATE_MAX);
+                conoutf("Tickrate: %d", tickrateoverride);
+            }
+            //NEW END
 
             case N_WELCOME:
             {
