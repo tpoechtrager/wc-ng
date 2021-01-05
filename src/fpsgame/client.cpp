@@ -1037,6 +1037,8 @@ namespace game
         fullyconnected = false;
         extern int tickrateoverride;
         tickrateoverride = 0;
+        extern void clearpings();
+        clearpings();
         //NEW END
     }
 
@@ -1144,6 +1146,41 @@ namespace game
         }
     }
 
+    //NEW
+    struct ping
+    {
+        int id;
+        ullong time;
+    };
+
+    vector<ping> pings;
+    int pingid = 0;
+
+    int addping()
+    {
+        if(pings.length()>=255) pings.remove(0);
+        pings.add({pingid++, mod::getmicroseconds()});
+        return pings.last().id;
+    }
+
+    ullong calcping(int id)
+    {
+        loopvrev(pings) if(pings[i].id==id)
+        {
+            ullong ping = mod::getmicroseconds()-pings[i].time;
+            pings.remove(i);
+            return ping;
+        }
+        return -1ULL;
+    }
+
+    void clearpings()
+    {
+        pingid = 0;
+        pings.shrink(0);
+    }
+    //NEW END
+
     void sendmessages()
     {
         packetbuf p(MAXTRANS);
@@ -1174,9 +1211,7 @@ namespace game
         if(totalmillis-lastping>250)
         {
             putint(p, N_PING);
-            //NEW
-            putint(p, (int)mod::getsaltedmicroseconds());
-            //NEW END
+            putint(p, addping()); //NEW
             //putint(p, totalmillis);
             lastping = totalmillis;
         }
@@ -1205,7 +1240,6 @@ namespace game
 
     void sendintro()
     {
-        mod::getsaltedmicroseconds(true); //NEW rand value on each connect
         packetbuf p(MAXTRANS, ENET_PACKET_FLAG_RELIABLE);
         putint(p, N_CONNECT);
         sendstring(player1->name, p);
@@ -1967,8 +2001,8 @@ namespace game
             {
                 //NEW
                 DEMORECORDER_SKIP_PACKET_NC;
-                uint usecping = mod::getsaltedmicroseconds(false, (uint)getint(p));
-                if(!usecping) break;
+                ullong usecping = calcping(getint(p));
+                if(usecping==-1ULL) break;
                 float ping = usecping/1000.0f;
                 player1->highresping = (player1->highresping*5.0f+ping)/6.0f;
                 player1->ping = (player1->ping*5+ping)/6;
