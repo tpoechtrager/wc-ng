@@ -1223,7 +1223,14 @@ namespace game
     static int TICKRATE_DEFAULT = 30;
     static int TICKRATE_MAX = 240;
     static int TICKRATE_MIN_OVERRIDE = 1;
-    MODVARP(tickrate, TICKRATE_MIN, TICKRATE_DEFAULT, TICKRATE_MAX);
+    MODVARFP(tickrate, TICKRATE_MIN, TICKRATE_DEFAULT, TICKRATE_MAX,
+    {
+        if(tickrate%TICKRATE_DEFAULT != 0)
+        {
+            conoutf("tickrate must be a multiple of %d", TICKRATE_DEFAULT);
+            tickrate = TICKRATE_DEFAULT;
+        }
+    });
     int tickrateoverride = 0;
     //NEW END
 
