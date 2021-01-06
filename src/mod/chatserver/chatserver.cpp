@@ -1,6 +1,6 @@
 /***********************************************************************
  *  WC-NG - Cube 2: Sauerbraten Modification                           *
- *  Copyright (C) 2014, 2015 by Thomas Poechtrager                     *
+ *  Copyright (C) 2014-2021 by Thomas Poechtrager                      *
  *  t.poechtrager@gmail.com                                            *
  *                                                                     *
  *  This program is free software; you can redistribute it and/or      *
@@ -59,12 +59,10 @@
 #include <openssl/evp.h>
 #include <openssl/err.h>
 static SSL_CTX *ctx;
-VAR(HAVEOPENSSL, 1, 1, 1);
 VARN(usessl, useopenssl, 0, 0, 1);
-SVAR(cipherlist, CIPHERLIST);
+SVAR(cipherlist, "");
 SVAR(certificate, "server.crt");
 SVAR(privatekey, "server.key");
-VAR(forwardsecrecy, 0, 1, 1);
 
 using mod::strtool;
 
@@ -81,7 +79,6 @@ VAR(serverpassprompt, 0, 0, 1);
 VAR(forktobackground, 0, 0, 1);
 VAR(maxclients, 2, 32, NUMMAXCLIENTS);
 VAR(maxclientsperip, 1, 8, NUMMAXCLIENTS);
-VAR(supportoldclients, 0, 0, 1);
 VAR(useauthtoken, 0, 1, 1);
 SVAR(logfile, "");
 
@@ -111,7 +108,10 @@ struct client_t
     int protocol;
     time_t conntime;
     strtool name;
+    strtool realname;
     char ip[16];
+    strtool osname;
+    clientversion version;
 
     struct server
     {
@@ -152,6 +152,7 @@ struct client_t
         authtoken.~strtool();
         server.title.~strtool();
         name.~strtool();
+        osname.~strtool();
 
         szeromemory(this, sizeof(*this));
     }
@@ -393,7 +394,7 @@ static client_t *getclient(int id)
     return NULL;
 }
 
-static void sendclient(ucharbuf &p, client_t &c)
+static void sendclient(ucharbuf &p, client_t &c, client_t *t = NULL)
 {
     putint(p, C_CLIENT_CONNECT);
     putint(p, c.id);
@@ -401,7 +402,12 @@ static void sendclient(ucharbuf &p, client_t &c)
     p.put(0xFF);
     putint(p, c.conntime);
     sendstring(c.name, p);
+    sendstring(c.realname, p);
     putint(p, 0);
+    sendstring(c.osname, p);
+    putint(p, c.version.major);
+    putint(p, c.version.minor);
+    putint(p, c.version.patch);
 }
 
 static void sendserverinfo(ucharbuf &p, client_t &c, bool fakedisc = false)
@@ -554,12 +560,9 @@ static void checkclients()
             bool mcpip = !mc && getclientcount(address.host) >= maxclientsperip;
 
             if (banned || mc || mcpip)
-            {
-                if (!supportoldclients)
-                {
-                    putint(s, banned ? CS_DISC_IP_BANNED : CS_DISC_SERVER_FULL);
-                    send(clientsocket, s);
-                }
+            { 
+                putint(s, banned ? CS_DISC_IP_BANNED : CS_DISC_SERVER_FULL);
+                send(clientsocket, s);
                 enet_socket_destroy(clientsocket);
                 if (banned) conoutf("%s: ip is banned", ip);
                 else conoutf("%s: max clients%s", ip, mcpip ? " per ip" : "");
@@ -579,7 +582,7 @@ static void checkclients()
                     if (!c->ssl)
                         fatal("SSL_new() failed");
 
-                    if (!SSL_set_cipher_list(c->ssl, cipherlist))
+                    if (cipherlist[0] && !SSL_set_cipher_list(c->ssl, cipherlist))
                         fatal("invalid cipher list");
 
                     SSL_set_fd(c->ssl, c->socket);
@@ -674,8 +677,7 @@ static void checkclients()
                         c.protocol = getint(p);
                         bool pwok = false;
 
-                        if ((c.protocol != PROTOCOL_VER && !supportoldclients) ||
-                            (c.protocol < 2 || c.protocol > PROTOCOL_VER))
+                        if (c.protocol != PROTOCOL_VER)
                         {
                             putint(s, C_INVALID_PROTOCOL);
                             putint(s, PROTOCOL_VER);
@@ -687,43 +689,38 @@ static void checkclients()
                         }
 
                         getfilteredstring(c.name, p, false, MAXNAMELEN, true);
+                        getfilteredstring(c.realname, p, false, MAXNAMELEN, true);
 
-                        if (c.protocol >= 3)
+                        getfilteredstring(c.osname, p, false, 20);
+                        c.version = { getint(p), getint(p), getint(p) };
+
+                        string serverpwhash;
+                        string clientpwhash;
+                        strtool salt;
+
+                        getstring(salt, p, 1024);
+                        getstring(clientpwhash, p);
+
+                        salt += c.authtoken;
+
+                        if (::serverpass[0])
                         {
-                            string serverpwhash;
-                            string clientpwhash;
-                            strtool salt;
-
-                            getstring(salt, p, 1024);
-                            getstring(clientpwhash, p);
-
-                            salt += c.authtoken;
-
-                            if (::serverpass[0])
-                            {
-                                if (hashstring(::serverpass, salt.str(), serverpwhash))
-                                    pwok = !strcmp(serverpwhash, clientpwhash);
-                            }
-                            else
-                            {
-                                // no server password set
-                                pwok = true;
-                            }
-
-                            if (useopenssl && c.authtoken)
-                                salt.secureclear();
+                            if (hashstring(::serverpass, salt.str(), serverpwhash))
+                                pwok = !strcmp(serverpwhash, clientpwhash);
                         }
                         else
                         {
-                            strtool clientpass;
-                            getstring(clientpass, p, 1024, true);
-                            pwok = !::serverpass[0] || clientpass == ::serverpass;
-                            if (useopenssl) clientpass.secureclear();
+                            // no server password set
+                            pwok = true;
                         }
 
-                        // clear temporary data
-                        if (useopenssl)
-                            c.authtoken.secureclear();
+                        if (useopenssl && c.authtoken)
+                        {
+                            // clear temporary data
+                            salt.secureclear();
+                            if (c.authtoken)
+                                c.authtoken.secureclear();
+                        }
 
                         if (!pwok)
                         {
@@ -735,6 +732,7 @@ static void checkclients()
                         }
 
                         putint(s, C_CONNECTED);
+                        putint(s, PROTOCOL_VERSION);
                         putint(s, c.id);
                         putint(s, C_TIME);
                         putint(s, time(NULL));
@@ -743,15 +741,15 @@ static void checkclients()
 
                         loopv(clients)
                         {
-                            client_t &c = *clients[i];
+                            client_t &cc = *clients[i];
 
-                            if (!c.isauthed)
+                            if (!cc.isauthed)
                                 continue;
 
-                            sendclient(s, c);
+                            sendclient(s, cc, &c);
 
-                            if (c.server.addr.host)
-                                sendserverinfo(s, c);
+                            if (cc.server.addr.host)
+                                sendserverinfo(s, cc);
                         }
 
                         send(c, s);
@@ -759,6 +757,7 @@ static void checkclients()
                         s.len = 0;
                         sendclient(s, c);
                         sendauthed(c, s);
+
                         break;
                     }
                     default:
@@ -791,16 +790,21 @@ static void checkclients()
                     }
                     case C_CLIENT_RENAME:
                     {
-                        strtool old = c.name;
+                        strtool oldname = c.name;
+                        strtool oldrealname = c.realname;
                         getfilteredstring(c.name, p, false, MAXNAMELEN, true);
-                        if (old != c.name)
+                        if (c.protocol >= 5)
+                            getfilteredstring(c.realname, p, false, MAXNAMELEN, true);
+                        if (oldname != c.name || oldrealname != c.realname)
                         {
                             putint(s, C_CLIENT_RENAME);
                             putint(s, c.id);
                             sendstring(c.name, s);
+                            sendstring(c.realname, s);
                             sendauthed(s);
                         }
-                        old.secureclear();
+                        oldname.secureclear();
+                        oldrealname.secureclear();
                         break;
                     }
                     case C_DISCONNECT:
@@ -883,7 +887,7 @@ static void setupserver()
         const SSL_METHOD *sslmethod;
 
 #if OPENSSL_VERSION_NUMBER < 0x10100000L
-         sslmethod = TLSv1_2_server_method();
+        sslmethod = TLSv1_2_server_method();
 #else
         sslmethod = TLS_server_method();
 #endif
@@ -897,27 +901,16 @@ static void setupserver()
             fatal("ssl init failed");
         }
 
-        if (forwardsecrecy)
-        {
-            EC_KEY *ecdh = EC_KEY_new_by_curve_name(NID_X9_62_prime256v1);
-
-            if (!ecdh)
-                goto sslinitfail;
-
-            if (!SSL_CTX_set_options(ctx, SSL_OP_SINGLE_ECDH_USE))
-                goto sslinitfail;
-
-            if (!SSL_CTX_set_tmp_ecdh(ctx, ecdh))
-                goto sslinitfail;
-
-            EC_KEY_free(ecdh);
-        }
-
-        // Disable TLS v1.0, TLS v1.1, SSLv2, SSLv3 and prefer the server's
+        // Disable TLS v1.0, TLS v1.1, TLSv1.2, SSLv2, SSLv3 and prefer the server's
         // cipher preference.
 
+#ifndef SSL_OP_NO_TLSv1_2
+#define SSL_OP_NO_TLSv1_2 0x0
+#warning outdated OpenSSL/LibreSSL version
+#endif
+
         static const int OPTS = SSL_OP_NO_SSLv2|SSL_OP_NO_SSLv3|SSL_OP_NO_TLSv1|SSL_OP_NO_TLSv1_1|
-                                SSL_OP_CIPHER_SERVER_PREFERENCE;
+                                SSL_OP_NO_TLSv1_2|SSL_OP_CIPHER_SERVER_PREFERENCE;
 
         if (!SSL_CTX_set_options(ctx, OPTS))
             goto sslinitfail;
@@ -963,7 +956,6 @@ static void cmdopt_ip(const char *val) { setsvar("serverip", val); }
 static void cmdopt_port(const char *val) { serverport = atoi(val); }
 static void cmdopt_daemon(const char *val) { forktobackground = 1; }
 static void cmdopt_usessl(const char *val) { useopenssl = 1; }
-static void cmdopt_nopfs(const char *val) { forwardsecrecy = 0; }
 
 static void cmdopt_maxclients(const char *val)
 {
@@ -990,7 +982,6 @@ const char *const helptext[] =
     "port to listen on",
     "fork to background",
     "use ssl encryption",
-    "disable forward secrecy",
     "max clients",
     "max clients per ip",
     "show openssl version",
@@ -1006,11 +997,10 @@ static cmdopt cmdopts[] =
     { cmdopt_port,            { "port", "serverport", "p" }, helptext[4]  },
     { cmdopt_daemon,          { "daemon", "d"             }, helptext[5]  },
     { cmdopt_usessl,          { "usessl", "us"            }, helptext[6]  },
-    { cmdopt_nopfs,           { "no-pfs", "npfs",         }, helptext[7]  },
-    { cmdopt_maxclients,      { "maxclients", "mc"        }, helptext[8]  },
-    { cmdopt_maxclientsperip, { "maxclientsperip", "mcpi" }, helptext[9]  },
-    { cmdopt_opensslversion,  { "openssl-version", "ov"   }, helptext[10] },
-    { cmdopt_help,            { "help", "h"               }, helptext[11] },
+    { cmdopt_maxclients,      { "maxclients", "mc"        }, helptext[7]  },
+    { cmdopt_maxclientsperip, { "maxclientsperip", "mcpi" }, helptext[8]  },
+    { cmdopt_opensslversion,  { "openssl-version", "ov"   }, helptext[9] },
+    { cmdopt_help,            { "help", "h"               }, helptext[10] },
 };
 
 static void cmdopt_help(const char *val)
@@ -1072,13 +1062,6 @@ int main(int argc, char **argv)
 
     execfile("wc_chat_server.cfg");
     parsecommandopts(argc, argv);
-
-    if (supportoldclients && useauthtoken)
-    {
-        conoutf(CON_ERROR, "'supportoldclients 1' is not compatible with "
-                           "'useauthoken 1'");
-        return 1;
-    }
 
     if (serverpassprompt)
         passwordprompt();

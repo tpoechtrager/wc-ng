@@ -59,7 +59,8 @@ enum
     C_PING,
     C_PONG,
     C_TIME,
-    C_AUTH_TOK
+    C_AUTH_TOK,
+    C_MSG
 };
 
 enum
@@ -70,7 +71,7 @@ enum
     CS_DISC_IP_BANNED
 };
 
-static const int PROTOCOL_VER = 4;
+static const int PROTOCOL_VER = 5;
 
 static const size_t MAXDATA = 0xFFFF;
 static const size_t MAXMSGLEN = 512u;
@@ -84,10 +85,6 @@ static const int DEFAULTPORT = 6664;
 
 static const int CONNECTRECVTIMEOUT = 3000;
 static const char *const DEFAULTPREFIX = "\fs\f9[c]\fr";
-
-static const char *const CIPHERLIST =
-    "ECDH+AES256:DH+AESGCM:DH+AES256:ECDH+AES:DH+AES"
-    "RSA+AESGCM:!aNULL:!eNULL:!NULL:!SHA1:!DSS:!RC4:!MD5";
 
 void updatename();
 void servconnect(bool connect = true);

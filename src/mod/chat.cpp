@@ -1,6 +1,6 @@
 /***********************************************************************
  *  WC-NG - Cube 2: Sauerbraten Modification                           *
- *  Copyright (C) 2014, 2015 by Thomas Poechtrager                     *
+ *  Copyright (C) 2014-2021 by Thomas Poechtrager                      *
  *  t.poechtrager@gmail.com                                            *
  *                                                                     *
  *  This program is free software; you can redistribute it and/or      *
@@ -93,8 +93,8 @@ struct connectdata_t
 {
     strtool server;
     strtool nickname;
+    strtool realnickname;
     strtool password;
-    strtool cipherlist;
 
     connectdata_t() {}
 
@@ -102,8 +102,8 @@ struct connectdata_t
     {
         copystrtool(server, cd.server);
         copystrtool(nickname, cd.nickname);
+        copystrtool(realnickname, cd.realnickname);
         copystrtool(password, cd.password);
-        copystrtool(cipherlist, cd.cipherlist);
     }
 } connectdata;
 
@@ -120,6 +120,7 @@ struct client_t
     } ip;
     time_t conntime;
     strtool name;
+    strtool realname;
     const char *country;
     const char *countrycode;
 
@@ -136,14 +137,23 @@ struct client_t
                    country(), countrycode() {}
     } server;
 
+    strtool osname;
+    clientversion version;
+
     strtool getname()
     {
         strtool tmp;
-        tmp << name;
+        if (realname)
+        {
+            tmp << realname;
+            if (!name.find(realname)) tmp << " [" << name << "]";
+        }
+        else tmp << name;
+
         loopv(clients)
         {
             client_t *c = clients[i];
-            if (id != c->id && c->name == name)
+            if (id != c->id && c->name == name && c->realname == realname)
             {
                 tmp << " (" << id << ")";
                 break;
@@ -173,6 +183,7 @@ static atomic<bool> needserverinfo(false);
 static atomic<bool> showconnects(true);
 static atomic<bool> showservconnects(true);
 static atomic<int> timeoffset(0);
+static atomic<int> serverprotocol;
 static strtool prefix;
 static sdlmutex prefixmutex;
 static sdlmutex sendmutex;
@@ -218,6 +229,7 @@ static struct initprefix
     initprefix() { updateprefix(DEFAULTPREFIX); }
 } initprefx;
 
+MODSVARFP(wcchatname, "", updateconnectdata());
 MODSVARFP(wcchatserver, "", updateconnectdata());
 MODSVARFP(wcchatpassword, "", updateconnectdata());
 MODVARFP(wcchatshowconnects, 0, 1, 1, showconnects = wcchatshowconnects!=0);
@@ -232,8 +244,6 @@ COMMAND(wcchatdelcerts, "");
 COMMAND(wcchatlistcerts, "");
 COMMAND(wcchatshowcertdetails, "");
 COMMAND(wcchataddrevokedcert, "s");
-MODSVARFP(wcchatcipherlist, CIPHERLIST, updateconnectdata());
-
 COMMAND(wcchatlist, "");
 COMMAND(wcchatloopclients, "ss");
 COMMAND(wcchatisconnected, "");
@@ -574,9 +584,9 @@ static inline void updateconnectdata(bool reconnect)
     if (!ismainthread()) abort();
     connectdatamutex.lock();
     connectdata.nickname = game::player1->name;
+    connectdata.realnickname = wcchatname;
     connectdata.server = wcchatserver;
     connectdata.password = wcchatpassword;
-    connectdata.cipherlist = wcchatcipherlist;
     if (reconnect) connectdatahaschanged = true;
     connectdatamutex.unlock();
     wcchatdoautoconnect();
@@ -592,6 +602,7 @@ void updatename()
         ucharbuf p(sendbuf, sizeof(sendbuf));
         putint(p, C_CLIENT_RENAME);
         sendstring(game::player1->name, p);
+        sendstring(wcchatname, p);
         send(p);
     }
 }
@@ -676,7 +687,11 @@ static bool connect(const char *host, int port)
         sslmethod = TLS_client_method();
 #endif
         sslconn.ctx = SSL_CTX_new(sslmethod);
-        static const int OPTS = SSL_OP_NO_SSLv2|SSL_OP_NO_SSLv3|SSL_OP_NO_TLSv1|SSL_OP_NO_TLSv1_1;
+#ifndef SSL_OP_NO_TLSv1_2
+#define SSL_OP_NO_TLSv1_2 0x0
+#warning outdated OpenSSL/LibreSSL version
+#endif
+        static const int OPTS = SSL_OP_NO_SSLv2|SSL_OP_NO_SSLv3|SSL_OP_NO_TLSv1|SSL_OP_NO_TLSv1_1|SSL_OP_NO_TLSv1_2;
         if (!sslconn.ctx || !SSL_CTX_set_options(sslconn.ctx, OPTS)) abort();
         opensslinited = true;
     }
@@ -736,7 +751,9 @@ static void disconnect(bool msg = true)
     sslconn.free();
 }
 
-static int init(const char *host, int port, const char *nickname,
+static int init(const char *host, int port,
+                const char *nickname,
+                const char *realnickname,
                 const char *password, bool forcessl)
 {
     isconnecting = true;
@@ -813,16 +830,6 @@ static int init(const char *host, int port, const char *nickname,
 
         sslconn.ssl = SSL_new(sslconn.ctx);
         if (!sslconn.ssl) goto sslinitfail;
-
-        {
-            SDL_Mutex_Locker ml(connectdatamutex);
-
-            if (!SSL_set_cipher_list(sslconn.ssl, connectdata.cipherlist.str()))
-            {
-                consoleoutf("invalid cipher list!");
-                goto sslinitfail;
-            }
-        }
 
         SSL_set_fd(sslconn.ssl, sock);
 
@@ -922,6 +929,11 @@ static int init(const char *host, int port, const char *nickname,
     putint(p, C_CONNECT);
     putint(p, PROTOCOL_VER);
     sendstring(nickname, p);
+    sendstring(realnickname, p);
+    sendstring(mod::getosstring(), p);
+    putint(p, CLIENTVERSION.major);
+    putint(p, CLIENTVERSION.minor);
+    putint(p, CLIENTVERSION.patch);
 
     if (password[0])
     {
@@ -973,6 +985,7 @@ static int init(const char *host, int port, const char *nickname,
         {
             case C_CONNECTED:
             {
+                serverprotocol = getint(p);
                 myid = getint(p);
                 isconnected = true;
                 isconnecting = false;
@@ -1017,6 +1030,7 @@ static bool parsemessages(ucharbuf &p)
             c.conntime = getint(p)+timeoffset;
             getfilteredstring(c.name, p, false, MAXNAMELEN);
             if (!c.name) c.name = "unnamed";
+            getfilteredstring(c.realname, p, false, MAXNAMELEN);
             c.server.conntime = getint(p);
             if (c.server.conntime)
             {
@@ -1024,6 +1038,8 @@ static bool parsemessages(ucharbuf &p)
                 c.server.addr.port = (enet_uint16)getint(p);
                 geoip::country(c.server.addr.host, &c.server.country, &c.server.countrycode);
             }
+            getfilteredstring(c.osname, p, false, 20);
+            c.version = { getint(p), getint(p), getint(p) };
             if (getclient(c.id) || clients.length() >= NUMMAXCLIENTS) break;
             geoip::country(c.ip.ui32, &c.country, &c.countrycode);
             clients.add(new client_t(c));
@@ -1052,6 +1068,13 @@ static bool parsemessages(ucharbuf &p)
             }
             break;
         }
+        case C_MSG:
+        {
+            strtool msg;
+            getstring(msg, p);
+            if (msg) conoutf_r("%s", msg.str());
+            break;
+        }
         case C_CHAT_MSG:
         {
             strtool msg;
@@ -1064,12 +1087,14 @@ static bool parsemessages(ucharbuf &p)
         }
         case C_CLIENT_RENAME:
         {
-            strtool newname;
+            strtool newname, newrealname;
             client_t *c = getclient(getint(p));
             getfilteredstring(newname, p, false, MAXNAMELEN);
-            if (!c || c->name == newname) break;
+            getfilteredstring(newrealname, p, false, MAXNAMELEN);
+            if (!c || (c->name == newname && c->realname == newrealname)) break;
             strtool oldname = c->getname();
             c->name.swap(newname);
+            c->realname.swap(newrealname);
             if (c->id != myid)
             {
                 consoleoutf("\fs\f1%s\fr is now known as \fs\f1%s\fr",
@@ -1166,7 +1191,7 @@ static int chatthread(void *)
     server = strs[0].str();
     port = n >= 2 ? atoi(strs[1].str()) : DEFAULTPORT;
 
-    rv = init(server, port, cd.nickname.str(), cd.password.str(), forcessl);
+    rv = init(server, port, cd.nickname.str(), cd.realnickname.str(), cd.password.str(), forcessl);
 
     delete[] strs;
 
@@ -1315,9 +1340,10 @@ static void wcchatlist()
                 << " (" << ipbuf << ":" << (uint)s->addr.port << ")  (" << time2 << ")";
         }
 
-        consoleoutf("[%d/%d] id: %d  name: %s  country: %s  (%s)%s",
-                    i+1, clients.length(), c->id, c->name.str(),
+        consoleoutf("[%d/%d] id: %d  name: %s  country: %s  os: %s  wc-ng: v%s  (%s)%s",
+                    i+1, clients.length(), c->id, c->getname().str(),
                     c->country ? c->country : "unknown",
+                    c->osname.str(), c->version.str().str(),
                     time1.str(), srv.str());
     }
 }
@@ -1569,9 +1595,9 @@ static void wcchatloopclients(const char *callbackargs, const char *callbackcode
     if (!scriptcallbackid) return;
 
 #ifdef ENABLE_IPS
-    constexpr const char *args = "siisssiisssuuuuuu";
+    constexpr const char *args = "siisssiisssuussuuuu";
 #else
-    constexpr const char *args = "siisssiisssuu";
+    constexpr const char *args = "siisssiisssuuss";
 #endif
 
     time_t now = time(NULL);
@@ -1591,6 +1617,7 @@ static void wcchatloopclients(const char *callbackargs, const char *callbackcode
                                   s.title.str(), s.cn, int(now-s.conntime),
                                   s.country ? s.country : "", s.countrycode ? s.countrycode : "",
                                   sip, s.addr.host, s.addr.port,
+                                  c->osname.str(), c->version.str().str(),
                                   c->ip.ui[0], c->ip.ui[1], c->ip.ui[2], c->ip.ui[3] /* 0xff */);
     }
 
