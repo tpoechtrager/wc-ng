@@ -1232,6 +1232,11 @@ namespace game
         }
     });
     int tickrateoverride = 0;
+
+    void announcevrtrfeature()
+    {
+        addmsg(N_SERVCMD, "s", "__VARIABLE_TICKRATE_SUPPORTED\n");
+    }
     //NEW END
 
     void c2sinfo(bool force) // send update to the server
@@ -1271,13 +1276,6 @@ namespace game
             sendstring("", p);
         }
         sendclientpacket(p.finalize(), 1);
-
-        //NEW
-        packetbuf p2(256, ENET_PACKET_FLAG_RELIABLE);
-        putint(p2, N_SERVCMD);
-        sendstring("__VARIABLE_TICKRATE_SUPPORTED\n", p2);
-        sendclientpacket(p2.finalize(), 1);
-        //NEW END
     }
 
     void updatepos(fpsent *d)
@@ -1467,7 +1465,7 @@ namespace game
                 if(getint(p) > 0) conoutf("this server is password protected");
                 getstring(servinfo, p, sizeof(servinfo));
                 getstring(servauth, p, sizeof(servauth));
-                if(!wasconnected) //NEW if
+                if(!wasconnected) //NEW
                 {
                     sendintro();
                     if(curpeer) mod::chat::servconnect(); //NEW
@@ -1479,8 +1477,10 @@ namespace game
             case N_TICKRATE:
             {
                 int rate = getint(p);
+                int tickrateoverrideold = tickrateoverride;
                 tickrateoverride = clamp(rate, TICKRATE_MIN_OVERRIDE, TICKRATE_MAX);
-                conoutf("Tickrate: %d", tickrateoverride);
+                if(tickrateoverride != tickrateoverrideold) conoutf("Tickrate: %d", tickrateoverride);
+                break;
             }
             //NEW END
 
@@ -1491,6 +1491,7 @@ namespace game
                 fullyconnected = true;      //NEW
                 rebindpingport();           //NEW
                 mod::extinfo::connect();    //NEW
+                announcevrtrfeature();      //NEW
                 break;
             }
 
