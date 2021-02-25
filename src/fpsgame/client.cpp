@@ -1465,11 +1465,8 @@ namespace game
                 if(getint(p) > 0) conoutf("this server is password protected");
                 getstring(servinfo, p, sizeof(servinfo));
                 getstring(servauth, p, sizeof(servauth));
-                if(!wasconnected) //NEW
-                {
-                    sendintro();
-                    if(curpeer) mod::chat::servconnect(); //NEW
-                }
+                sendintro();
+                if(!wasconnected && curpeer) mod::chat::servconnect(); //NEW
                 break;
             }
 
