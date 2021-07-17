@@ -574,7 +574,7 @@ namespace game
     ICOMMAND(gettotaldamage, "s", (const char *cn), fpsent *o = getclient(cn); if(!o) o = player1; intret(o->totaldamage));
     ICOMMAND(gettotalshots, "s", (const char *cn), fpsent *o = getclient(cn); if(!o) o = player1; intret(o->totalshots));
     ICOMMAND(getping, "s", (const char *cn), fpsent *o = getclient(cn); if(!o) o = player1; intret(o->ping)); //NEW
-    ICOMMAND(getfloatping, "s", (const char *cn), fpsent *o = getclient(cn); if(!o) o = player1; floatret(o->highresping)); //NEW
+    ICOMMAND(getfloatping, "s", (const char *cn), fpsent *o = getclient(cn); if(!o) o = player1; floatret(o->highresping ? o->highresping : (float)o->ping)); //NEW
     ICOMMAND(gethudclientnum, "", (), intret(hudplayer()->clientnum)); //NEW
 
     vector<fpsent *> clients;
@@ -1184,8 +1184,8 @@ namespace game
             d = getclient(d->ownernum);
             if(!d) return;
         }
-        float ping = d->highresping;
-        draw_textf("%.2f ms", w-10*fonth, h-fonth*3/2, ping);
+        float ping = d->highresping ? d->highresping : (float)d->ping;
+        draw_textf(d->highresping ? "%.2f ms" : "%.0f ms", w-10*fonth, h-fonth*3/2, ping);
         increasedisplaycount();
     }
 
