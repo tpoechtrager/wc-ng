@@ -1185,7 +1185,7 @@ namespace game
             if(!d) return;
         }
         float ping = d->highresping ? d->highresping : (float)d->ping;
-        draw_textf("%.2f ms", w-10*fonth, h-fonth*3/2, ping);
+        draw_textf(d->highresping ? "%.2f ms" : "%.0f ms", w-10*fonth, h-fonth*3/2, ping);
         increasedisplaycount();
     }
 
