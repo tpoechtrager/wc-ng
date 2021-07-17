@@ -25,3 +25,6 @@ wcversion*
 cpucount
 src/lib
 src/include
+src/sauer_client
+src/wc_chat_server
+bin_unix

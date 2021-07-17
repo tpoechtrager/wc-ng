@@ -133,7 +133,7 @@ namespace gamemod
             {
                 if (d == player1)
                 {
-                    str.fmt("%.2f", d->highresping);
+                    str.fmt("%.2f", d->highresping ? d->highresping : (float)d->ping);
                     break;
                 }
             }
