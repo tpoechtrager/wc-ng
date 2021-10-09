@@ -126,24 +126,33 @@ namespace game
     {
         if(cmode != &ctfmode) return;
         putint(p, N_INITFLAGS);
-        if(m_hold)
+        loopk(2) putint(p, ctfmode.scores[k]);
+        putint(p, ctfmode.flags.length());
+        loopv(ctfmode.flags)
         {
-            putint(p, ctfmode.holdspawns.length());
-            loopv(ctfmode.holdspawns)
+            ctfclientmode::flag &f = ctfmode.flags[i];
+            putint(p, f.version);
+            putint(p, f.spawnindex);
+            putint(p, f.owner ? f.owner->clientnum : -1);
+            putint(p, f.vistime ? 1 : 0);
+            if(!f.owner)
             {
-                ctfclientmode::holdspawn &h = ctfmode.holdspawns[i];
-                putint(p, -1);
-                loopk(3) putint(p, int(h.o[k]*DMF));
+                putint(p, f.droptime ? 1 : 0);
+                if(f.droptime)
+                {
+                    putint(p, int(f.droploc.x*DMF));
+                    putint(p, int(f.droploc.y*DMF));
+                    putint(p, int(f.droploc.z*DMF));
+                }
             }
-        }
-        else
-        {
-            putint(p, ctfmode.flags.length());
-            loopv(ctfmode.flags)
+            if(m_hold)
             {
-                ctfclientmode::flag &f = ctfmode.flags[i];
-                putint(p, f.team);
-                loopk(3) putint(p, int(f.spawnloc[k]*DMF));
+                if(!f.team || !f.holdtime) putint(p, -1);
+                else
+                {
+                    putint(p, f.team);
+                    putint(p, f.holdcounter() / 100);
+                }
             }
         }
     }
