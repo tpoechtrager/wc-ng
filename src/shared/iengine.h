@@ -75,9 +75,9 @@ struct selinfo
         extern int worldsize;
         if(grid <= 0 || grid >= worldsize) return false;
         if(o.x >= worldsize || o.y >= worldsize || o.z >= worldsize) return false;
-        if(o.x < 0) { s.x -= (grid - 1 - o.x)/grid; o.x = 0; } 
-        if(o.y < 0) { s.y -= (grid - 1 - o.y)/grid; o.y = 0; } 
-        if(o.z < 0) { s.z -= (grid - 1 - o.z)/grid; o.z = 0; } 
+        if(o.x < 0) { s.x -= (grid - 1 - o.x)/grid; o.x = 0; }
+        if(o.y < 0) { s.y -= (grid - 1 - o.y)/grid; o.y = 0; }
+        if(o.z < 0) { s.z -= (grid - 1 - o.z)/grid; o.z = 0; }
         s.x = clamp(s.x, 0, (worldsize - o.x)/grid);
         s.y = clamp(s.y, 0, (worldsize - o.y)/grid);
         s.z = clamp(s.z, 0, (worldsize - o.z)/grid);
@@ -508,7 +508,7 @@ extern void genprivkey(const char *seed, vector<char> &privstr, vector<char> &pu
 extern bool calcpubkey(const char *privstr, vector<char> &pubstr);
 extern bool hashstring(const char *str, char *result, int maxlen);
 extern bool hashstring(const char *str, const char *salt, string &hash); //NEW
-extern void answerchallenge(const char *privstr, const char *challenge, vector<char> &answerstr);
+extern bool answerchallenge(const char *privstr, const char *challenge, vector<char> &answerstr);
 extern void *parsepubkey(const char *pubstr);
 extern void freepubkey(void *pubkey);
 extern void *genchallenge(void *pubkey, const void *seed, int seedlen, vector<char> &challengestr);
