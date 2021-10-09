@@ -1228,6 +1228,11 @@ namespace game
     }
 
     //NEW
+    void announcewcng()
+    {
+        addmsg(N_SERVCMD, "s", "__WC_NG %d\n", CLIENTVERSION.num());
+    }
+
     static int TICKRATE_MIN = 30;
     static int TICKRATE_DEFAULT = 30;
     static int TICKRATE_MAX = 240;
@@ -1497,6 +1502,7 @@ namespace game
                 fullyconnected = true;      //NEW
                 rebindpingport();           //NEW
                 mod::extinfo::connect();    //NEW
+                announcewcng()              //NEW
                 announcevrtrfeature();      //NEW
                 break;
             }
