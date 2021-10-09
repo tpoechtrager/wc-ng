@@ -1502,7 +1502,7 @@ namespace game
                 fullyconnected = true;      //NEW
                 rebindpingport();           //NEW
                 mod::extinfo::connect();    //NEW
-                announcewcng()              //NEW
+                announcewcng();             //NEW
                 announcevrtrfeature();      //NEW
                 break;
             }
