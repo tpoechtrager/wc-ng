@@ -78,12 +78,12 @@ namespace game
         if(!radarteammates) return;
         float scale = calcradarscale();
         int alive = 0, dead = 0;
-        loopv(players) 
+        loopv(players)
         {
             fpsent *o = players[i];
             if(o != d && o->state == CS_ALIVE && isteam(o->team, d->team))
             {
-                if(!alive++) 
+                if(!alive++)
                 {
                     settexture(isteam(d->team, player1->team) ? "packages/hud/blip_blue_alive.png" : "packages/hud/blip_red_alive.png");
                     gle::defvertex(2);
@@ -94,12 +94,12 @@ namespace game
             }
         }
         if(alive) gle::end();
-        loopv(players) 
+        loopv(players)
         {
             fpsent *o = players[i];
             if(o != d && o->state == CS_DEAD && isteam(o->team, d->team))
             {
-                if(!dead++) 
+                if(!dead++)
                 {
                     settexture(isteam(d->team, player1->team) ? "packages/hud/blip_blue_dead.png" : "packages/hud/blip_red_dead.png");
                     gle::defvertex(2);
@@ -111,7 +111,7 @@ namespace game
         }
         if(dead) gle::end();
     }
-        
+
     #include "capture.h"
     #include "ctf.h"
     #include "collect.h"
@@ -497,7 +497,7 @@ namespace game
     {
         authkey *a = findauthkey(desc);
         int vn = parseplayer(victim);
-        if(a && vn>=0 && vn!=player1->clientnum) 
+        if(a && vn>=0 && vn!=player1->clientnum)
         {
             a->lastauth = lastmillis;
             addmsg(N_AUTHKICK, "rssis", a->desc, a->name, vn, reason);
@@ -558,7 +558,7 @@ namespace game
         }
         string hash = "";
         if(!arg[1] && isdigit(arg[0])) val = parseint(arg);
-        else 
+        else
         {
             if(cn != player1->clientnum) return;
             server::hashpassword(player1->clientnum, sessionid, arg, hash);
@@ -647,7 +647,7 @@ namespace game
     }
     ICOMMAND(mode, "i", (int *val), setmode(*val));
     ICOMMAND(getmode, "", (), intret(gamemode));
-    ICOMMAND(timeremaining, "i", (int *formatted), 
+    ICOMMAND(timeremaining, "i", (int *formatted),
     {
         int val = max(maplimit - lastmillis + 999, 0)/1000;
         if(*formatted)
@@ -843,7 +843,7 @@ namespace game
                 int val = *id->storage.i;
                 string str;
                 if(val < 0)
-                    formatstring(str, "%d", val); 
+                    formatstring(str, "%d", val);
                 else if(id->flags&IDF_HEX && id->maxval==0xFFFFFF)
                     formatstring(str, "0x%.6X (%d, %d, %d)", val, (val>>16)&0xFF, (val>>8)&0xFF, val&0xFF);
                 else
@@ -889,10 +889,10 @@ namespace game
     }
     ICOMMAND(pausegame, "i", (int *val), pausegame(*val > 0));
     ICOMMAND(paused, "iN$", (int *val, int *numargs, ident *id),
-    { 
-        if(*numargs > 0) pausegame(clampvar(id, *val, 0, 1) > 0); 
+    {
+        if(*numargs > 0) pausegame(clampvar(id, *val, 0, 1) > 0);
         else if(*numargs < 0) intret(gamepaused ? 1 : 0);
-        else printvar(id, gamepaused ? 1 : 0); 
+        else printvar(id, gamepaused ? 1 : 0);
     });
 
     bool ispaused() { return gamepaused; }
@@ -1054,8 +1054,8 @@ namespace game
     VARP(teamcolorchat, 0, 1, 1);
     const char *chatcolorname(fpsent *d) { return teamcolorchat ? teamcolorname(d, NULL) : colorname(d); }
 
-    void toserver(char *text) 
-    { 
+    void toserver(char *text)
+    {
         conoutf(CON_CHAT, "%s:\f0 %s", chatcolorname(player1), text);
         extern void sendmessages();                     //NEW
         if(mod::bouncerserverhost.host) sendmessages(); //NEW
@@ -1230,7 +1230,8 @@ namespace game
     //NEW
     void announcewcng()
     {
-        addmsg(N_SERVCMD, "s", "__WC_NG %d\n", CLIENTVERSION.num());
+        defformatstring(wcng, "__WC_NG %d", CLIENTVERSION.num());
+        addmsg(N_SERVCMD, "rs", wcng);
     }
 
     static int TICKRATE_MIN = 30;
@@ -1249,7 +1250,7 @@ namespace game
 
     void announcevrtrfeature()
     {
-        addmsg(N_SERVCMD, "s", "__VARIABLE_TICKRATE_SUPPORTED\n");
+        addmsg(N_SERVCMD, "rs", "__VARIABLE_TICKRATE_SUPPORTED");
     }
     //NEW END
 
@@ -1533,7 +1534,7 @@ namespace game
                 else conoutf("gamespeed is %d", val);
                 break;
             }
-                
+
             case N_CLIENT:
             {
                 int cn = getint(p), len = getuint(p);
@@ -2027,7 +2028,7 @@ namespace game
                 player1->highresping = (player1->highresping*5.0f+ping)/6.0f;
                 player1->ping = (player1->ping*5+ping)/6;
                 addmsg(N_CLIENTPING, "i", player1->ping);
-                if(mod::demorecorder::demorecord) 
+                if(mod::demorecorder::demorecord)
                     mod::demorecorder::self::ping(player1->ping);
                 //NEW END
                 //addmsg(N_CLIENTPING, "i", player1->ping = (player1->ping*5+lastmillis-getint(p))/6);
@@ -2048,12 +2049,12 @@ namespace game
             case N_SERVMSG:
             {
                 //NEW
-                bool c = (mod::demorecorder::clientdemoskipservmsg || 
-                          mod::demorecorder::clientdemoskipservcmds || 
+                bool c = (mod::demorecorder::clientdemoskipservmsg ||
+                          mod::demorecorder::clientdemoskipservcmds ||
                           mod::demorecorder::servmsgcmdignoremillis);
 
                 DEMORECORDER_SKIP_PACKET_FUNC(c, {
-                    if(mod::demorecorder::servmsgcmdignoremillis && 
+                    if(mod::demorecorder::servmsgcmdignoremillis &&
                        totalmillis > mod::demorecorder::servmsgcmdignoremillis) mod::demorecorder::servmsgcmdignoremillis = 0;
                     cond = (mod::demorecorder::servmsgcmdignoremillis || mod::demorecorder::servmsgcmdignoremillis);
                 });
