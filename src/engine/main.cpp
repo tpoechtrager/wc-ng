@@ -1054,25 +1054,63 @@ static void maxfpschanged()
 {
     extern int maxfps;
     if(!maxfps) ++maxfps;
-    else if(maxfps < 0)
-    {
-        static const char *vendor = (const char *)glGetString(GL_VENDOR);
-        if(!strstr(vendor, "NVIDIA"))
-        {
-            mod::erroroutf_r("'/maxfps -1' is limited to nvidia graphic cards for now");
-            conoutf("setting maxfps to 1000 instead");
-            maxfps = 1000;
-        }
-    }
 }
 //NEW END
  
 VAR(menufps, 0, 60, 1000);
 VARFP(maxfps, -1, 200, 1000, maxfpschanged()); //NEW VARFP instead of VARP   -1 as MINVAL to disable the fps limiter
 
+//NEW
+MODVARP(fpslimiter, 0, 1, 4);
+MODVARP(fpslimiterdebug, 0, 0, 1);
+
+static void busywait(ullong us)
+{
+    ullong end = mod::getmicroseconds() + us;
+
+#ifdef _WIN32
+#define sched_yield() Sleep(0)
+#endif
+
+    while (mod::getmicroseconds() < end)
+        sched_yield();
+}
+//NEW END
+
 void limitfps(int &millis, int curmillis)
 {
-    if(maxfps < 0 && !mainmenu && !minimized) return; //NEW
+    //NEW
+    if(maxfps < 0 && !mainmenu && !minimized) return;
+    if (fpslimiter != 1 && maxfps >= 0)
+    {
+        ullong now = mod::getmicroseconds();
+        static ullong lastframe = now;
+        ullong diff = now - lastframe;
+        ullong framebudget = 1000000/maxfps;
+        if(diff < framebudget)
+        {
+            ullong usleft = framebudget - diff;
+            if(fpslimiterdebug) conoutf("frame time: %.2f ms; sleep: %.2f", diff / 1000.f, usleft / 1000.f);
+            if(fpslimiter == 2)
+            {
+                usleep(usleft);
+            }
+            else if(fpslimiter == 3)
+            {
+                ullong end = now + usleft;
+                usleep(usleft);
+                usleft = end - mod::getmicroseconds();
+                if(usleft > 0) busywait(usleft);
+            }
+            else if(fpslimiter == 4)
+            {
+                busywait(usleft);
+            }
+        }
+        lastframe = mod::getmicroseconds();
+        return;
+    }
+    //NEW END
     int limit = (mainmenu || minimized) && menufps ? (maxfps ? min(maxfps, menufps) : menufps) : maxfps;
     if(!limit) return;
     static int fpserror = 0;
