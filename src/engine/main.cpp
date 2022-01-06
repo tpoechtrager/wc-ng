@@ -1058,63 +1058,76 @@ static void maxfpschanged()
 //NEW END
  
 VAR(menufps, 0, 60, 1000);
-VARFP(maxfps, -1, 200, 1000, maxfpschanged()); //NEW VARFP instead of VARP   -1 as MINVAL to disable the fps limiter
+VARFP(maxfps, -1, 200, 10000, maxfpschanged()); //NEW VARFP instead of VARP   -1 as MINVAL to disable the fps limiter
 
 //NEW
-MODVARP(fpslimiter, 0, 1, 4);
+MODVARP(fpslimiter, 1, 1, 5);
 MODVARP(fpslimiterdebug, 0, 0, 1);
 
 #ifdef _WIN32
 #define sched_yield() Sleep(0)
-#define usleep(us) Sleep(us / 1000)
 #endif
 
-static void busywait(ullong us)
+static void busywait(ullong ns)
 {
-    ullong end = mod::getmicroseconds() + us;
-    while(mod::getmicroseconds() < end)
+    ullong end = mod::getnanoseconds() + ns;
+    while(mod::getnanoseconds() < end)
         sched_yield();
+}
+
+static void nsleep(ullong ns)
+{
+#ifdef _WIN32
+    Sleep(ns / 1000000LLU);
+#else
+    struct timespec ts;
+    ts.tv_sec = ns/1000000000LLU;
+    ts.tv_nsec = ns%1000000000LLU;
+    nanosleep(&ts, NULL);
+#endif
 }
 //NEW END
 
 void limitfps(int &millis, int curmillis)
 {
     //NEW
+    int fpslimit = (fpslimiter==1 ? (maxfps>1000 ? 1000 : maxfps) : maxfps);
     if(maxfps < 0 && !mainmenu && !minimized) return;
-    if (fpslimiter != 1 && maxfps >= 0)
+    if (fpslimiter != 1 && fpslimit >= 0)
     {
-        ullong now = mod::getmicroseconds();
+        ullong now = mod::getnanoseconds();
         static ullong lastframe = now;
         ullong diff = now - lastframe;
-        ullong framebudget = 1000000/maxfps;
+        ullong framebudget = 1000000000LLU/fpslimit;
         if(diff < framebudget)
         {
-            ullong usleft = framebudget - diff;
-            if(fpslimiterdebug) conoutf("frame time: %.2f ms; sleep: %.2f", diff / 1000.f, usleft / 1000.f);
+            ullong nsleft = framebudget - diff;
+            if(fpslimiterdebug) conoutf("frame time: %.6f ms; sleep: %.6f", diff / 1000000.f, nsleft / 1000000.f);
             if(fpslimiter == 2)
             {
 #ifdef _WIN32
-                conoutf("fpslimiter 2 is not available on Windows. Use fpslimiter 3 or 4 instead.");
+                conoutf("fpslimiter 2 is not available/inaccurate on Windows. Use fpslimiter 3 or 4 instead.");
 #endif
-                usleep(usleft);
+                nsleep(nsleft);
             }
-            else if(fpslimiter == 3)
+            else if(fpslimiter == 3 || fpslimiter == 4)
             {
-                ullong end = now + usleft;
-                usleep(usleft);
-                usleft = end - mod::getmicroseconds();
-                if(usleft > 0) busywait(usleft);
+                ullong end = now + nsleft;
+                if(fpslimit==4 && nsleft>100000LLU) nsleft -= 100000LLU;
+                nsleep(nsleft);
+                nsleft = end - mod::getnanoseconds();
+                if(nsleft > 0) busywait(nsleft);
             }
-            else if(fpslimiter == 4)
+            else if(fpslimiter == 5)
             {
-                busywait(usleft);
+                busywait(nsleft);
             }
         }
-        lastframe = mod::getmicroseconds();
+        lastframe = mod::getnanoseconds();
         return;
     }
     //NEW END
-    int limit = (mainmenu || minimized) && menufps ? (maxfps ? min(maxfps, menufps) : menufps) : maxfps;
+    int limit = (mainmenu || minimized) && menufps ? (maxfps ? min(fpslimit, menufps) : menufps) : fpslimit; //NEW maxfps -> fpslimit
     if(!limit) return;
     static int fpserror = 0;
     int delay = 1000/limit - (millis-curmillis);
@@ -1240,21 +1253,18 @@ void resetfpshistory()
 }
 
 static int rfps = 0; //NEW
+static vector<ullong> ffps(10000); //NEW
 
 void updatefpshistory(int millis)
 {
     //NEW
-    if(maxfps < 0)
-    {
-        static int last = 0, fps = 0;
-        if(totalmillis-last >= 1000)
-        {
-            rfps = fps; fps = 0;
-            last = totalmillis;
-        }
-        else ++fps;
-        return;
-    }
+    ullong now = mod::getnanoseconds();
+    ffps.add(now);
+    int remove = 0;
+    loopv(ffps) if(now - ffps[i] > 1000000000) remove++; else break;
+    ffps.remove(0, remove);
+    rfps = ffps.length();
+    return;
     //NEW END
     fpshistory[fpspos++] = max(1, min(1000, millis));
     if(fpspos>=MAXFPSHISTORY) fpspos = 0;
@@ -1263,12 +1273,9 @@ void updatefpshistory(int millis)
 void getfps(int &fps, int &bestdiff, int &worstdiff)
 {
     //NEW
-    if(maxfps < 0)
-    {
-        fps = rfps;
-        bestdiff = worstdiff = 0;
-        if(fps) return;
-    }
+    fps = rfps;
+    bestdiff = worstdiff = 0;
+    return;
     //NEW END
     int total = fpshistory[MAXFPSHISTORY-1], best = total, worst = total;
     loopi(MAXFPSHISTORY-1)
