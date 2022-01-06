@@ -1260,7 +1260,7 @@ namespace game
         }
     }
 
-    MODHVARP(crosshaircolor, 0, 0x0, 0x010101); //NEW
+    MODHVARP(crosshaircolor, 0x0, 0x010101, 0xFFFFFF); //NEW
 
     int selectcrosshair(vec &color)
     {
@@ -1281,7 +1281,7 @@ namespace game
             }
         }
 
-        if(crosshaircolor!=0x010101) color = vec((crosshaircolor>>16)&0xFF, (crosshaircolor>>8)&0xFF, crosshaircolor&0xFF);
+        if(crosshaircolor!=0x010101) color = vec((crosshaircolor>>16)&0xFF, (crosshaircolor>>8)&0xFF, crosshaircolor&0xFF); //NEW
 
         if(crosshair!=1 && !editmode && !m_insta)
         {
