@@ -1260,6 +1260,8 @@ namespace game
         }
     }
 
+    MODHVARP(crosshaircolor, 0, 0x0, 0x010101); //NEW
+
     int selectcrosshair(vec &color)
     {
         fpsent *d = hudplayer();
@@ -1278,6 +1280,8 @@ namespace game
                 color = vec(0, 0, 1);
             }
         }
+
+        if(crosshaircolor!=0x010101) color = vec((crosshaircolor>>16)&0xFF, (crosshaircolor>>8)&0xFF, crosshaircolor&0xFF);
 
         if(crosshair!=1 && !editmode && !m_insta)
         {
