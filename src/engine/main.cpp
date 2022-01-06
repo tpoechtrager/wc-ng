@@ -1064,15 +1064,15 @@ VARFP(maxfps, -1, 200, 1000, maxfpschanged()); //NEW VARFP instead of VARP   -1 
 MODVARP(fpslimiter, 0, 1, 4);
 MODVARP(fpslimiterdebug, 0, 0, 1);
 
+#ifdef _WIN32
+#define sched_yield() Sleep(0)
+#define usleep(us) Sleep(us / 1000)
+#endif
+
 static void busywait(ullong us)
 {
     ullong end = mod::getmicroseconds() + us;
-
-#ifdef _WIN32
-#define sched_yield() Sleep(0)
-#endif
-
-    while (mod::getmicroseconds() < end)
+    while(mod::getmicroseconds() < end)
         sched_yield();
 }
 //NEW END
@@ -1093,6 +1093,9 @@ void limitfps(int &millis, int curmillis)
             if(fpslimiterdebug) conoutf("frame time: %.2f ms; sleep: %.2f", diff / 1000.f, usleft / 1000.f);
             if(fpslimiter == 2)
             {
+#ifdef _WIN32
+                conoutf("fpslimiter 2 is not available on Windows. Use fpslimiter 3 or 4 instead.");
+#endif
                 usleep(usleft);
             }
             else if(fpslimiter == 3)
