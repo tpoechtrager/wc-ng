@@ -1101,19 +1101,19 @@ void limitfps(int &millis, int curmillis)
         ullong framebudget = 1000000000LLU/fpslimit;
         if(diff < framebudget)
         {
-            ullong nsleft = framebudget - diff;
-            if(fpslimiterdebug) conoutf("frame time: %.6f ms; sleep: %.6f", diff / 1000000.f, nsleft / 1000000.f);
+            llong nsleft = framebudget - diff;
+            ullong end = now + nsleft;
+            if(fpslimiterdebug) conoutf("frame time: %.6f ms; sleep: %.6f ms", diff / 1000000.f, nsleft / 1000000.f);
             if(fpslimiter == 2)
             {
 #ifdef _WIN32
-                conoutf("fpslimiter 2 is not available/inaccurate on Windows. Use fpslimiter 3 or 4 instead.");
+                conoutf("fpslimiter 2 is not available/inaccurate on Windows. Use fpslimiter >= 3 instead.");
 #endif
                 nsleep(nsleft);
             }
             else if(fpslimiter == 3 || fpslimiter == 4)
             {
-                ullong end = now + nsleft;
-                if(fpslimit==4 && nsleft>100000LLU) nsleft -= 100000LLU;
+                if(fpslimiter==4 && nsleft>100000LL) nsleft -= 100000LL;
                 nsleep(nsleft);
                 nsleft = end - mod::getnanoseconds();
                 if(nsleft > 0) busywait(nsleft);
@@ -1121,6 +1121,11 @@ void limitfps(int &millis, int curmillis)
             else if(fpslimiter == 5)
             {
                 busywait(nsleft);
+            }
+            if(fpslimiterdebug)
+            {
+                llong sleepdeviation = end - mod::getnanoseconds();
+                conoutf("sleep deviation: %.6f ms", sleepdeviation / 1000000.f);
             }
         }
         lastframe = mod::getnanoseconds();
@@ -1261,7 +1266,7 @@ void updatefpshistory(int millis)
     ullong now = mod::getnanoseconds();
     ffps.add(now);
     int remove = 0;
-    loopv(ffps) if(now - ffps[i] > 1000000000) remove++; else break;
+    loopv(ffps) if(now - ffps[i] > 1000000000LLU) remove++; else break;
     ffps.remove(0, remove);
     rfps = ffps.length();
     return;
