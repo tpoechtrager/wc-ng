@@ -1364,7 +1364,7 @@ namespace game
     MODVARP(filterservermastermode, MM_START-1, MM_START-1, int(sizeofarray(mastermodenames))+MM_START);
     //NEW END
 
-    bool serverinfoentry(g3d_gui *g, bool &shown, int i, const char *name, int port, const char *sdesc, const char *map, int ping, const vector<int> &attr, int np, int servermod, const char *country, const char *countrycode) //NEW shown, servermod, country, countrycode
+    bool serverinfoentry(g3d_gui *g, bool &shown, int i, const char *name, int port, const char *sdesc, const char *map, int ping, const vector<int> &attr, int np, int servermod, const char *country, const char *countrycode, int speccount) //NEW shown, servermod, country, countrycode, speccount
     {
         //NEW
         shown = false;
@@ -1446,7 +1446,21 @@ namespace game
             case 1:
                 if(attr.length()>=4)
                 {
-                    if(g->buttonf(np >= attr[3] ? "\f3%d/%d " : "%d/%d ", 0xFFFFDD, NULL, np, attr[3])&G3D_UP) return true;
+                    //NEW
+                    const char *a, *b;
+                    if(speccount > 0)
+                    {
+                        a = "\f3%d/%d (%ds) ";
+                        b = "%d/%d (%ds) ";
+                    }
+                    else
+                    {
+                        a = "\f3%d/%d ";
+                        b = "%d/%d ";
+                    }
+                    if(g->buttonf(np >= attr[3] ? a : b, 0xFFFFDD, NULL, np, attr[3], speccount)&G3D_UP) return true;
+                    //NEW END
+                    //if(g->buttonf(np >= attr[3] ? "\f3%d/%d " : "%d/%d ", 0xFFFFDD, NULL, np, attr[3])&G3D_UP) return true; //NEW commented out
                 }
                 else if(g->buttonf("%d ", 0xFFFFDD, NULL, np)&G3D_UP) return true;
                 break;

@@ -108,7 +108,7 @@ namespace game
     extern int maxsoundradius(int n);
     extern bool serverinfostartcolumn(g3d_gui *g, int i);
     extern void serverinfoendcolumn(g3d_gui *g, int i);
-    extern bool serverinfoentry(g3d_gui *g, bool &shown, int i, const char *name, int port, const char *desc, const char *map, int ping, const vector<int> &attr, int np, int servermod, const char *country, const char *countrycode); //NEW shown, servermod, country, countrycode
+    extern bool serverinfoentry(g3d_gui *g, bool &shown, int i, const char *name, int port, const char *desc, const char *map, int ping, const vector<int> &attr, int np, int servermod, const char *country, const char *countrycode, int speccount); //NEW shown, servermod, country, countrycode, speccount
     extern bool needminimap();
 } 
  

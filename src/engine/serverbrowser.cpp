@@ -25,6 +25,7 @@ SDL_cond *querycond, *resultcond;
 #define RESOLVERLIMIT 3000
 
 MODVARP(extinfoserverbrowser, 0, 1, 2); //NEW
+MODVARP(realplayercount, 0, 0, 1);
 bool isextinfoconnect = false; //NEW
 
 int resolverloop(void * data)
@@ -654,7 +655,8 @@ void checkpings()
         }
         int rtt = clamp(totalmillis - millis, 0, min(servpingdecay, totalmillis));
         if(millis >= lastreset && rtt < servpingdecay) si->addping(rtt, millis);
-        si->numplayers = getint(p);
+        int numplayers = getint(p); //NEW numplayers variable
+        if(!realplayercount || si->players.empty()) si->numplayers = numplayers; //NEW if
         int numattr = getint(p);
         si->attr.setsize(0);
         loopj(numattr) { int attr = getint(p); if(p.overread()) break; si->attr.add(attr); }
@@ -665,7 +667,7 @@ void checkpings()
         //NEW
         extern serverinfo *selectedserver;
         bool isselectedserver = (selectedserver == si);
-        if(isextinfoconnect || ((extinfoserverbrowser && (isselectedserver || extinfoserverbrowser == 2)) && (si->numplayers > 0 || (!si->players.empty() && si->numplayers <= 0))))
+        if(isextinfoconnect || ((extinfoserverbrowser && (isselectedserver || extinfoserverbrowser == 2 || realplayercount)) && (numplayers > 0 || (!si->players.empty() && numplayers <= 0))))
         {
             addextinfocallback();
             if (isextinfoconnect || isselectedserver) mod::extinfo::requestteaminfo(si->address);
@@ -699,7 +701,15 @@ void extinforecv(int type, void *p, ENetAddress &addr)
             if (index < 0) break;
             si->playerstmp.add(ep);
             si->playersfollowing.remove(index);
-            if (si->playersfollowing.empty()) si->players = si->playerstmp;
+            if (si->playersfollowing.empty())
+            {
+                si->players = si->playerstmp;
+                if (realplayercount  && !si->players.empty())
+                {
+                    si->numplayers = 0;
+                    loopv(si->players) if (si->players[i].ep.state != CS_SPECTATOR && si->players[i].ep.cn < 128) si->numplayers++;
+                }
+            }
             break;
         }
         case EXT_TEAMSCORE:
@@ -778,8 +788,12 @@ const char *showservers(g3d_gui *cgui, uint *header, int pagemin, int pagemax)
                 const char *sdesc = si.sdesc;
                 if(si.address.host == ENET_HOST_ANY) sdesc = "[unknown host]";
                 else if(si.ping == serverinfo::WAITING) sdesc = "[waiting for response]";
-                bool shown; //NEW
-                if(game::serverinfoentry(cgui, shown, i, si.name, si.port, sdesc, si.map, sdesc == si.sdesc ? si.ping : (float)-1, si.attr, si.numplayers, si.servermod, si.country, si.countrycode)) //NEW shown  si.servermod, si.country, si.countrycode
+                //NEW
+                bool shown;
+                int speccount = 0;
+                if(realplayercount && !si.players.empty()) loopv(si.players) if(si.players[i].ep.state == CS_SPECTATOR) speccount++;
+                //NEW END
+                if(game::serverinfoentry(cgui, shown, i, si.name, si.port, sdesc, si.map, sdesc == si.sdesc ? si.ping : (float)-1, si.attr, si.numplayers, si.servermod, si.country, si.countrycode, speccount)) //NEW shown  si.servermod, si.country, si.countrycode, speccount
                     sc = &si;
                 if(!shown) notshown++; //NEW
             }
