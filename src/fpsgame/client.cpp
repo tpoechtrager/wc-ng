@@ -8,6 +8,8 @@ namespace game
     VARP(radarteammates, 0, 1, 1);
     FVARP(minimapalpha, 0, 1, 1);
     //NEW
+    MODVARP(interimguncyclingsound, 0, 1, 1); //NEW
+
     int demogamespeedold;
     MODVARFP(demogamespeed, 0, 0, 1,
     {
@@ -1834,7 +1836,8 @@ namespace game
                 if(!d) return;
                 int gun = getint(p);
                 d->gunselect = clamp(gun, int(GUN_FIST), int(GUN_PISTOL));
-                playsound(S_WEAPLOAD, &d->o);
+                if(interimguncyclingsound || (!intermission && !gamepaused)) playsound(S_WEAPLOAD, &d->o); //NEW if
+                else stopsounds(); //NEW
                 break;
             }
 
