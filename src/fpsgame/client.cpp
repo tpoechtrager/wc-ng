@@ -1025,6 +1025,8 @@ namespace game
         player1->lifesequence = 0;
         player1->state = CS_ALIVE;
         player1->privilege = PRIV_NONE;
+        player1->ping = 0; //NEW
+        player1->highresping = 0.0f; //NEW
         sendcrc = senditemstoserver = false;
         demoplayback = false;
         demohasextinfo = false; //NEW
