@@ -2079,6 +2079,8 @@ VARP(crosshairsize, 0, 15, 50);
 VARP(cursorsize, 0, 30, 50);
 VARP(crosshairfx, 0, 1, 1);
 VARP(crosshaircolors, 0, 1, 1);
+MODHVARP(crosshaircolor, 0x0, 0xFFFFFF, 0xFFFFFF); //NEW
+
 
 #define MAXCROSSHAIRS 4
 static Texture *crosshairs[MAXCROSSHAIRS] = { NULL, NULL, NULL, NULL };
@@ -2142,6 +2144,7 @@ void drawcrosshair(int w, int h)
         if(index < 0) return;
         if(!crosshairfx) index = 0;
         if(!crosshairfx || !crosshaircolors) color = vec(1, 1, 1);
+        if(crosshaircolors && crosshaircolor!=0x010101) color = vec::hexcolor(crosshaircolor); //NEW crosshaircolor!=0x010101 is kept for a previous wrong default value
         crosshair = crosshairs[index];
         if(!crosshair)
         {
