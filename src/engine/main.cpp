@@ -1057,7 +1057,7 @@ static void maxfpschanged()
 }
 //NEW END
  
-VAR(menufps, 0, 60, 1000);
+VARP(menufps, 0, 60, 1000);
 VARFP(maxfps, -1, 200, 10000, maxfpschanged()); //NEW VARFP instead of VARP   -1 as MINVAL to disable the fps limiter
 
 //NEW
