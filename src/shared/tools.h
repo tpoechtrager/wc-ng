@@ -253,6 +253,11 @@ template<size_t N> inline bool matchstring(const char *s, size_t len, const char
     return len == N-1 && !memcmp(s, d, N-1);
 }
 
+inline bool matchstring(const char *s, size_t len, const char *d, size_t len2)
+{
+    return len == len2 && !memcmp(s, d, len);
+}
+
 inline char *newstring(size_t l)                { return new char[l+1]; }
 inline char *newstring(const char *s, size_t l) { return copystring(newstring(l), s, l+1); }
 inline char *newstring(const char *s)           { size_t l = strlen(s); char *d = newstring(l); memcpy(d, s, l+1); return d; }
@@ -1446,6 +1451,12 @@ static inline uchar cubeupper(uchar c)
 }
 extern size_t decodeutf8(uchar *dst, size_t dstlen, const uchar *src, size_t srclen, size_t *carry = NULL);
 extern size_t encodeutf8(uchar *dstbuf, size_t dstlen, const uchar *srcbuf, size_t srclen, size_t *carry = NULL);
+extern int cubecasecmp(const char *s1, const char *s2, int n = INT_MAX);
+static inline bool cubecaseequal(const char *s1, const char *s2, int n = INT_MAX) { return !cubecasecmp(s1, s2, n); }
+extern char *cubecasefind(const char *haystack, const char *needle);
+
+extern string homedir;
+
 
 //NEW
 #if !defined(PLUGIN) && !defined(STANDALONE)

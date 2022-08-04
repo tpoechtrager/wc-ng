@@ -206,7 +206,7 @@ ifneq (,$(findstring mingw,$(PLATFORM)))
   SERVER_INCLUDES= -DSTANDALONE $(INCLUDES) -Ilib/include -Ilib/include/SDL2
 
   SDL_DEP_LIBS= -lgdi32 -ldxguid -lole32 -lwinmm
-  SDL_DEP_LIBS+= -limm32 -lversion -loleaut32
+  SDL_DEP_LIBS+= -limm32 -lversion -loleaut32 -lsetupapi
 
   SERVER_LIBS= $(SUBSYSTEM) -L$(WINLIB) -Wl,-Bstatic -lz -Wl,-Bdynamic -lws2_32 -lwinmm
   CHATSERV_LIBS+= -L$(WINLIB)/openssl -Wl,-Bstatic -lssl -lcrypto -lcrypt32 -Wl,-Bdynamic
