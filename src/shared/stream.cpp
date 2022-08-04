@@ -2,6 +2,7 @@
 
 ///////////////////////////// console ////////////////////////
 
+#ifndef PLUGIN //NEW
 void conoutf(const char *fmt, ...)
 {
     va_list args;
@@ -25,6 +26,7 @@ void conoutf(int type, int tag, const char *fmt, ...)
     conoutfv(type | ((tag << CON_TAG_SHIFT) & CON_TAG_MASK), fmt, args);
     va_end(args);
 }
+#endif
 
 ///////////////////////// character conversion ///////////////
 
