@@ -124,6 +124,20 @@ namespace game
     collectclientmode collectmode;
 
     //NEW
+    // checks if a player is carrying the flag
+    // 0 => no flag; 1 => team good or neutral (m_hold); 2 => team evil
+    int hasflag(fpsent *d) {
+        if(!m_ctf) return 0;
+        loopv(ctfmode.flags) {
+            if(ctfmode.flags[i].owner == d) {
+                return m_hold ? 1 : ctfmode.flags[i].team;
+            }
+        }
+        return 0;
+    }
+    //NEW END
+
+    //NEW
     void demorecorder_initflags(ucharbuf &p)
     {
         if(cmode != &ctfmode) return;

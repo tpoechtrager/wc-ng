@@ -27,6 +27,7 @@ namespace game
     MODVARP(showacc, 0, 1, 1);
     MODVARP(showtks, 0, 0, 1);
     MODVARP(showcountry, 0, 3, 5);
+    MODVARP(showctfflagicons, 0, 1, 1);
     MODVARP(showserveruptime, 0, 0, 1);
     MODVARP(showservermod, 0, 0, 1);
     MODVARP(oldscoreboard, 0, 0, 1);
@@ -506,6 +507,30 @@ namespace game
             }
 
             if(oldscoreboard) goto next; //NEW
+
+            //NEW
+            // show flag icon next to player's name
+            if(m_ctf && showctfflagicons) {
+                g.pushlist();
+                g.text("", 0x000000);
+                loopscoregroup(o, {
+                    // check if the player is carrying a flag
+                    int flagteam = hasflag(o);
+                    if(flagteam > 0) { // has flag
+                        // choose the correct icon
+                        const char *icon =
+                            m_hold ? "../hud/blip_neutral_flag.png"
+                            : isteam(player1->team, flagteam == 1 ? "good" : "evil") ? "../hud/blip_blue_flag.png" : "../hud/blip_red_flag.png";
+                        
+                        g.text("", 0x000000, icon);
+                    } else {
+                        g.text("", 0x000000);
+                    }
+                });
+                g.poplist();
+            }
+            //NEW END
+
             name:; //NEW
 
             if(oldscoreboard) g.space(6); //NEW
