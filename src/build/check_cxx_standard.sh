@@ -6,7 +6,7 @@ COMPILER=$1
 check()
 {
     error=0
-    case `echo "void*p=nullptr;auto x=[](){};" | $COMPILER -xc++ -std=$1 -c -S -o- - 2>&1 1>/dev/null` in
+    case `echo "void*p=nullptr;auto x=[](){};" | $COMPILER -xc++ -std=$1 -S -o- - 2>&1 1>/dev/null` in
         *warning*|*error*|*invalid* ) error=1 ;;
     esac
     test $? -eq 0 && test $error -eq 0 && echo "-std=$1" && exit 0
