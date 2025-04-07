@@ -67,7 +67,7 @@ namespace demorecorder
         strftime(tmp, MAXSTRLEN, "%Y.%m.%d_%H_%M_%S_", localtime(&t));
         file = tmp;
 
-        filtertext(tmp, servinfo);
+        filtertext(tmp, servdesc);
         fixdemofilestring(tmp);
 
         {
@@ -157,9 +157,9 @@ namespace demorecorder
         if (!demorecord || demoid != id)
             goto error;
 
-        string servinfotmp;
-        copystring(servinfotmp, servinfo);
-        filtertext(servinfotmp, servinfo);
+        string serverdesctmp;
+        copystring(serverdesctmp, servdesc);
+        filtertext(serverdesctmp, servdesc);
 
         string serverip;
 
@@ -171,7 +171,7 @@ namespace demorecorder
         putint(p, N_SERVMSG);
 
         defformatstring(info, "demo recorded on %s (%s:%u)",
-                              *servinfotmp ? servinfotmp : "<no description>", serverip,
+                              *serverdesctmp ? serverdesctmp : "<no description>", serverip,
                               curpeer ? curpeer->address.port : 0);
 
         sendstring(info, p);
@@ -635,7 +635,7 @@ namespace demorecorder
 
             putint(p, curpeer ? (int)curpeer->address.host : -1);
             putint(p, curpeer ? (int)curpeer->address.port : -1);
-            sendstring(::servinfo, p);
+            sendstring(::servdesc, p);
             putint(p, gamemode);
             sendstring(getclientmap(), p);
             putint(p, 0);
@@ -657,8 +657,8 @@ namespace demorecorder
             demoinfo->host = (uint)getint(p);
             demoinfo->port = (uint)getint(p);
 
-            getstring(demoinfo->servinfo, p, sizeof(demoinfo->servinfo));
-            filtertext(demoinfo->servinfo, demoinfo->servinfo);
+            getstring(demoinfo->servdesc, p, sizeof(demoinfo->servdesc));
+            filtertext(demoinfo->servdesc, demoinfo->servdesc);
 
             demoinfo->mode = getint(p);
 
@@ -1042,7 +1042,7 @@ namespace searchdemo
                     {
                         strtool sname(buf, sizeof(buf));
 
-                        sname = pd->demoinfo->servinfo;
+                        sname = pd->demoinfo->servdesc;
                         sname.lowerstring();
 
                         if (!sname.find(pd->servername))
@@ -1689,7 +1689,7 @@ namespace searchdemo
 
                     strftime(timebuf, sizeof(string), "%x %X", tm);
 
-                    if (!*di->servinfo)
+                    if (!*di->servdesc)
                     {
                         if (!di->host)
                             goto nohost;
@@ -1708,7 +1708,7 @@ namespace searchdemo
                     else
                     {
                         nohost:;
-                        copystring(server, di->servinfo);
+                        copystring(server, di->servdesc);
                     }
 
                     string modename;

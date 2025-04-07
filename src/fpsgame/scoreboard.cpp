@@ -332,7 +332,7 @@ namespace game
             //NEW
             if(demohasservertitle)
             {
-                if(demoplayback) g.titlef("%.25s", scoreboardtextcolorhead, NULL, servinfo);
+                if(demoplayback) g.titlef("%.25s", scoreboardtextcolorhead, NULL, servdesc);
             }
             else
             //NEW END
@@ -340,7 +340,7 @@ namespace game
                 string hostname;
                 if(enet_address_get_host_ip(address, hostname, sizeof(hostname)) >= 0)
                 {
-                    if(servinfo[0]) g.titlef("%.25s", scoreboardtextcolorhead, NULL, servinfo);
+                    if(servdesc[0]) g.titlef("%.25s", scoreboardtextcolorhead, NULL, servdesc);
                     else g.titlef("%s:%d", scoreboardtextcolorhead, NULL, hostname, address->port);
                 }
             }

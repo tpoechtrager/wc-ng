@@ -219,7 +219,7 @@ namespace game
     time_t gametimestamp = time(NULL);     //NEW
     int mapstart = 0;                      //NEW
     ENetAddress demoserver;                //NEW
-    string servinfo = "", servauth = "", connectpass = "";
+    string servdesc = "", servauth = "", connectpass = "";
 
     VARP(deadpush, 1, 2, 20);
 
@@ -613,6 +613,7 @@ namespace game
     ICOMMAND(sauth, "", (), if(servauth[0]) tryauth(servauth));
     ICOMMAND(dauth, "s", (char *desc), if(desc[0]) tryauth(desc));
 
+    ICOMMAND(getservdesc, "", (), result(servdesc));
     ICOMMAND(getservauth, "", (), result(servauth));
 
     void togglespectator(int val, const char *who)
@@ -1046,6 +1047,8 @@ namespace game
         if(remote) stopfollowing();
         ignores.setsize(0);
         connected = remote = false;
+        servdesc[0] = '\0';
+        servauth[0] = '\0';
         player1->clientnum = -1;
         sessionid = 0;
         mastermode = MM_OPEN;
@@ -1513,7 +1516,7 @@ namespace game
                 sessionid = getint(p);
                 player1->clientnum = mycn;      // we are now connected
                 if(getint(p) > 0) conoutf("this server is password protected");
-                getstring(servinfo, p, sizeof(servinfo));
+                getstring(servdesc, p, sizeof(servdesc));
                 getstring(servauth, p, sizeof(servauth));
                 sendintro();
                 if(!wasconnected && curpeer) mod::chat::servconnect(); //NEW
@@ -2444,7 +2447,7 @@ namespace game
                 if (gametimestamp < 0)
                     gametimestamp = 0;
 
-                if (!*di.servinfo)
+                if (!*di.servdesc)
                 {
                     string hostname;
 
@@ -2453,12 +2456,12 @@ namespace game
                     address.port = di.port;
 
                     if (enet_address_get_host_ip(&address, hostname, sizeof(hostname)) >= 0)
-                        formatstring(game::servinfo, "%s:%d", hostname, di.port);
+                        formatstring(game::servdesc, "%s:%d", hostname, di.port);
                     else
-                        copystring(game::servinfo, "-");
+                        copystring(game::servdesc, "-");
                 }
                 else
-                    copystring(game::servinfo, di.servinfo);
+                    copystring(game::servdesc, di.servdesc);
 
                 demoserver.host = di.host;
                 demoserver.port = di.port;

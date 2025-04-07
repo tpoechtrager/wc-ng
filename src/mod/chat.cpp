@@ -620,7 +620,7 @@ void servconnect(bool connect)
             putint(p, curpeer->address.port);
             putint(p, (totalmillis-connmillis)/1000);
             putint(p, game::player1->clientnum);
-            sendstring(game::servinfo, p);
+            sendstring(game::servdesc, p);
         }
         send(p);
     }

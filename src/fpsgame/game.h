@@ -797,7 +797,7 @@ namespace game
     extern int mapstart; //NEW
     extern bool connected, remote, demoplayback;
     extern ENetAddress demoserver; //NEW
-    extern string servinfo;
+    extern string servdesc;
     extern vector<uchar> messages;
 
     extern int parseplayer(const char *arg);

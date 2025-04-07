@@ -2210,6 +2210,7 @@ void texsmooth(int *id, int *angle)
     s.smooth = smoothangle(*id, *angle);
 }
 COMMAND(texsmooth, "ib");
+ICOMMAND(getvsmooth, "i", (int *tex), intret(lookupvslot(*tex, false).slot->smooth));
 
 static int findtextype(Slot &s, int type, int last = -1)
 {

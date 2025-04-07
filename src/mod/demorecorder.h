@@ -119,7 +119,7 @@ namespace demorecorder
         time_t time;
         uint host;
         uint16_t port;
-        string servinfo;
+        string servdesc;
         int mode;
         string map;
         bool ok;

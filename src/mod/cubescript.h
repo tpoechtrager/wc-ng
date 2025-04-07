@@ -284,8 +284,8 @@ void getserverdescription()
     if ((demoplayback && demohasservertitle) ||
         (curpeer && enet_address_get_host_ip(&curpeer->address, hostname, sizeof(hostname)) >= 0))
     {
-        if (*servinfo)
-            res = servinfo;
+        if (*servdesc)
+            res = servdesc;
         else if(curpeer)
         {
             formatstring(hostname, "%s:%d", hostname, curpeer->address.port);
