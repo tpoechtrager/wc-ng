@@ -209,12 +209,12 @@ ifneq (,$(findstring mingw,$(PLATFORM)))
   SDL_DEP_LIBS+= -limm32 -lversion -loleaut32 -lsetupapi
 
   SERVER_LIBS= $(SUBSYSTEM) -L$(WINLIB) -Wl,-Bstatic -lz -Wl,-Bdynamic -lws2_32 -lwinmm
-  CHATSERV_LIBS+= -L$(WINLIB)/openssl -Wl,-Bstatic -lssl -lcrypto -lcrypt32 -Wl,-Bdynamic
-  CHATSERV_LIBS+= -mconsole -Wl,-Bstatic -lSDL2 -lpthread -Wl,-Bdynamic -lws2_32 $(SDL_DEP_LIBS)
+  CHATSERV_LIBS+= -L$(WINLIB)/openssl -Wl,-Bstatic -lssl -lcrypto -lcrypt32 -lbcrypt -Wl,-Bdynamic
+  CHATSERV_LIBS+= -mconsole -Wl,-Bstatic -lSDL2 -Wl,-Bdynamic -pthread -lws2_32 $(SDL_DEP_LIBS)
   MASTER_LIBS= -L$(WINLIB) -Wl,-Bstatic -lz -Wl,-Bdynamic -lws2_32 -lwinmm
 
   CLIENT_LIBS+= $(SUBSYSTEM) -L$(WINLIB)
-  CLIENT_LIBS+= -Wl,-Bstatic -lmaxminddb -lcurl -lssl -lcrypto -lcrypt32 -ldl -Wl,-Bdynamic
+  CLIENT_LIBS+= -Wl,-Bstatic -lmaxminddb -lcurl -lssl -lcrypto -lcrypt32 -lbcrypt -ldl -Wl,-Bdynamic
   CLIENT_LIBS+= -lgdi32
 
   CLIENT_LIBS+= -Wl,-Bstatic
@@ -227,7 +227,7 @@ ifneq (,$(findstring mingw,$(PLATFORM)))
   CLIENT_LIBS+= -Wl,-Bdynamic
 
   PLUGIN_INCLUDES= $(CLIENT_INCLUDES) -DPLUGIN
-  PLUGIN_LIBS+= -L$(WINLIB) -Wl,-Bstatic -lz -lSDL2 -lstdc++ -lpthread -Wl,-Bdynamic
+  PLUGIN_LIBS+= -L$(WINLIB) -Wl,-Bstatic -lz -lSDL2 -lstdc++ -Wl,-Bdynamic -pthread
   PLUGIN_LIBS+= -lws2_32 $(SDL_DEP_LIBS)
 
   # Old MinGW-w64-crt doesn't have strtok_r.
