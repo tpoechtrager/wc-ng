@@ -303,14 +303,7 @@ void renderplayerpreview(g3d_gui& g, strtool& command, const ENetAddress& eaddr,
 
         loopexintofplayers(ep,
         {
-            int bgcolor = guiplayerbgcolor(ep.ip.ui32, eaddr);
-            if (bgcolor > -1)
-            {
-                g.pushlist();
-                g.background(bgcolor, 3);
-            }
             g.text(ep.getname(), statuscolor(ep.priv, ep.state, COLOR_NORMAL), NULL);
-            if (bgcolor > -1) g.poplist();
         });
         g.poplist();
 

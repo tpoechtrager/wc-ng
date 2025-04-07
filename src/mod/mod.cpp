@@ -904,10 +904,8 @@ namespace mod
         extinfo::init();
         demorecorder::init();
         searchdemo::init();
-        ipignore::init();
         http::init();
         event::init();
-        proxydetection::init();
 
         //run("startup"); // moved to main.cpp
     }
@@ -919,7 +917,6 @@ namespace mod
         extinfo::deinit();
         demorecorder::deinit();
         searchdemo::deinit();
-        ipignore::deinit();
         http::deinit(); // http needs to be shutdown before events, there might be event callbacks left
         event::deinit();
         geoip::deinit();

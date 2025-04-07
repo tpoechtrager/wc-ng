@@ -468,16 +468,15 @@ namespace game
             g.text("", 0, " ");
             loopscoregroup(o,
             {
-                int bgcolor = gamemod::guiplayerbgcolor(o, getserveraddress()); //NEW
-                if((o==player1 && highlightscore && (multiplayer(false) || demoplayback || players.length() > 1)) || bgcolor > -1) //NEW || bgcolor > -1
+                if(o==player1 && highlightscore && (multiplayer(false) || demoplayback || players.length() > 1))
                 {
                     g.pushlist();
-                    g.background(bgcolor > -1 ? bgcolor : 0x808080, numgroups>1 ? 3 : 5); //NEW bgcolor > -1 ? bgcolor :
+                    g.background(0x808080, numgroups>1 ? 3 : 5);
                 }
                 const playermodelinfo &mdl = getplayermodelinfo(o);
                 const char *icon = sg.team && m_teammode ? (isteam(player1->team, sg.team) ? mdl.blueicon : mdl.redicon) : mdl.ffaicon;
                 g.text("", 0, icon);
-                if((o==player1 && highlightscore && (multiplayer(false) || demoplayback || players.length() > 1)) || bgcolor > -1) g.poplist(); //NEW || bgcolor > -1
+                if(o==player1 && highlightscore && (multiplayer(false) || demoplayback || players.length() > 1)) g.poplist();
             });
             g.poplist();
 
@@ -750,14 +749,13 @@ namespace game
                 loopv(spectators) 
                 {
                     fpsent *o = spectators[i];
-                    int bgcolor = gamemod::guiplayerbgcolor(o, getserveraddress());          //NEW
-                    if((o==player1 && highlightscore) || bgcolor > -1)                       //NEW || bgcolor > -1
+                    if(o==player1 && highlightscore)
                     {
                         g.pushlist();
-                        g.background(bgcolor > -1 ? bgcolor : 0x808080, 3);                  //NEW bgcolor > -1 ? bgcolor :
+                        g.background(0x808080, 3);
                     }
                     g.text(colorname(o), statuscolor(o, scoreboardtextcolor), "spectator");  //NEW scoreboardtextcolor   instead of   0xFFFFDD
-                    if((o==player1 && highlightscore) || bgcolor > -1) g.poplist();          //NEW || bgcolor > -1
+                    if(o==player1 && highlightscore) g.poplist();
                 }
                 g.poplist();
 
@@ -831,16 +829,13 @@ namespace game
                         g.text("", scoreboardtextcolor, "spectator");
                     }
                     fpsent *o = spectators[i];
-                    int status = scoreboardtextcolor;
-                    int bgcolor = gamemod::guiplayerbgcolor(o, getserveraddress());                                  //NEW
-                    if(bgcolor > -1) status = bgcolor;                                                               //NEW
-                    if((o==player1 && highlightscore) || bgcolor > -1)                                               //NEW || bgcolor > -1
+                    if(o==player1 && highlightscore)
                     {
                         g.pushlist();
-                        g.background(bgcolor > -1 ? bgcolor : 0x808080);                                             //NEW bgcolor > -1 ? bgcolor :
+                        g.background(0x808080);
                     }
-                    g.text(colorname(o), statuscolor(o, status), countryflag(o->extinfo ? o->countrycode : NULL));   //NEW countryflag()   and    status   instead of   0xFFFFDD
-                    if((o==player1 && highlightscore) || bgcolor > -1) g.poplist();                                  //NEW || bgcolor > -1) g.poplist();
+                    g.text(colorname(o), statuscolor(o, scoreboardtextcolor), countryflag(o->extinfo ? o->countrycode : NULL));   //NEW countryflag()   and    scoreboardtextcolor   instead of   0xFFFFDD
+                    if(o==player1 && highlightscore) g.poplist();
                     if(i+1<spectators.length() && (i+1)%3) g.space(1);
                     else g.poplist();
                 }

@@ -4,10 +4,10 @@ ENET_OBJS= \
 
 CLIENT_MOD_OBJS= \
     mod/plugin.o mod/demorecorder.o mod/chat.o mod/events.o \
-    mod/extinfo.o mod/gamemod.o mod/geoip.o mod/ipignore.o mod/mod.o \
+    mod/extinfo.o mod/gamemod.o mod/geoip.o mod/mod.o \
     mod/cubescript.o mod/hwdisplay.o mod/playerdisplay.o mod/http.o \
     mod/http-builtin-cert.o mod/strtool.o mod/crypto.o \
-    mod/extinfo-playerpreview.o mod/ipbuf.o mod/proxy-detection.o \
+    mod/extinfo-playerpreview.o mod/ipbuf.o \
     mod/geoip-compat.o mod/neutral-player-names.o
 
 CLIENT_OBJS= \

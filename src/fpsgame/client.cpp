@@ -560,8 +560,8 @@ namespace game
 
     bool isignored(int cn) { return ignores.find(cn) >= 0; }
 
-    ICOMMAND(ignore, "s", (char *arg), if(!mod::ipignore::checkaddress(arg)) ignore(parseplayer(arg))); //NEW if(!mod::checkipignore(arg))
-    ICOMMAND(unignore, "s", (char *arg), if(!mod::ipignore::checkaddress(arg, true)) unignore(parseplayer(arg))); //NEW if(!mod::checkipignore(arg, true))
+    ICOMMAND(ignore, "s", (char *arg), ignore(parseplayer(arg)));
+    ICOMMAND(unignore, "s", (char *arg), unignore(parseplayer(arg)));
     ICOMMAND(isignored, "s", (char *arg), intret(isignored(parseplayer(arg)) ? 1 : 0));
 
     void setteam(const char *arg1, const char *arg2)
@@ -1588,7 +1588,7 @@ namespace game
                 if(!d) return;
                 getstring(text, p);
                 filtertext(text, text, true, true);
-                if(mod::ipignore::isignored(d->clientnum, text)) break; //NEW || mod::isignored(), removed isignored(d->clientnum) (moved to mod::isignored()!)
+                if(isignored(d->clientnum)) break;
                 if(d->state!=CS_DEAD && d->state!=CS_SPECTATOR)
                     particle_textcopy(d->abovehead(), text, PART_TEXT, 2000, 0x32FF64, 4.0f, -8);
                 if(mod::event::run(mod::event::PLAYER_TEXT, "dss", d->clientnum, d->name, text) <= 0) //NEW
@@ -1603,7 +1603,7 @@ namespace game
                 fpsent *t = getclient(tcn);
                 getstring(text, p);
                 filtertext(text, text, true, true);
-                if(!t || mod::ipignore::isignored(t->clientnum, text)) break; //NEW || mod::isignored(), removed isignored(t->clientnum) (moved to mod::isignored()!)
+                if(!t || isignored(t->clientnum)) break;
                 if(t->state!=CS_DEAD && t->state!=CS_SPECTATOR)
                     particle_textcopy(t->abovehead(), text, PART_TEXT, 2000, 0x6496FF, 4.0f, -8);
                 if(mod::event::run(mod::event::PLAYER_TEAM_TEXT, "dss", t->clientnum, t->name, text) <= 0) //NEW
@@ -1684,7 +1684,7 @@ namespace game
                 }
                 if(d->name[0])          // already connected
                 {
-                    if(strcmp(d->name, text) && !mod::ipignore::isignored(d->clientnum)) //NEW replaced !isignored(d->clientnum) with !mod::ipignore::isignored(d->clientnum, NULL)
+                    if(strcmp(d->name, text) && !isignored(d->clientnum))
                     {
                         mod::event::run(mod::event::PLAYER_RENAME, "dss", d->clientnum, colorname(d), colorname(d, text)); //NEW
                         conoutf("%s is now known as %s", colorname(d), colorname(d, text));
@@ -1716,7 +1716,7 @@ namespace game
                     if(strcmp(text, d->name))
                     {
                         mod::event::run(mod::event::PLAYER_RENAME, "dss", d->clientnum, colorname(d), colorname(d, text)); //NEW
-                        if(!mod::ipignore::isignored(d->clientnum)) //NEW replaced !isignored(d->clientnum) with !mod::ipignore::isignored(d->clientnum, NULL)
+                        if(!isignored(d->clientnum))
                             conoutf("%s is now known as %s", colorname(d), colorname(d, text));
                         copystring(d->name, text, MAXNAMELEN+1);
                     }

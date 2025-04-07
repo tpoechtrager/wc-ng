@@ -453,13 +453,11 @@ struct checkcalldepth
 #include "gamemod.h"
 #include "http.h"
 #include "geoip.h"
-#include "ipignore.h"
 #include "extinfo.h"
 #include "demorecorder.h"
 #include "chat.h"
 #include "events.h"
 #include "thread.h"
-#include "proxy-detection.h"
 #include "neutral-player-names.h"
 
 #endif //STANDALONE
