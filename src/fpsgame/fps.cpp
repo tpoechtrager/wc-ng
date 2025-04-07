@@ -1009,13 +1009,13 @@ namespace game
     bool disableradar = false; // NEW
 
     VARP(gameclock, 0, 0, 1);
-    FVARP(gameclockscale, 1e-3f, 0.75f, 1e3f);
+    FVARP(gameclockscale, 0.5, 1.0, 2.0);
     HVARP(gameclockcolour, 0, 0xFFFFFF, 0xFFFFFF);
     VARP(gameclockalpha, 0, 255, 255);
-    HVARP(gameclocklowcolour, 0, 0xFFC040, 0xFFFFFF);
+    HVARP(gameclocklowcolour, 0, 0xFFA050, 0xFFFFFF);
     VARP(gameclockalign, -1, 0, 1);
-    FVARP(gameclockx, 0, 0.50f, 1);
-    FVARP(gameclocky, 0, 0.03f, 1);
+    FVARP(gameclockx, 0.0, 0.50, 1.0);
+    FVARP(gameclocky, 0.0, 0.03, 1.0);
 
     void drawgameclock(int w, int h)
     {
@@ -1083,9 +1083,13 @@ namespace game
         pophudmatrix();
     }
 
-    static inline bool ammobargunvisible(const fpsent *d, int gun)
+    static inline bool ammobargunvisible(const fpsent *d, int gun, bool hideempty)
     {
-        return d->ammo[gun] > 0 || d->gunselect == gun;
+        if(d->ammo[gun] > 0 || d->gunselect == gun) return true;
+        if(hideempty) return false;
+        if(m_efficiency) return gun!=GUN_PISTOL;
+        if(m_insta) return gun==GUN_RIFLE;
+        return true;
     }
 
     void drawammobar(int w, int h, fpsent *p)
@@ -1094,7 +1098,7 @@ namespace game
 
         int NUMPLAYERGUNS = GUN_PISTOL - GUN_SG + 1;
         int numvisibleguns = NUMPLAYERGUNS;
-        if(ammobarhideempty) loopi(NUMPLAYERGUNS) if(!ammobargunvisible(p, GUN_SG + i)) numvisibleguns--;
+        loopi(NUMPLAYERGUNS) if(!ammobargunvisible(p, GUN_SG + i, ammobarhideempty!=0)) numvisibleguns--;
 
         vec2 origin = vec2(ammobarx, ammobary).mul(vec2(w, h).div(ammobarscale));
         vec2 offsetdir = ammobarhorizontal ? vec2(1, 0) : vec2(0, 1);
@@ -1106,7 +1110,7 @@ namespace game
         flushhudmatrix();
 
         int numskippedguns = 0;
-        loopi(NUMPLAYERGUNS) if(ammobargunvisible(p, GUN_SG + i) || !ammobarhideempty)
+        loopi(NUMPLAYERGUNS) if(ammobargunvisible(p, GUN_SG + i, ammobarhideempty!=0))
         {
             float offset = initialoffset + (i - numskippedguns) * stepsize;
             vec2 drawpos = vec2(offsetdir).mul(offset).add(origin);
@@ -1254,9 +1258,9 @@ namespace game
     {
         switch(index)
         {
-            case 2: return "data/hit.png";
-            case 1: return "data/teammate.png";
-            default: return "data/crosshair.png";
+            case 2: return "packages/crosshairs/default_hit.png";
+            case 1: return "packages/crosshairs/default_teammate.png";
+            default: return "packages/crosshairs/default.png";
         }
     }
 

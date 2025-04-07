@@ -271,14 +271,33 @@ static void mountzip(ziparchive &arch, vector<zipfile> &files, const char *mount
     }
 }
 
+#ifndef PLUGIN //NEW
+#ifdef STANDALONE
+VAR(forcezipext, 0, 1, 1);
+#else
+VARP(forcezipext, 0, 1, 1);
+#endif
+#endif
+
+template<size_t N>
+static void fixzipname(char (&pname)[N])
+{
+#ifndef PLUGIN //NEW
+    if(forcezipext)
+    {
+        size_t plen = strlen(pname);
+        if(plen < 4 || strcasecmp(&pname[plen-4], ".zip")) concatstring(pname, ".zip");
+    }
+#endif
+}
+
 bool addzip(const char *name, const char *mount = NULL, const char *strip = NULL)
 {
     if(!mod::ismainthread()) abort(); //NEW
     string pname;
     copystring(pname, name);
     path(pname);
-    size_t plen = strlen(pname);
-    if(plen < 4 || strcasecmp(&pname[plen-4], ".zip")) concatstring(pname, ".zip");
+    fixzipname(pname);
 
     ziparchive *exists = findzip(pname);
     if(exists) 
@@ -319,8 +338,7 @@ bool removezip(const char *name)
     string pname;
     copystring(pname, name);
     path(pname);
-    int plen = (int)strlen(pname);
-    if(plen < 4 || !strchr(&pname[plen-4], '.')) concatstring(pname, ".zip");
+    fixzipname(pname);
     ziparchive *exists = findzip(pname);
     if(!exists)
     {

@@ -175,14 +175,6 @@ namespace game
     }
 
     //NEW
-    static inline const ENetAddress &getserveraddress()
-    {
-        if(curpeer) return curpeer->address;
-        if(demohasservertitle) return demoserver;
-        static const ENetAddress nulladdr{};
-        return nulladdr;
-    }
-
     template<typename T>
     static inline bool displayextinfo(T cond = T(1))
     {
@@ -895,10 +887,10 @@ namespace game
     ICOMMAND(showscores, "D", (int *down), showscores(*down!=0));
 
     VARP(hudscore, 0, 0, 1);
-    FVARP(hudscorescale, 1e-3f, 1.0f, 1e3f);
+    FVARP(hudscorescale, 0.5, 1.0, 2.0);
     VARP(hudscorealign, -1, 0, 1);
-    FVARP(hudscorex, 0, 0.50f, 1);
-    FVARP(hudscorey, 0, 0.03f, 1);
+    FVARP(hudscorex, 0.0, 0.50, 1.0);
+    FVARP(hudscorey, 0.0, 0.03, 1.0);
     HVARP(hudscoreplayercolour, 0, 0x60A0FF, 0xFFFFFF);
     HVARP(hudscoreenemycolour, 0, 0xFF4040, 0xFFFFFF);
     VARP(hudscorealpha, 0, 255, 255);

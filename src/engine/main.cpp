@@ -92,7 +92,7 @@ int initing = NOT_INITING;
 
 bool initwarning(const char *desc, int level, int type)
 {
-    if(initing < level) 
+    if(initing < level)
     {
         addchange(desc, type);
         return true;
@@ -194,7 +194,7 @@ void renderbackground(const char *caption, Texture *mapshot, const char *mapname
     if(!inbetweenframes && !force) return;
 
     if(!restore || force) stopsounds(); // stop sounds while loading
- 
+
     int w = screenw, h = screenh;
     if(forceaspect) w = int(ceil(h*forceaspect));
     getbackgroundres(w, h);
@@ -255,8 +255,10 @@ void renderbackground(const char *caption, Texture *mapshot, const char *mapname
             gle::attribf(hx-hsz, hy+hsz); gle::attribf(side,   1);
         }
         gle::end();
-        float lh = 0.5f*min(w, h), lw = lh*2,
-              lx = 0.5f*(w - lw), ly = 0.5f*(h*0.5f - lh);
+        float lh = 0.44f*min(w, h);
+        float lw = lh*2;
+        float lx = 0.5f*(w - lw);
+        float ly = 0.2f*(h*0.5f - lh);
         settexture((maxtexsize ? min(maxtexsize, hwtexsize) : hwtexsize) >= 1024 && (screenw > 1280 || screenh > 800) ? "data/logo_1024.png" : "data/logo.png", 3);
         bgquad(lx, ly, lw, lh);
         if(caption)
@@ -274,7 +276,10 @@ void renderbackground(const char *caption, Texture *mapshot, const char *mapname
         if(mapshot || mapname)
         {
             int infowidth = 12*FONTH;
-            float sz = 0.35f*min(w, h), msz = (0.75f*min(w, h) - sz)/(infowidth + FONTH), x = 0.5f*(w-sz), y = ly+lh - sz/15;
+            float sz = 0.35f*min(w, h);
+            float x = 0.5f*(w-sz);
+            float y = ly+lh;
+            float msz = (0.75f*min(w, h) - sz)/(infowidth + FONTH);
             if(mapinfo)
             {
                 int mw, mh;
@@ -298,9 +303,9 @@ void renderbackground(const char *caption, Texture *mapshot, const char *mapname
                 draw_text("?", 0, 0);
                 pophudmatrix();
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            }        
+            }
             settexture("data/mapshot_frame.png", 3);
-            bgquad(x, y, sz, sz);
+            bgquad(x-sz*0.083f, y-sz*0.083f, sz*1.166f, sz*1.166f);
             if(mapname)
             {
                 int tw = text_width(mapname);
@@ -350,7 +355,7 @@ void renderprogress(float bar, const char *text, GLuint tex, bool background)   
     }
 
     clientkeepalive();      // make sure our connection doesn't time out while loading maps etc.
-    
+
     SDL_PumpEvents(); // keep the event queue awake to avoid 'beachball' cursor
 
     extern int mesa_swap_bug, curvsync;
@@ -372,7 +377,7 @@ void renderprogress(float bar, const char *text, GLuint tex, bool background)   
     gle::deftexcoord0();
 
     float fh = 0.075f*min(w, h), fw = fh*10,
-          fx = renderedframe ? w - fw - fh/4 : 0.5f*(w - fw), 
+          fx = renderedframe ? w - fw - fh/4 : 0.5f*(w - fw),
           fy = renderedframe ? fh/4 : h - fh*1.5f,
           fu1 = 0/512.0f, fu2 = 511/512.0f,
           fv1 = 0/64.0f, fv2 = 52/64.0f;
@@ -428,13 +433,16 @@ void renderprogress(float bar, const char *text, GLuint tex, bool background)   
     if(tex)
     {
         glBindTexture(GL_TEXTURE_2D, tex);
-        float sz = 0.35f*min(w, h), x = 0.5f*(w-sz), y = 0.5f*min(w, h) - sz/15;
+        float lh = 0.44f*min(w, h);
+        float sz = 0.35f*min(w, h);
+        float x = 0.5f*(w-sz);
+        float y = 0.2f*(h*0.5f - lh) + lh;
         bgquad(x, y, sz, sz);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         settexture("data/mapshot_frame.png", 3);
-        bgquad(x, y, sz, sz);
+        bgquad(x-sz*0.083f, y-sz*0.083f, sz*1.166f, sz*1.166f);
         glDisable(GL_BLEND);
     }
 
@@ -534,7 +542,7 @@ void inputgrab(bool on, bool delay = false)
         }
     }
 #endif
-}   
+}
 
 bool initwindowpos = false;
 
@@ -571,11 +579,11 @@ void resetfullscreen()
 VARF(fullscreendesktop, 0, 0, 1, if(fullscreen) resetfullscreen());
 
 void screenres(int w, int h)
-{               
+{
     scr_w = clamp(w, SCR_MINW, SCR_MAXW);
     scr_h = clamp(h, SCR_MINH, SCR_MAXH);
     if(screen)
-    {           
+    {
         if(fullscreendesktop)
         {
             scr_w = min(scr_w, desktopw);
@@ -586,7 +594,7 @@ void screenres(int w, int h)
             if(fullscreendesktop) gl_resize();
             else resetfullscreen();
             initwindowpos = true;
-        } 
+        }
         else
         {
             SDL_SetWindowSize(screen, scr_w, scr_h);
@@ -598,14 +606,14 @@ void screenres(int w, int h)
     {
         initwarning("screen resolution");
     }
-}       
+}
 
 ICOMMAND(screenres, "ii", (int *w, int *h), screenres(*w, *h));
 
 static void setgamma(int val)
-{   
+{
     if(screen && SDL_SetWindowBrightness(screen, val/100.0f) < 0) conoutf(CON_ERROR, "Could not set gamma: %s", SDL_GetError());
-}   
+}
 
 static int curgamma = 100;
 VARFNP(gamma, reqgamma, 30, 100, 300,
@@ -616,7 +624,7 @@ VARFNP(gamma, reqgamma, 30, 100, 300,
 });
 
 void restoregamma()
-{       
+{
     if(initing || reqgamma == 100) return;
     curgamma = reqgamma;
     setgamma(curgamma);
@@ -781,7 +789,7 @@ void resetgl()
     cleanupdepthfx();
     cleanupshaders();
     cleanupgl();
-    
+
     setupscreen();
     inputgrab(grabinput);
     gl_init();
@@ -789,7 +797,7 @@ void resetgl()
     inbetweenframes = false;
     if(!reloadtexture(*notexture) ||
        !reloadtexture("data/logo.png") ||
-       !reloadtexture("data/logo_1024.png") || 
+       !reloadtexture("data/logo_1024.png") ||
        !reloadtexture("data/background.png") ||
        !reloadtexture("data/background_detail.png") ||
        !reloadtexture("data/background_decal.png") ||
@@ -1424,13 +1432,13 @@ int main(int argc, char **argv)
             case 'v': /* compat, ignore */ break;
             case 't': fullscreen = atoi(&argv[i][2]); break;
             case 's': /* compat, ignore */ break;
-            case 'f': /* compat, ignore */ break; 
-            case 'l': 
+            case 'f': /* compat, ignore */ break;
+            case 'l':
             {
-                char pkgdir[] = "packages/"; 
-                load = strstr(path(&argv[i][2]), path(pkgdir)); 
-                if(load) load += sizeof(pkgdir)-1; 
-                else load = &argv[i][2]; 
+                char pkgdir[] = "packages/";
+                load = strstr(path(&argv[i][2]), path(pkgdir));
+                if(load) load += sizeof(pkgdir)-1;
+                else load = &argv[i][2];
                 break;
             }
             case 'x': initscript = &argv[i][2]; break;
@@ -1455,7 +1463,7 @@ int main(int argc, char **argv)
             sdl_xgrab_bug = 1;
 #endif
     }
-    
+
     logoutf("init: net");
     if(enet_initialize()<0) fatal("Unable to initialise network module");
     atexit(enet_deinitialize);
@@ -1510,12 +1518,12 @@ int main(int argc, char **argv)
     defformatstring(gamecfgname, "data/game_%s.cfg", game::gameident());
     execfile(gamecfgname);
     if(game::savedservers()) execfile(game::savedservers(), false);
-    
+
     identflags |= IDF_PERSIST;
 
     execfile(game::wcconfig(), false); //NEW
 
-    if(!execfile(game::savedconfig(), false)) 
+    if(!execfile(game::savedconfig(), false))
     {
         execfile(game::defaultconfig());
         writecfg(game::restoreconfig());
@@ -1584,7 +1592,7 @@ int main(int argc, char **argv)
         totalmillis = millis;
         atotalmillis = millis; //NEW
         updatetime();
- 
+
         checkinput();
         menuprocess();
         tryedit();
@@ -1618,8 +1626,8 @@ int main(int argc, char **argv)
         renderedframe = inbetweenframes = true;
         framebenchmark(); //NEW
     }
-    
-    ASSERT(0);   
+
+    ASSERT(0);
     return EXIT_FAILURE;
 
     #if defined(WIN32) && !defined(_DEBUG) && !defined(__GNUC__) && !defined(__clang__) //NEW !defined(__clang__)

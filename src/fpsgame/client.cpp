@@ -436,10 +436,10 @@ namespace game
 
     bool isspectator(int cn)
     {
-        fpsent *d = getclient(cn);
+        fpsent *d = cn<0 ? player1 : getclient(cn);
         return d && d->state==CS_SPECTATOR;
     }
-    ICOMMAND(isspectator, "i", (int *cn), intret(isspectator(*cn) ? 1 : 0));
+    ICOMMAND(isspectator, "b", (int *cn), intret(isspectator(*cn) ? 1 : 0));
 
     bool isai(int cn, int type)
     {
@@ -1090,7 +1090,7 @@ namespace game
     }
 
     VARP(teamcolorchat, 0, 1, 1);
-    const char *chatcolorname(fpsent *d) { return teamcolorchat ? teamcolorname(d, NULL) : colorname(d); }
+    const char *chatcolorname(fpsent *d) { return teamcolorchat && (d!=player1 || d->state!=CS_SPECTATOR) ? teamcolorname(d, NULL) : colorname(d); }
 
     void toserver(char *text) 
     { 
@@ -1103,7 +1103,7 @@ namespace game
     }
     COMMANDN(say, toserver, "C");
 
-    void sayteam(char *text) { conoutf(CON_TEAMCHAT, "\fs\f8[team]\fr %s: \f8%s", chatcolorname(player1), text); addmsg(N_SAYTEAM, "rcs", player1, text); }
+    void sayteam(char *text) { conoutf(CON_TEAMCHAT, "\fs\f8[%s]\fr %s: \f8%s", player1->state==CS_SPECTATOR ? "spec" : "team", chatcolorname(player1), text); addmsg(N_SAYTEAM, "rcs", player1, text); }
     COMMAND(sayteam, "C");
 
     ICOMMAND(servcmd, "C", (char *cmd), addmsg(N_SERVCMD, "rs", cmd));
@@ -1610,7 +1610,7 @@ namespace game
                 if(t->state!=CS_DEAD && t->state!=CS_SPECTATOR)
                     particle_textcopy(t->abovehead(), text, PART_TEXT, 2000, 0x6496FF, 4.0f, -8);
                 if(mod::event::run(mod::event::PLAYER_TEAM_TEXT, "dss", t->clientnum, t->name, text) <= 0) //NEW
-                    conoutf(CON_TEAMCHAT, "\fs\f8[team]\fr %s: \f8%s", chatcolorname(t), text);
+                    conoutf(CON_TEAMCHAT, "\fs\f8[%s]\fr %s: \f8%s", t->state==CS_SPECTATOR ? "spec" : "team", chatcolorname(t), text);
                 break;
             }
 

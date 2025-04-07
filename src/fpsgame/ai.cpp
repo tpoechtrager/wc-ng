@@ -1377,7 +1377,7 @@ namespace ai
     }
 
     VAR(showwaypoints, 0, 0, 1);
-    VAR(showwaypointsradius, 0, 200, 10000);
+    VAR(showwaypointsradius, 0, 256, 8192);
 
     const char *stnames[AI_S_MAX] = {
         "wait", "defend", "pursue", "interest"
