@@ -24,9 +24,12 @@ SDL_cond *querycond, *resultcond;
 #define RESOLVERTHREADS 2
 #define RESOLVERLIMIT 3000
 
-MODVARP(extinfoserverbrowser, 0, 1, 2); //NEW
+//NEW
+MODVARP(extinfoserverbrowser, 0, 1, 2);
 MODVARP(realplayercount, 0, 0, 1);
-bool isextinfoconnect = false; //NEW
+MODVARP(colorserverbrowser, 0, 0, 1);
+bool isextinfoconnect = false;
+//NEW END
 
 int resolverloop(void * data)
 {
@@ -663,7 +666,8 @@ void checkpings()
         getstring(text, p);
         filtertext(si->map, text, false);
         getstring(text, p);
-        filtertext(si->sdesc, text, true, true);
+        if(colorserverbrowser) copystring(si->sdesc, text); //NEW if
+        else filtertext(si->sdesc, text, true, true);
         //NEW
         extern serverinfo *selectedserver;
         bool isselectedserver = (selectedserver == si);
